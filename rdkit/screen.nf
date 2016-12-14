@@ -8,20 +8,19 @@ params.descriptor = 'rdkit'
 params.metric = 'tanimoto'
 
 target = file(params.target)
-script = file('screen.py')
 
 process rdkitScreen {
 
 	input:
     file target
-    file script
+    file 'screen.py' from file('screen.py')
 
     output:
     file 'results.sdf.gz' into results 
     
     
     """
-    python $script -smiles '$params.smiles' -simmin $params.simmin -simmax $params.simmax -d $params.descriptor -m $params.metric -i $target -o results
+    python screen.py -smiles '$params.smiles' -simmin $params.simmin -simmax $params.simmax -d $params.descriptor -m $params.metric -i $target -o results
     """
     
 }

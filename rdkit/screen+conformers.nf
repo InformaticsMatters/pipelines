@@ -13,21 +13,19 @@ params.num = 1
 params.attempts = 0
 
 target = file(params.target)
-screenScript = file('screen.py')
-conformersScript = file('conformers.py')
 
 process rdkitScreen {
 
 	input:
     file target
-    file screenScript
+    file 'screen.py' from file('screen.py')
 
     output:
     stdout screenOutput
     
     
     """
-    python $screenScript -smiles '$params.smiles' -simmin $params.simmin -simmax $params.simmax -d $params.descriptor -m $params.metric -i $target
+    python screen.py -smiles '$params.smiles' -simmin $params.simmin -simmax $params.simmax -d $params.descriptor -m $params.metric -i $target
     """
     
 }
@@ -36,14 +34,14 @@ process rdkitConformer {
 
 	input:
     stdin screenOutput
-    file conformersScript
+    file 'conformers.py' from file('conformers.py')
 
     output:
     file 'results.sdf.gz' into results 
     
     
     """
-    python $conformersScript  -n $params.num -a $params.attempts -o results
+    python conformers.py  -n $params.num -a $params.attempts -o results
     """
     
 }

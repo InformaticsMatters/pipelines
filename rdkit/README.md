@@ -48,6 +48,36 @@ Screen the structures in dhfr_3d.sdf.gz for similarity to the specifed file in m
 
 ### Execution in Docker
 
+From the rdkit directory (adjust arguments if different):
+
+```sh
+gunzip -c ../data/dhfr_3d.sdf.gz | docker run -i -v $(pwd):/work -w /work informaticsmatters/rdkit python screen.py -smiles 'C1N=C(C2=CC=CC=C2)C2=CC=CC=C2C2=C1C=NC(NC1=CC=CC=C1)=N2' -simmin 0.49 > myfile.sdf
+Screen Args:  Namespace(descriptor='rdkit', input=None, metric='tanimoto', molfile=None, output=None, simmax=999, simmin=0.49, smiles='C1N=C(C2=CC=CC=C2)C2=CC=CC=C2C2=C1C=NC(NC1=CC=CC=C1)=N2')
+718 0.49537037037
+723 0.490173410405
+745 0.566194837635
+Found 3 similar molecules
+```
+Input pipe into Docker container using STDIN.
+Results sent from Docker container to STDOUT and redirected to file myfile.sdf
+
+### Execution in Nextflow
+Requires Nextflow to be installed.
+#### Native
+Requires RDKit to be installed
+
+
+#### Docker
+Uses RDKit provided by the container
+
+```sh
+nextflow run screen.nf --smiles 'C1N=C(C2=CC=CC=C2)C2=CC=CC=C2C2=C1C=NC(NC1=CC=CC=C1)=N2' -with-docker informaticsmatters/rdkit
+N E X T F L O W  ~  version 0.22.6
+Launching `screen.nf` [desperate_saha] - revision: b2fbd583dc
+[warm up] executor > local
+[88/18d787] Submitted process > rdkitScreen (1)
+Results: /Users/timbo/dev/git/pipelines/rdkit/work/88/18d787eea01ff4fd1c15db9e60ff4e/results.sdf.gz
+```
 
 ##2 conformers.py
 Generates 3D conformers
