@@ -8,41 +8,54 @@ Performs ligand based virtual screening using RDKit descriptors
 These examples need Python and RDKit to be present
 
 ```sh
-python screen.py -h
-usage: screen.py [-h] [-smiles SMILES] [-molfile MOLFILE] [-simmin SIMMIN]
-                 [-simmax SIMMAX] [-d {maccs,morgan2,morgan3,rdkit}]
+usage: screen.py [-h] [--smiles SMILES] [--molfile MOLFILE] [--simmin SIMMIN]
+                 [--simmax SIMMAX] [-d {maccs,morgan2,morgan3,rdkit}]
                  [-m {asymmetric,braunblanquet,cosine,dice,kulczynski,mcconnaughey,rogotgoldberg,russel,sokal,tanimoto}]
-                 [-i INPUT] [-o OUTPUT]
+                 [-f {hac,mw}] [--hacmin HACMIN] [--hacmax HACMAX]
+                 [--mwmin MWMIN] [--mwmax MWMAX] [-i INPUT] [-o OUTPUT]
+                 [-if {sdf,json}] [-q]
 
 RDKit screen
 
 optional arguments:
   -h, --help            show this help message and exit
-  -smiles SMILES        query structure as smiles (incompatible with -molfile
+  --smiles SMILES       query structure as smiles (incompatible with -molfile
                         arg)
-  -molfile MOLFILE      query structure as filename in molfile format
+  --molfile MOLFILE     query structure as filename in molfile format
                         (incompatible with -smiles arg)
-  -simmin SIMMIN        similarity lower cutoff (1.0 means identical)
-  -simmax SIMMAX        similarity upper cutoff (1.0 means identical)
+  --simmin SIMMIN       similarity lower cutoff (1.0 means identical)
+  --simmax SIMMAX       similarity upper cutoff (1.0 means identical)
   -d {maccs,morgan2,morgan3,rdkit}, --descriptor {maccs,morgan2,morgan3,rdkit}
                         descriptor or fingerprint type (default rdkit)
   -m {asymmetric,braunblanquet,cosine,dice,kulczynski,mcconnaughey,rogotgoldberg,russel,sokal,tanimoto}, --metric {asymmetric,braunblanquet,cosine,dice,kulczynski,mcconnaughey,rogotgoldberg,russel,sokal,tanimoto}
                         similarity metric (default tanimoto)
+  -f {hac,mw}, --fragment {hac,mw}
+                        Find single fragment if more than one (hac = biggest
+                        by heavy atome count, mw = biggest by mol weight )
+  --hacmin HACMIN       Min heavy atom count
+  --hacmax HACMAX       Max heavy atom count
+  --mwmin MWMIN         Min mol weight
+  --mwmax MWMAX         Max mol weight
   -i INPUT, --input INPUT
-                        input SD file, if not defined the STDIN is used
+                        Input SD file, if not defined the STDIN is used
   -o OUTPUT, --output OUTPUT
-                        base name for output file (no extension). If not
+                        Base name for output file (no extension). If not
                         defined then SDTOUT is used for the structures and
                         output is used as base name of the other files.
+  -if {sdf,json}, --informat {sdf,json}
+                        Input format. When using STDIN as input this needs to
+                        be specified.
+  -q, --quiet           Quiet mode
+
 ```
 
 ```sh
-zcat ../data/dhfr_3d.sdf.gz | python screen.py -smiles 'C1N=C(C2=CC=CC=C2)C2=CC=CC=C2C2=C1C=NC(NC1=CC=CC=C1)=N2' -simmin 0.5 | gzip > screened_mols.sdf.gz
+zcat ../data/dhfr_3d.sdf.gz | python screen.py --smiles 'C1N=C(C2=CC=CC=C2)C2=CC=CC=C2C2=C1C=NC(NC1=CC=CC=C1)=N2' --simmin 0.5 --informat sdf | gzip > screened_mols.sdf.gz
 ```
 Screen the structures in dhfr_3d.sdf.gz for similarity to the specifed smiles. Gzip the resulting SDF and write to screened_mols.sdf.gz
 
 ```sh
-zcat ../data/dhfr_3d.sdf.gz | python screen.py -molfile ../data/pyrimethamine.mol -simmin 0.5 -simmax 0.8 > screened_mols.sdf
+zcat ../data/dhfr_3d.sdf.gz | python screen.py --molfile ../data/pyrimethamine.mol --simmin 0.5 --simmax 0.8 --informat sdf > screened_mols.sdf
 ```
 Screen the structures in dhfr_3d.sdf.gz for similarity to the specifed file in molfile format of between 0.5 and 0.8. Write results to screened_mols.sdf
 
@@ -86,6 +99,7 @@ Generates 3D conformers
 python conformers.py -h
 usage: conformers.py [-h] [-n NUM] [-a ATTEMPTS] [-r RMSD] [-c {rmsd,tfd}]
                      [-t THRESHOLD] [-e EMIN] [-i INPUT] [-o OUTPUT]
+                     [-if {sdf,json}]
 
 RDKit conformers
 
@@ -104,15 +118,18 @@ optional arguments:
   -e EMIN, --emin EMIN  energy minimisation iterations (default of 0 means
                         none)
   -i INPUT, --input INPUT
-                        input SD file, if not defined the STDIN is used
+                        Input SD file, if not defined the STDIN is used
   -o OUTPUT, --output OUTPUT
-                        base name for output file (no extension). If not
+                        Base name for output file (no extension). If not
                         defined then SDTOUT is used for the structures and
                         output is used as base name of the other files.
+  -if {sdf,json}, --informat {sdf,json}
+                        Input format. When using STDIN as input this needs to
+                        be specified.
 ```
 
 ```sh
-zcat ../data/Kinase_inhibs.sdf.gz | python conformers.py -n 5 > out.sdf
+zcat ../data/Kinase_inhibs.sdf.gz | python conformers.py -n 5 -if sdf > out.sdf
 ```
 Tries to generate 5 conformers for each structure in the input file (may generate less if 2 conformers differ by less than the default RMSD) 
 
@@ -127,7 +144,7 @@ Performs rigid 3D alignment of structures
 ```sh
 python o3dAlign.py -h
 usage: o3dAlign.py [-h] [-t THRESHOLD] [-n NUM] [-a ATTEMPTS] [-r RMSD]
-                   [-e EMIN] [-i INPUT] [-o OUTPUT]
+                   [-e EMIN] [-i INPUT] [-o OUTPUT] [-if {sdf,json}]
                    query
 
 Open3DAlign with RDKit
@@ -147,16 +164,20 @@ optional arguments:
   -e EMIN, --emin EMIN  energy minimisation iterations for generated confomers
                         (default of 0 means none)
   -i INPUT, --input INPUT
-                        input SD file, if not defined the STDIN is used
+                        Input SD file, if not defined the STDIN is used
   -o OUTPUT, --output OUTPUT
-                        base name for output file (no extension). If not
+                        Base name for output file (no extension). If not
                         defined then SDTOUT is used for the structures and
-                        'o3dalign' is used as base name of the other files.
+                        output is used as base name of the other files.
+  -if {sdf,json}, --informat {sdf,json}
+                        Input format. When using STDIN as input this needs to
+                        be specified.
+
 ```
 
 
 ```sh
-zcat ../data/dhfr_3d.sdf.gz | python o3dAlign.py ../data/pyrimethamine.mol -n 5 -t 10 > my_output.sdf
+zcat ../data/dhfr_3d.sdf.gz | python o3dAlign.py ../data/pyrimethamine.mol -n 5 -t 10 -if sdf > my_output.sdf
 ```
 Aligns structures from STDIN to the specified molecule (3D), generating up to 5 conformers to align. Redirects output structures to my_output.sdf.
 
@@ -169,3 +190,42 @@ python o3dAlign.py ../data/pyrimethamine.mol -i ../data/dhfr_3d.sdf.gz -o o3da
 ```
 Aligns the 3D structures in the file dhfr_3d.sdf.gz to the 3D structure pyrimethamine.mol writing the output to o3da.sdf.gz
 
+##3. filter.py
+Filters and fixes molecules
+```sh
+python filter.py -h
+usage: filter.py [-h] [-f {hac,mw}] [--hacmin HACMIN] [--hacmax HACMAX]
+                 [--mwmin MWMIN] [--mwmax MWMAX] [-l LIMIT] [-c CHUNKSIZE]
+                 [-q] [-i INPUT] [-o OUTPUT] [-if {sdf,json}]
+
+RDKit filter
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -f {hac,mw}, --fragment {hac,mw}
+                        Find single fragment if more than one (hac = biggest
+                        by heavy atome count, mw = biggest by mol weight )
+  --hacmin HACMIN       Min heavy atom count
+  --hacmax HACMAX       Max heavy atom count
+  --mwmin MWMIN         Min mol weight
+  --mwmax MWMAX         Max mol weight
+  -l LIMIT, --limit LIMIT
+                        Limit output to this many records
+  -c CHUNKSIZE, --chunksize CHUNKSIZE
+                        Split output into chunks of size c. Output will always
+                        be files. Names like filter01.sdf.gz, filter02.sdf.gz
+                        ...
+  -q, --quiet           Quiet mode - suppress reporting reason for filtering
+  -i INPUT, --input INPUT
+                        Input SD file, if not defined the STDIN is used
+  -o OUTPUT, --output OUTPUT
+                        Base name for output file (no extension). If not
+                        defined then SDTOUT is used for the structures and
+                        output is used as base name of the other files.
+  -if {sdf,json}, --informat {sdf,json}
+                        Input format. When using STDIN this must be specified.
+```
+
+```sh
+zcat ../data/Kinase_inhibs.sdf.gz | python filter.py --hacmin 25 --hacmax 30 -if sdf
+```

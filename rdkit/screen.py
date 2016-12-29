@@ -49,13 +49,12 @@ def main():
     parser.add_argument('-m', '--metric',
                     choices=['asymmetric','braunblanquet','cosine','dice','kulczynski','mcconnaughey','rogotgoldberg','russel','sokal','tanimoto'],
                     default='tanimoto', help='similarity metric (default tanimoto)')
-    parser.add_argument('-f', '--fragment', choices=['hac', 'mw'], help='Find single fragment if more than one (hac = biggest by heavy atome count, mw = biggest by mol weight )')
+    parser.add_argument('-f', '--fragment', choices=['hac', 'mw'], help='Find single fragment if more than one (hac = biggest by heavy atom count, mw = biggest by mol weight )')
     parser.add_argument('--hacmin', type=int, help='Min heavy atom count')
     parser.add_argument('--hacmax', type=int, help='Max heavy atom count')
     parser.add_argument('--mwmin', type=float, help='Min mol weight')
     parser.add_argument('--mwmax', type=float, help='Max mol weight')
-    parser.add_argument('-i', '--input', help="input SD file, if not defined the STDIN is used")
-    parser.add_argument('-o', '--output', help="base name for output file (no extension). If not defined then SDTOUT is used for the structures and output is used as base name of the other files.")
+    utils.add_default_io_args(parser)
     parser.add_argument('-q', '--quiet', action='store_true', help='Quiet mode')
 
     args = parser.parse_args()
@@ -76,7 +75,7 @@ def main():
     
     query_fp = descriptor(query_rdkitmol)
 
-    input,output,suppl,writer,output_base = utils.defaultOpenInputOutput(args.input, args.output, 'screen')
+    input,output,suppl,writer,output_base = utils.default_open_input_output(args.input, args.informat, args.output, 'screen')
 
     # OK, all looks good so we can hope that things will run OK.
     # But before we start lets write the metadata so that the results can be handled.
@@ -91,8 +90,8 @@ def main():
         i +=1
         if mol is None: continue
         if args.fragment:
-            mol = filter.Fragment(mol, args.fragment, quiet=args.quiet)
-        if not filter.Filter(mol, minHac=args.hacmin, maxHac=args.hacmax, minMw=args.mwmin, maxMw=args.mwmax, quiet=args.quiet):
+            mol = filter.fragment(mol, args.fragment, quiet=args.quiet)
+        if not filter.filter(mol, minHac=args.hacmin, maxHac=args.hacmax, minMw=args.mwmin, maxMw=args.mwmax, quiet=args.quiet):
             continue
         target_fp = descriptor(mol)
         sim = metric(query_fp, target_fp)
@@ -113,7 +112,7 @@ def main():
     input.close()
     output.close()
 
-    utils.writeMetrics(output_base, {'__InputCount__':i, '__OutputCount__':count,'RDKitScreen':count})
+    utils.write_metrics(output_base, {'__InputCount__':i, '__OutputCount__':count,'RDKitScreen':count})
     
 if __name__ == "__main__":
     main()

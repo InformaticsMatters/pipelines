@@ -1,9 +1,8 @@
 import utils, conformers
 from rdkit import Chem, RDConfig
 from rdkit.Chem import AllChem, rdMolAlign
-import gzip
 import argparse
-import sys
+
 
 
 
@@ -50,9 +49,7 @@ def main():
     parser.add_argument('-a', '--attempts', default=0, type=int, help='number of attempts to generate conformers')
     parser.add_argument('-r', '--rmsd', type=float, default=1.0, help='prune RMSD threshold for excluding conformers')
     parser.add_argument('-e', '--emin', type=int, default=0, help='energy minimisation iterations for generated confomers (default of 0 means none)')
-    parser.add_argument('-i', '--input', help='input SD file, if not defined the STDIN is used')
-    parser.add_argument('-o', '--output', help="base name for output file (no extension). If not defined then SDTOUT is used for the structures and 'o3dAlign' is used as base name of the other files.")
-
+    utils.add_default_io_args(parser)
 
     args = parser.parse_args()
     utils.log("o3dAlign Args: ",args)
@@ -62,7 +59,7 @@ def main():
     qmol2 = Chem.MolFromMolFile(args.query)
     qmol2 = Chem.RemoveHs(qmol2)
 
-    input,output,suppl,writer,output_base = utils.defaultOpenInputOutput(args.input, args.output, 'o3dAlign')
+    input,output,suppl,writer,output_base = utils.default_open_input_output(args.input, args.informat, args.output, 'o3dAlign')
 
     pyO3A = rdMolAlign.GetO3A(qmol2, qmol)
     perfect_align = pyO3A.Align()
@@ -88,7 +85,7 @@ def main():
     writer.close()
     output.close()
     
-    utils.writeMetrics(output_base, {'__InputCount__':i, '__OutputCount__':count,'RDKitO3DAlign':count})
+    utils.write_metrics(output_base, {'__InputCount__':i, '__OutputCount__':count,'RDKitO3DAlign':count})
 
 if __name__ == "__main__":
     main()

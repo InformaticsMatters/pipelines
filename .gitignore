@@ -1,4 +1,7 @@
 *~
+.gradle
+.idea
+dist
 *.pyc
 work
 .nextflow

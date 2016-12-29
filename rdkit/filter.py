@@ -7,7 +7,7 @@ import argparse
 
 ### start function definitions #########################################
 
-def Fragment(mol, mode, quiet=False):
+def fragment(mol, mode, quiet=False):
     frags = Chem.GetMolFrags(mol, asMols=True)
 
     if len(frags) == 1:
@@ -40,7 +40,7 @@ def Fragment(mol, mode, quiet=False):
             biggest_mol.PutProp(name, mol.GetProp(name))
         return biggest_mol
             
-def FilterByHeavyAtomCount(mol, minCount, maxCount, quiet=False):
+def filter_by_heavy_atom_count(mol, minCount, maxCount, quiet=False):
     hac = mol.GetNumHeavyAtoms()
     if minCount is not None and hac < minCount:
         if not quiet:
@@ -52,7 +52,7 @@ def FilterByHeavyAtomCount(mol, minCount, maxCount, quiet=False):
         return False
     return True
 
-def FilterByMolWt(mol, minMw, maxMw, quiet=False):
+def filter_by_molwt(mol, minMw, maxMw, quiet=False):
     mw = Descriptors.MolWt(mol)
     if minMw is not None and mw < minMw:
         if not quiet:
@@ -64,12 +64,12 @@ def FilterByMolWt(mol, minMw, maxMw, quiet=False):
         return False
     return True
     
-def Filter(mol, minHac=None, maxHac=None, minMw=None, maxMw=None, quiet=False):
+def filter(mol, minHac=None, maxHac=None, minMw=None, maxMw=None, quiet=False):
     if minHac or maxHac:
-        if not FilterByHeavyAtomCount(mol, minHac, maxHac, quiet):
+        if not filter_by_heavy_atom_count(mol, minHac, maxHac, quiet):
             return False
     if minMw or maxMw:
-        if not FilterByMolWt(mol, minMw, maxMw, quiet):
+        if not filter_by_molwt(mol, minMw, maxMw, quiet):
             return False 
     return True
 
@@ -88,13 +88,11 @@ def main():
     parser.add_argument('-l', '--limit', type=int, help='Limit output to this many records')
     parser.add_argument('-c', '--chunksize', type=int, help='Split output into chunks of size c. Output will always be files. Names like filter01.sdf.gz, filter02.sdf.gz ...')
     parser.add_argument('-q', '--quiet', action='store_true', help='Quiet mode - suppress reporting reason for filtering')
-    parser.add_argument('-i', '--input', help="input SD file, if not defined the STDIN is used")
-    parser.add_argument('-o', '--output', help="base name for output file (no extension). If not defined then SDTOUT is used for the structures and filter' is used as base name of the other files.")
-
+    utils.add_default_io_args(parser)
     args = parser.parse_args()
     utils.log("Filter Args: ",args)
         
-    input,suppl = utils.defaultOpenInput(args.input)
+    input,suppl = utils.default_open_input(args.input, args.informat)
     if args.output:
         output_base = args.output
     else:
@@ -126,8 +124,8 @@ def main():
         i +=1
         if mol is None: continue
         if args.fragment:
-            mol = Fragment(mol, args.fragment, quiet=args.quiet)
-        if not Filter(mol, minHac=args.hacmin, maxHac=args.hacmax, minMw=args.mwmin, maxMw=args.mwmax, quiet=args.quiet):
+            mol = fragment(mol, args.fragment, quiet=args.quiet)
+        if not filter(mol, minHac=args.hacmin, maxHac=args.hacmax, minMw=args.mwmin, maxMw=args.mwmax, quiet=args.quiet):
             continue
         if args.chunksize:
             if count > 0 and count % args.chunksize == 0:
@@ -149,7 +147,7 @@ def main():
     input.close()
     output.close()
 
-    utils.writeMetrics(output_base, {'__InputCount__':i, '__OutputCount__':count,'RDKitFilter':i})
+    utils.write_metrics(output_base, {'__InputCount__':i, '__OutputCount__':count,'RDKitFilter':i})
     
 if __name__ == "__main__":
     main()

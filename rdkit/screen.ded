@@ -1,0 +1,168 @@
+{
+  "id": "rdkit.screen.basic",
+  "name": "RDKit Docker Screening",
+  "description": "RDKit Docker Screening",
+  "tags": [
+    "rdkit",
+    "docker",
+    "screen"
+  ],
+  "resourceUrl": null,
+  "icon": "icons/filter_molecules.png",
+  
+  "inputDescriptors": [
+    {
+      "route": "FILE",
+      "multiplicity": "ITEM",
+      "primaryType": "org.squonk.types.SDFile",
+      "mediaType": "chemical/x-mdl-sdfile",
+      "name": "input"
+    }
+  ],
+  "outputDescriptors": [
+    {
+      "route": "FILE",
+      "multiplicity": "ITEM",
+      "primaryType": "org.squonk.types.SDFile",
+      "mediaType": "chemical/x-mdl-sdfile",
+      "name": "output"
+    }
+  ],
+  "resources": {
+    "screen.py": "screen.py"
+  },
+  "executor": "org.squonk.execution.steps.impl.CannedDockerProcessDatasetStep",
+  "imageName": "informaticsmatters/rdkit",
+  "command": "python screen.py '${query_source}' ${threshold} -d ${descriptor} -m ${metric}",
+  
+  "optionDescriptors": [
+    {
+      "modes": [
+        "User"
+      ],
+      "@class": "org.squonk.options.OptionDescriptor",
+      "typeDescriptor": {
+        "type": "java.lang.String",
+        "@class": "org.squonk.options.SimpleTypeDescriptor"
+      },
+      "key": "docker.executor.id",
+      "label": "DockerExecutorDescriptor ID",
+      "description": "DockerExecutorDescriptor ID - do not change",
+      "defaultValue": "rdkit.screen.basic",
+      "visible": false,
+      "editable": false
+    },
+    {
+      "modes": [
+        "User"
+      ],
+      "editable": true,
+      "@class": "org.squonk.options.OptionDescriptor",
+      "typeDescriptor": {
+        "type": "java.lang.String",
+        "@class": "org.squonk.options.SimpleTypeDescriptor"
+      },
+      "key": "dockerImageVersion",
+      "label": "RDKit version",
+      "description": "Version of the RDKit Docker image to execute",
+      "values": [
+        "latest",
+        "Release_2016_09_2",
+        "Release_2016_03_1",
+        "Release_2015_09_2",
+        "Release_2015_09_1"
+      ],
+      "defaultValue": "latest",
+      "visible": true
+    },
+    {
+      "modes": [
+        "User"
+      ],
+      "editable": true,
+      "visible": true,
+      "description": "Query molecule as smiles",
+      "label": "Query molecule",
+      "key": "arg.query",
+      "typeDescriptor": {
+        "type": "org.squonk.options.types.Structure",
+        "formats": [
+          "smiles"
+        ],
+        "molType": "DISCRETE",
+        "@class": "org.squonk.options.MoleculeTypeDescriptor"
+      },
+      "@class": "org.squonk.options.OptionDescriptor"
+    },
+    {
+      "modes": [
+        "User"
+      ],
+      "@class": "org.squonk.options.OptionDescriptor",
+      "typeDescriptor": {
+        "type": "java.lang.Float",
+        "@class": "org.squonk.options.SimpleTypeDescriptor"
+      },
+      "key": "arg.threshold",
+      "label": "Threshold",
+      "description": "Similarity threshold",
+      "defaultValue": [
+        "java.lang.Float",
+        0.7
+      ],
+      "visible": true,
+      "editable": true
+    },
+    {
+      "modes": [
+        "User"
+      ],
+      "editable": true,
+      "@class": "org.squonk.options.OptionDescriptor",
+      "typeDescriptor": {
+        "type": "java.lang.String",
+        "@class": "org.squonk.options.SimpleTypeDescriptor"
+      },
+      "key": "arg.descriptor",
+      "label": "Descriptor",
+      "description": "Descriptor/fingerprint to use",
+      "values": [
+        "maccs",
+        "morgan2",
+        "morgan3",
+        "rdkit"
+      ],
+      "defaultValue": "rdkit",
+      "visible": true
+    },
+    {
+      "modes": [
+        "User"
+      ],
+      "editable": true,
+      "@class": "org.squonk.options.OptionDescriptor",
+      "typeDescriptor": {
+        "type": "java.lang.String",
+        "@class": "org.squonk.options.SimpleTypeDescriptor"
+      },
+      "key": "arg.metric",
+      "label": "Metric",
+      "description": "Similarity metric to use",
+      "values": [
+        "asymmetric",
+        "braunblanquet",
+        "cosine",
+        "dice",
+        "kulczynski",
+        "mcconnaughey",
+        "rogotgoldberg",
+        "russel",
+        "sokal",
+        "tanimoto"
+      ],
+      "defaultValue": "tanimoto",
+      "visible": true
+    }
+  ]
+}
+

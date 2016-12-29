@@ -1,9 +1,7 @@
 import utils
-import sys
 from rdkit import Chem
 from rdkit.Chem import AllChem, TorsionFingerprints
 from rdkit.ML.Cluster import Butina
-from rdkit.Chem.Fingerprints import FingerprintMols
 import gzip, collections
 import argparse
 
@@ -118,9 +116,7 @@ def main():
     parser.add_argument('-c', '--cluster', choices=['rmsd', 'tfd'], help='Cluster method (rmsd or tfd). If None then no clustering')
     parser.add_argument('-t', '--threshold', type=float, help='cluster threshold (default of 2.0 for RMSD and 0.3 for TFD)')
     parser.add_argument('-e', '--emin', type=int, default=0, help='energy minimisation iterations (default of 0 means none)')
-    parser.add_argument('-i', '--input', help="input SD file, if not defined the STDIN is used")
-    parser.add_argument('-o', '--output', help="base name for output file (no extension). If not defined then SDTOUT is used for the structures and output is used as base name of the other files.")
-
+    utils.add_default_io_args(parser)
     args = parser.parse_args()
 
     if not args.threshold:
@@ -131,7 +127,7 @@ def main():
         
     utils.log("Conformers Args: ",args)
         
-    input,output,suppl,writer,output_base = utils.defaultOpenInputOutput(args.input, args.output, 'conformers')
+    input,output,suppl,writer,output_base = utils.default_open_input_output(args.input, args.informat, args.output, 'conformers')
 
     # OK, all looks good so we can hope that things will run OK.
     # But before we start lets write the metadata so that the results can be handled.
@@ -166,7 +162,7 @@ def main():
     writer.close()
     output.close()
     
-    utils.writeMetrics(output_base, {'__InputCount__':i, '__OutputCount__':count,'RDKitConformer':count})
+    utils.write_metrics(output_base, {'__InputCount__':i, '__OutputCount__':count,'RDKitConformer':count})
 
 
 if __name__ == "__main__":
