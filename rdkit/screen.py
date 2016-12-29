@@ -1,12 +1,10 @@
-import utils
-import sys
+import utils, filter
+import sys, gzip, argparse
 from rdkit import Chem
 from rdkit.Chem import AllChem
 from rdkit.Chem import MACCSkeys
 from rdkit import DataStructs
 from rdkit.Chem.Fingerprints import FingerprintMols
-import gzip
-import argparse
 
 ### start field name defintions #########################################
 
@@ -43,16 +41,22 @@ def main():
     ### command line args defintions #########################################
 
     parser = argparse.ArgumentParser(description='RDKit screen')
-    parser.add_argument('-smiles', help='query structure as smiles (incompatible with -molfile arg)')
-    parser.add_argument('-molfile', help='query structure as filename in molfile format (incompatible with -smiles arg)')
-    parser.add_argument('-simmin', type=float, default=0.7, help='similarity lower cutoff (1.0 means identical)')
-    parser.add_argument('-simmax', type=float, default=999, help='similarity upper cutoff (1.0 means identical)')
+    parser.add_argument('--smiles', help='query structure as smiles (incompatible with -molfile arg)')
+    parser.add_argument('--molfile', help='query structure as filename in molfile format (incompatible with -smiles arg)')
+    parser.add_argument('--simmin', type=float, default=0.7, help='similarity lower cutoff (1.0 means identical)')
+    parser.add_argument('--simmax', type=float, default=999, help='similarity upper cutoff (1.0 means identical)')
     parser.add_argument('-d', '--descriptor', choices=['maccs','morgan2','morgan3','rdkit'], default='rdkit', help='descriptor or fingerprint type (default rdkit)')
     parser.add_argument('-m', '--metric',
                     choices=['asymmetric','braunblanquet','cosine','dice','kulczynski','mcconnaughey','rogotgoldberg','russel','sokal','tanimoto'],
                     default='tanimoto', help='similarity metric (default tanimoto)')
+    parser.add_argument('-f', '--fragment', choices=['hac', 'mw'], help='Find single fragment if more than one (hac = biggest by heavy atome count, mw = biggest by mol weight )')
+    parser.add_argument('--hacmin', type=int, help='Min heavy atom count')
+    parser.add_argument('--hacmax', type=int, help='Max heavy atom count')
+    parser.add_argument('--mwmin', type=float, help='Min mol weight')
+    parser.add_argument('--mwmax', type=float, help='Max mol weight')
     parser.add_argument('-i', '--input', help="input SD file, if not defined the STDIN is used")
     parser.add_argument('-o', '--output', help="base name for output file (no extension). If not defined then SDTOUT is used for the structures and output is used as base name of the other files.")
+    parser.add_argument('-q', '--quiet', action='store_true', help='Quiet mode')
 
     args = parser.parse_args()
     utils.log("Screen Args: ",args)
@@ -86,12 +90,17 @@ def main():
     for mol in suppl:
         i +=1
         if mol is None: continue
+        if args.fragment:
+            mol = filter.Fragment(mol, args.fragment, quiet=args.quiet)
+        if not filter.Filter(mol, minHac=args.hacmin, maxHac=args.hacmax, minMw=args.mwmin, maxMw=args.mwmax, quiet=args.quiet):
+            continue
         target_fp = descriptor(mol)
         sim = metric(query_fp, target_fp)
     
         if sim > args.simmin and sim <= args.simmax:
             count +=1
-            utils.log(i,sim)
+            if not args.quiet:
+                utils.log(i,sim)
             for name in mol.GetPropNames():
                 mol.ClearProp(name)
             mol.SetDoubleProp(field_Similarity, sim)

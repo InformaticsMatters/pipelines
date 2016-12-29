@@ -7,11 +7,7 @@ def log(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
     
 def defaultOpenInputOutput(inputDef, outputDef, defaultOutput):
-    if inputDef:
-        input = gzip.open(inputDef)
-    else:
-        input = sys.stdin
-    suppl = Chem.ForwardSDMolSupplier(input)
+    input, suppl = defaultOpenInput(inputDef)
 
     if outputDef:
         output = gzip.open(outputDef + '.sdf.gz','w+')
@@ -23,6 +19,15 @@ def defaultOpenInputOutput(inputDef, outputDef, defaultOutput):
     writer = Chem.SDWriter(output)
     
     return input,output,suppl,writer,output_base
+    
+def defaultOpenInput(inputDef):
+    if inputDef:
+        input = gzip.open(inputDef)
+    else:
+        input = sys.stdin
+    suppl = Chem.ForwardSDMolSupplier(input)
+
+    return input, suppl
 
 def writeMetrics(baseName, values):
     m = open(baseName  + '_metrics.txt', 'w')
