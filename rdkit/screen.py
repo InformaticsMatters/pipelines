@@ -44,7 +44,7 @@ def main():
     parser.add_argument('--smiles', help='query structure as smiles (incompatible with -molfile arg)')
     parser.add_argument('--molfile', help='query structure as filename in molfile format (incompatible with -smiles arg)')
     parser.add_argument('--simmin', type=float, default=0.7, help='similarity lower cutoff (1.0 means identical)')
-    parser.add_argument('--simmax', type=float, default=999, help='similarity upper cutoff (1.0 means identical)')
+    parser.add_argument('--simmax', type=float, default=1.0, help='similarity upper cutoff (1.0 means identical)')
     parser.add_argument('-d', '--descriptor', choices=['maccs','morgan2','morgan3','rdkit'], default='rdkit', help='descriptor or fingerprint type (default rdkit)')
     parser.add_argument('-m', '--metric',
                     choices=['asymmetric','braunblanquet','cosine','dice','kulczynski','mcconnaughey','rogotgoldberg','russel','sokal','tanimoto'],
@@ -75,7 +75,7 @@ def main():
     
     query_fp = descriptor(query_rdkitmol)
 
-    input,output,suppl,writer,output_base = utils.default_open_input_output(args.input, args.informat, args.output, 'screen')
+    input,output,suppl,writer,output_base = utils.default_open_input_output(args.input, args.informat, args.output, 'screen', args.outformat)
 
     # OK, all looks good so we can hope that things will run OK.
     # But before we start lets write the metadata so that the results can be handled.
@@ -96,7 +96,7 @@ def main():
         target_fp = descriptor(mol)
         sim = metric(query_fp, target_fp)
     
-        if sim > args.simmin and sim <= args.simmax:
+        if sim >= args.simmin and sim <= args.simmax:
             count +=1
             if not args.quiet:
                 utils.log(i,sim)

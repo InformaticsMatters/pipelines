@@ -127,7 +127,7 @@ def main():
         
     utils.log("Conformers Args: ",args)
         
-    input,output,suppl,writer,output_base = utils.default_open_input_output(args.input, args.informat, args.output, 'conformers')
+    input,output,suppl,writer,output_base = utils.default_open_input_output(args.input, args.informat, args.output, 'conformers', args.outformat)
 
     # OK, all looks good so we can hope that things will run OK.
     # But before we start lets write the metadata so that the results can be handled.

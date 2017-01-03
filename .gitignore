@@ -6,3 +6,4 @@ dist
 work
 .nextflow
 .nextflow.log*
+*.sh

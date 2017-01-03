@@ -13,7 +13,7 @@ usage: screen.py [-h] [--smiles SMILES] [--molfile MOLFILE] [--simmin SIMMIN]
                  [-m {asymmetric,braunblanquet,cosine,dice,kulczynski,mcconnaughey,rogotgoldberg,russel,sokal,tanimoto}]
                  [-f {hac,mw}] [--hacmin HACMIN] [--hacmax HACMAX]
                  [--mwmin MWMIN] [--mwmax MWMAX] [-i INPUT] [-o OUTPUT]
-                 [-if {sdf,json}] [-q]
+                 [-if {sdf,json}] [-of {sdf,json}] [-q]
 
 RDKit screen
 
@@ -31,7 +31,7 @@ optional arguments:
                         similarity metric (default tanimoto)
   -f {hac,mw}, --fragment {hac,mw}
                         Find single fragment if more than one (hac = biggest
-                        by heavy atome count, mw = biggest by mol weight )
+                        by heavy atom count, mw = biggest by mol weight )
   --hacmin HACMIN       Min heavy atom count
   --hacmax HACMAX       Max heavy atom count
   --mwmin MWMIN         Min mol weight
@@ -43,10 +43,10 @@ optional arguments:
                         defined then SDTOUT is used for the structures and
                         output is used as base name of the other files.
   -if {sdf,json}, --informat {sdf,json}
-                        Input format. When using STDIN as input this needs to
-                        be specified.
+                        Input format. When using STDIN this must be specified.
+  -of {sdf,json}, --outformat {sdf,json}
+                        Output format. Defaults to 'sdf'.
   -q, --quiet           Quiet mode
-
 ```
 
 ```sh
@@ -64,7 +64,7 @@ Screen the structures in dhfr_3d.sdf.gz for similarity to the specifed file in m
 From the rdkit directory (adjust arguments if different):
 
 ```sh
-gunzip -c ../data/dhfr_3d.sdf.gz | docker run -i -v $(pwd):/work -w /work informaticsmatters/rdkit python screen.py -smiles 'C1N=C(C2=CC=CC=C2)C2=CC=CC=C2C2=C1C=NC(NC1=CC=CC=C1)=N2' -simmin 0.49 > myfile.sdf
+gunzip -c ../data/dhfr_3d.sdf.gz | docker run -i --rm -v $(pwd):/work -w /work informaticsmatters/rdkit python screen.py --smiles 'C1N=C(C2=CC=CC=C2)C2=CC=CC=C2C2=C1C=NC(NC1=CC=CC=C1)=N2' --simmin 0.49 --informat sdf > myfile.sdf
 Screen Args:  Namespace(descriptor='rdkit', input=None, metric='tanimoto', molfile=None, output=None, simmax=999, simmin=0.49, smiles='C1N=C(C2=CC=CC=C2)C2=CC=CC=C2C2=C1C=NC(NC1=CC=CC=C1)=N2')
 718 0.49537037037
 723 0.490173410405

@@ -59,7 +59,7 @@ def main():
     qmol2 = Chem.MolFromMolFile(args.query)
     qmol2 = Chem.RemoveHs(qmol2)
 
-    input,output,suppl,writer,output_base = utils.default_open_input_output(args.input, args.informat, args.output, 'o3dAlign')
+    input,output,suppl,writer,output_base = utils.default_open_input_output(args.input, args.informat, args.output, 'o3dAlign', args.outformat)
 
     pyO3A = rdMolAlign.GetO3A(qmol2, qmol)
     perfect_align = pyO3A.Align()

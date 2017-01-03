@@ -1,7 +1,6 @@
 import utils
 import sys, gzip
 from rdkit import Chem
-from rdkit.Chem import AllChem
 from rdkit.Chem import Descriptors
 import argparse
 

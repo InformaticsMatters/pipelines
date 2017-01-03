@@ -6,7 +6,7 @@ task dist(type: Zip) {
 
     from('rdkit') {
         includes = ['**.py','**.nf','**.ded']
-        into 'rdkit'
+        into 'pipelines/rdkit'
     }
 }
 

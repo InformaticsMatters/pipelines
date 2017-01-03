@@ -76,8 +76,7 @@ def main():
     parser.add_argument('-m', '--metric',
                     choices=['asymmetric','braunblanquet','cosine','dice','kulczynski','mcconnaughey','rogotgoldberg','russel','sokal','tanimoto'],
                     default='tanimoto', help='similarity metric (default tanimoto)')
-    parser.add_argument('-i', '--input', help="input SD file, if not defined the STDIN is used")
-    parser.add_argument('-o', '--output', help="base name for output file (no extension). If not defined then SDTOUT is used for the structures and output is used as base name of the other files.")
+    utils.add_default_io_args(parser)
 
     args = parser.parse_args()
     utils.log("Cluster Args: ",args)
@@ -86,7 +85,7 @@ def main():
     if descriptor is None:
         raise ValueError('Invalid descriptor name ' + args.descriptor)
 
-    input,output,suppl,writer,output_base = utils.defaultOpenInputOutput(args.input, args.output, 'cluster_butina')
+    input,output,suppl,writer,output_base = utils.default_open_input_output(args.input, args.informat, args.output, 'cluster_butina', args.outformat)
 
     # generate fingerprints
     mols = [x for x in suppl if x is not None]
@@ -113,7 +112,7 @@ def main():
     writer.close()
     output.close()
 
-    utils.writeMetrics(output_base, {'__InputCount__':i, '__OutputCount__':i,'RDKitCluster':i})
+    utils.write_metrics(output_base, {'__InputCount__':i, '__OutputCount__':i,'RDKitCluster':i})
     
 if __name__ == "__main__":
     main()

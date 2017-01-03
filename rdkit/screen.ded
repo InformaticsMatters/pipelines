@@ -2,39 +2,31 @@
   "id": "rdkit.screen.basic",
   "name": "RDKit Docker Screening",
   "description": "RDKit Docker Screening",
-  "tags": [
-    "rdkit",
-    "docker",
-    "screen"
-  ],
+  "tags": [ "rdkit", "docker", "screen" ],
   "resourceUrl": null,
   "icon": "icons/filter_molecules.png",
   
   "inputDescriptors": [
     {
-      "route": "FILE",
       "multiplicity": "ITEM",
-      "primaryType": "org.squonk.types.SDFile",
-      "mediaType": "chemical/x-mdl-sdfile",
+      "primaryType": "org.squonk.dataset.Dataset",
+      "secondaryType": "org.squonk.types.MoleculeObject",
+      "mediaType": "application/x-squonk-dataset-molecule+json",
       "name": "input"
     }
   ],
+  "inputRoutes": [ "FILE" ],
   "outputDescriptors": [
     {
-      "route": "FILE",
       "multiplicity": "ITEM",
-      "primaryType": "org.squonk.types.SDFile",
-      "mediaType": "chemical/x-mdl-sdfile",
+      "primaryType": "org.squonk.dataset.Dataset",
+      "secondaryType": "org.squonk.types.MoleculeObject",
+      "mediaType": "application/x-squonk-dataset-molecule+json",
       "name": "output"
     }
   ],
-  "resources": {
-    "screen.py": "screen.py"
-  },
-  "executor": "org.squonk.execution.steps.impl.CannedDockerProcessDatasetStep",
-  "imageName": "informaticsmatters/rdkit",
-  "command": "python screen.py '${query_source}' ${threshold} -d ${descriptor} -m ${metric}",
-  
+  "outputRoutes": [ "FILE" ],
+
   "optionDescriptors": [
     {
       "modes": [
@@ -163,6 +155,13 @@
       "defaultValue": "tanimoto",
       "visible": true
     }
-  ]
+  ],
+
+  "volumes": {
+      "pipelines/rdkit": "/pipelines/rdkit"
+    },
+  "executor": "org.squonk.execution.steps.impl.DefaultDockerExecutorStep",
+  "imageName": "informaticsmatters/rdkit",
+  "command": "python /pipelines/rdkit/screen.py -i input.data.gz -if json -o output -of json --smiles '${query_source}' --simmin ${threshold} -d ${descriptor} -m ${metric}"
 }
 
