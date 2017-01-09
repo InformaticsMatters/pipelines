@@ -146,7 +146,9 @@ def main():
     input.close()
     output.close()
 
-    utils.write_metrics(output_base, {'__InputCount__':i, '__OutputCount__':count,'RDKitFilter':i})
+    if args.meta:
+        utils.write_metrics(output_base, {'__InputCount__':i, '__OutputCount__':count,'RDKitFilter':i})
+
     
 if __name__ == "__main__":
     main()

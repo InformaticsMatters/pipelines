@@ -190,7 +190,7 @@ python o3dAlign.py ../data/pyrimethamine.mol -i ../data/dhfr_3d.sdf.gz -o o3da
 ```
 Aligns the 3D structures in the file dhfr_3d.sdf.gz to the 3D structure pyrimethamine.mol writing the output to o3da.sdf.gz
 
-##3. filter.py
+##4. filter.py
 Filters and fixes molecules
 ```sh
 python filter.py -h
@@ -228,4 +228,42 @@ optional arguments:
 
 ```sh
 zcat ../data/Kinase_inhibs.sdf.gz | python filter.py --hacmin 25 --hacmax 30 -if sdf
+```
+
+
+##5. cluster_butina.py
+Molecule clustering using Butina method
+```sh
+python cluster_butina.py -h
+usage: cluster_butina.py [-h] [-t THRESHOLD]
+                         [-d {rdkit,morgan3,morgan2,maccs}]
+                         [-m {sokal,cosine,rogotgoldberg,dice,braunblanquet,asymmetric,kulczynski,mcconnaughey,russel,tanimoto}]
+                         [-i INPUT] [-o OUTPUT] [-if {sdf,json}]
+                         [-of {sdf,json}] [--meta]
+
+RDKit screen
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -t THRESHOLD, --threshold THRESHOLD
+                        similarity clustering threshold (1.0 means identical)
+  -d {rdkit,morgan3,morgan2,maccs}, --descriptor {rdkit,morgan3,morgan2,maccs}
+                        descriptor or fingerprint type (default rdkit)
+  -m {sokal,cosine,rogotgoldberg,dice,braunblanquet,asymmetric,kulczynski,mcconnaughey,russel,tanimoto}, --metric {sokal,cosine,rogotgoldberg,dice,braunblanquet,asymmetric,kulczynski,mcconnaughey,russel,tanimoto}
+                        similarity metric (default tanimoto)
+  -i INPUT, --input INPUT
+                        Input SD file, if not defined the STDIN is used
+  -o OUTPUT, --output OUTPUT
+                        Base name for output file (no extension). If not
+                        defined then SDTOUT is used for the structures and
+                        output is used as base name of the other files.
+  -if {sdf,json}, --informat {sdf,json}
+                        Input format. When using STDIN this must be specified.
+  -of {sdf,json}, --outformat {sdf,json}
+                        Output format. Defaults to 'sdf'.
+  --meta                Write metadata and metrics files
+```
+
+```sh
+zcat ../data/Kinase_inhibs.sdf.gz | python python/pipelines/rdkit/cluster_butina.py -t 0.6 -if sdf
 ```

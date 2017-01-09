@@ -17,6 +17,7 @@ def add_default_io_args(parser):
     parser.add_argument('-o', '--output', help="Base name for output file (no extension). If not defined then SDTOUT is used for the structures and output is used as base name of the other files.")
     parser.add_argument('-if', '--informat', choices=['sdf', 'json'], help="Input format. When using STDIN this must be specified.")
     parser.add_argument('-of', '--outformat', choices=['sdf', 'json'], help="Output format. Defaults to 'sdf'.")
+    parser.add_argument('--meta', action='store_true', help='Write metadata and metrics files')
 
 
 '''

@@ -1,12 +1,10 @@
 import utils
-import sys
 from rdkit import Chem
 from rdkit.Chem import AllChem
 from rdkit.Chem import MACCSkeys
 from rdkit import DataStructs
 from rdkit.Chem.Fingerprints import FingerprintMols
 from rdkit.ML.Cluster import Butina
-import gzip
 import argparse
 
 descriptors = {
@@ -71,10 +69,10 @@ def main():
     ### command line args defintions #########################################
 
     parser = argparse.ArgumentParser(description='RDKit screen')
-    parser.add_argument('-threshold', type=float, default=0.7, help='similarity clustering threshold (1.0 means identical)')
-    parser.add_argument('-d', '--descriptor', choices=['maccs','morgan2','morgan3','rdkit'], default='rdkit', help='descriptor or fingerprint type (default rdkit)')
+    parser.add_argument('-t', '--threshold', type=float, default=0.7, help='similarity clustering threshold (1.0 means identical)')
+    parser.add_argument('-d', '--descriptor', choices=list(descriptors.keys()), default='rdkit', help='descriptor or fingerprint type (default rdkit)')
     parser.add_argument('-m', '--metric',
-                    choices=['asymmetric','braunblanquet','cosine','dice','kulczynski','mcconnaughey','rogotgoldberg','russel','sokal','tanimoto'],
+                    choices=list(metrics.keys()),
                     default='tanimoto', help='similarity metric (default tanimoto)')
     utils.add_default_io_args(parser)
 
@@ -112,7 +110,8 @@ def main():
     writer.close()
     output.close()
 
-    utils.write_metrics(output_base, {'__InputCount__':i, '__OutputCount__':i,'RDKitCluster':i})
+    if args.meta:
+        utils.write_metrics(output_base, {'__InputCount__':i, '__OutputCount__':i,'RDKitCluster':i})
     
 if __name__ == "__main__":
     main()

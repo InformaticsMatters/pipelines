@@ -79,10 +79,11 @@ def main():
 
     # OK, all looks good so we can hope that things will run OK.
     # But before we start lets write the metadata so that the results can be handled.
-    t = open(output_base + '_types.txt', 'w')
-    t.write(field_Similarity + '=integer\n')
-    t.flush()
-    t.close()
+    if args.meta:
+        t = open(output_base + '_types.txt', 'w')
+        t.write(field_Similarity + '=integer\n')
+        t.flush()
+        t.close()
 
     i=0
     count = 0
@@ -112,7 +113,8 @@ def main():
     input.close()
     output.close()
 
-    utils.write_metrics(output_base, {'__InputCount__':i, '__OutputCount__':count,'RDKitScreen':count})
+    if args.meta:
+        utils.write_metrics(output_base, {'__InputCount__':i, '__OutputCount__':count,'RDKitScreen':count})
 
     return count
     

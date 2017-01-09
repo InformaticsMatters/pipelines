@@ -84,8 +84,9 @@ def main():
     writer.flush()
     writer.close()
     output.close()
-    
-    utils.write_metrics(output_base, {'__InputCount__':i, '__OutputCount__':count,'RDKitO3DAlign':count})
+
+    if args.meta:
+        utils.write_metrics(output_base, {'__InputCount__':i, '__OutputCount__':count,'RDKitO3DAlign':count})
 
 if __name__ == "__main__":
     main()
