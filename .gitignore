@@ -1,9 +1,11 @@
 *~
 .gradle
 .idea
+build
 dist
 *.pyc
 work
 .nextflow
 .nextflow.log*
 *.sh
+

@@ -1,15 +1,18 @@
+
 version = 1.0
 
 task dist(type: Zip) {
     destinationDir = file('dist')
     baseName = 'pipelines'
 
-    from('rdkit') {
-        includes = ['**.py','**.nf','**.ded']
-        into 'pipelines/rdkit'
+    from('src/python/pipelines') {
+        includes = ['**/*.py','**/*.nf','**/*.ded']
+        into 'pipelines'
     }
 }
 
-task clean(type: Delete) {
-    delete 'dist'
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.2.1'
+    jarFile = 'wrapper/wrapper.jar'
 }

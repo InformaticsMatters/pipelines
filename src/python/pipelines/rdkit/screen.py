@@ -12,32 +12,32 @@ field_Similarity = "Similarity"
 
 ### start main execution #########################################
 
+descriptors = {
+    #'atompairs':   lambda m: Pairs.GetAtomPairFingerprint(m),
+    'maccs':       lambda m: MACCSkeys.GenMACCSKeys(m),
+    'morgan2':     lambda m: AllChem.GetMorganFingerprint(m,2),
+    'morgan3':     lambda m: AllChem.GetMorganFingerprint(m,3),
+    'rdkit':       lambda m: FingerprintMols.FingerprintMol(m),
+    #'topo':        lambda m: Torsions.GetTopologicalTorsionFingerprint(m)
+}
+
+metrics = {
+    'asymmetric':DataStructs.AsymmetricSimilarity,
+    'braunblanquet':DataStructs.BraunBlanquetSimilarity,
+    'cosine':DataStructs.CosineSimilarity,
+    'dice': DataStructs.DiceSimilarity,
+    'kulczynski':DataStructs.KulczynskiSimilarity,
+    'mcconnaughey':DataStructs.McConnaugheySimilarity,
+    #'onbit':DataStructs.OnBitSimilarity,
+    'rogotgoldberg':DataStructs.RogotGoldbergSimilarity,
+    'russel':DataStructs.RusselSimilarity,
+    'sokal':DataStructs.SokalSimilarity,
+    'tanimoto': DataStructs.TanimotoSimilarity
+    #'tversky': DataStructs.TverskySimilarity
+}
+
 def main():
 
-    descriptors = {
-        #'atompairs':   lambda m: Pairs.GetAtomPairFingerprint(m),
-        'maccs':       lambda m: MACCSkeys.GenMACCSKeys(m),
-        'morgan2':     lambda m: AllChem.GetMorganFingerprint(m,2),
-        'morgan3':     lambda m: AllChem.GetMorganFingerprint(m,3),
-        'rdkit':       lambda m: FingerprintMols.FingerprintMol(m),
-        #'topo':        lambda m: Torsions.GetTopologicalTorsionFingerprint(m)
-    }
-
-    metrics = {
-        'asymmetric':DataStructs.AsymmetricSimilarity,
-        'braunblanquet':DataStructs.BraunBlanquetSimilarity,
-        'cosine':DataStructs.CosineSimilarity,
-        'dice': DataStructs.DiceSimilarity,
-        'kulczynski':DataStructs.KulczynskiSimilarity,
-        'mcconnaughey':DataStructs.McConnaugheySimilarity,
-        #'onbit':DataStructs.OnBitSimilarity,
-        'rogotgoldberg':DataStructs.RogotGoldbergSimilarity,
-        'russel':DataStructs.RusselSimilarity,
-        'sokal':DataStructs.SokalSimilarity,
-        'tanimoto': DataStructs.TanimotoSimilarity
-        #'tversky': DataStructs.TverskySimilarity
-    }
-           
     ### command line args defintions #########################################
 
     parser = argparse.ArgumentParser(description='RDKit screen')
@@ -45,9 +45,9 @@ def main():
     parser.add_argument('--molfile', help='query structure as filename in molfile format (incompatible with -smiles arg)')
     parser.add_argument('--simmin', type=float, default=0.7, help='similarity lower cutoff (1.0 means identical)')
     parser.add_argument('--simmax', type=float, default=1.0, help='similarity upper cutoff (1.0 means identical)')
-    parser.add_argument('-d', '--descriptor', choices=['maccs','morgan2','morgan3','rdkit'], default='rdkit', help='descriptor or fingerprint type (default rdkit)')
+    parser.add_argument('-d', '--descriptor', choices=list(descriptors.keys()), default='rdkit', help='descriptor or fingerprint type (default rdkit)')
     parser.add_argument('-m', '--metric',
-                    choices=['asymmetric','braunblanquet','cosine','dice','kulczynski','mcconnaughey','rogotgoldberg','russel','sokal','tanimoto'],
+                    choices=list(metrics.keys()),
                     default='tanimoto', help='similarity metric (default tanimoto)')
     parser.add_argument('-f', '--fragment', choices=['hac', 'mw'], help='Find single fragment if more than one (hac = biggest by heavy atom count, mw = biggest by mol weight )')
     parser.add_argument('--hacmin', type=int, help='Min heavy atom count')
@@ -113,6 +113,8 @@ def main():
     output.close()
 
     utils.write_metrics(output_base, {'__InputCount__':i, '__OutputCount__':count,'RDKitScreen':count})
+
+    return count
     
 if __name__ == "__main__":
     main()
