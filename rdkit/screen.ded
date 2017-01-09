@@ -1,11 +1,11 @@
-{
+{ "serviceConfig": {
   "id": "rdkit.screen.basic",
   "name": "RDKit Docker Screening",
   "description": "RDKit Docker Screening",
   "tags": [ "rdkit", "docker", "screen" ],
   "resourceUrl": null,
   "icon": "icons/filter_molecules.png",
-  
+
   "inputDescriptors": [
     {
       "multiplicity": "ITEM",
@@ -15,7 +15,6 @@
       "name": "input"
     }
   ],
-  "inputRoutes": [ "FILE" ],
   "outputDescriptors": [
     {
       "multiplicity": "ITEM",
@@ -25,7 +24,6 @@
       "name": "output"
     }
   ],
-  "outputRoutes": [ "FILE" ],
 
   "optionDescriptors": [
     {
@@ -156,12 +154,14 @@
       "visible": true
     }
   ],
+  "executorClassName": "org.squonk.execution.steps.impl.DefaultDockerExecutorStep"
+  },
 
+  "inputRoutes": [ "FILE" ],
+  "outputRoutes": [ "FILE" ],
+  "imageName": "informaticsmatters/rdkit",
+  "command": "python /pipelines/rdkit/screen.py -i input.data.gz -if json -o output -of json --smiles '${query_source}' --simmin ${threshold} -d ${descriptor} -m ${metric}",
   "volumes": {
       "pipelines/rdkit": "/pipelines/rdkit"
-    },
-  "executor": "org.squonk.execution.steps.impl.DefaultDockerExecutorStep",
-  "imageName": "informaticsmatters/rdkit",
-  "command": "python /pipelines/rdkit/screen.py -i input.data.gz -if json -o output -of json --smiles '${query_source}' --simmin ${threshold} -d ${descriptor} -m ${metric}"
+    }
 }
-
