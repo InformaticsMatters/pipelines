@@ -1,5 +1,7 @@
 #RDKit examples
 
+See test-python.sh for working examples. The ones listed here could be out of date.
+
 ##1. screen.py
 Performs ligand based virtual screening using RDKit descriptors
 

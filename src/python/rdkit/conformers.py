@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import utils
 from rdkit import Chem
 from rdkit.Chem import AllChem, TorsionFingerprints

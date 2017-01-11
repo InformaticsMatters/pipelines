@@ -8,4 +8,4 @@ work
 .nextflow
 .nextflow.log*
 /*.sh
-
+/tmp

@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import utils, filter
 import sys, gzip, argparse
 from rdkit import Chem
