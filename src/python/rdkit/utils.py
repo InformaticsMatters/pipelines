@@ -213,4 +213,3 @@ class JsonWriter:
 
     def flush(self):
         self.file.flush()
-
