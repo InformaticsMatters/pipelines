@@ -1,7 +1,16 @@
 
 version = 1.0
 
+task cleanDist(type: Delete) {
+    group = 'Distribution'
+    delete 'dist'
+}
+
+
 task dist(type: Zip) {
+    group = 'Distribution'
+    dependsOn cleanDist
+
     destinationDir = file('dist')
     baseName = 'pipelines'
 
@@ -12,7 +21,8 @@ task dist(type: Zip) {
 }
 
 
+
 task wrapper(type: Wrapper) {
-    gradleVersion = '3.2.1'
+    gradleVersion = '3.3'
     jarFile = 'wrapper/wrapper.jar'
 }
