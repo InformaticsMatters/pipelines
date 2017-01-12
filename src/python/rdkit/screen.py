@@ -43,8 +43,9 @@ def main():
     ### command line args defintions #########################################
 
     parser = argparse.ArgumentParser(description='RDKit screen')
-    parser.add_argument('--smiles', help='query structure as smiles (incompatible with -molfile arg)')
-    parser.add_argument('--molfile', help='query structure as filename in molfile format (incompatible with -smiles arg)')
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('--smiles', help='query structure as smiles (incompatible with -molfile arg)')
+    group.add_argument('--molfile', help='query structure as filename in molfile format (incompatible with -smiles arg)')
     parser.add_argument('--simmin', type=float, default=0.7, help='similarity lower cutoff (1.0 means identical)')
     parser.add_argument('--simmax', type=float, default=1.0, help='similarity upper cutoff (1.0 means identical)')
     parser.add_argument('-d', '--descriptor', choices=list(descriptors.keys()), default='rdkit', help='descriptor or fingerprint type (default rdkit)')
@@ -65,10 +66,7 @@ def main():
     descriptor = descriptors[args.descriptor.lower()]
     metric = metrics[args.metric.lower()]
 
-    
-    if args.smiles and args.molfile:
-        raise ValueError('Cannot specify -smiles and -molfile arguments together')
-    elif args.smiles:
+    if args.smiles:
         query_rdkitmol = Chem.MolFromSmiles(args.smiles)
     elif args.molfile:
         query_rdkitmol = Chem.MolFromMolFile(args.molfile)
