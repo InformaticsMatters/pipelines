@@ -2,13 +2,14 @@ from __future__ import print_function
 import sys, gzip, json, uuid
 from rdkit import Chem
 from sanifix import fix_mol
-#from ijson import items
+from StreamJsonListLoader import StreamJsonListLoader
 
 
-'''
-Log output to STDERR
-'''
+
 def log(*args, **kwargs):
+    """
+    Log output to STDERR
+    """
     print(*args, file=sys.stderr, **kwargs)
 
 
@@ -20,10 +21,8 @@ def add_default_io_args(parser):
     parser.add_argument('--meta', action='store_true', help='Write metadata and metrics files')
 
 
-'''
-Default approach to handling the inputs and outputs
-'''
 def default_open_input_output(inputDef, inputFormat, outputDef, defaultOutput, outputFormat):
+    """Default approach to handling the inputs and outputs"""
     input, suppl = default_open_input(inputDef, inputFormat)
     output,writer,outputBase = default_open_output(outputDef, defaultOutput, outputFormat)
     return input,output,suppl,writer,outputBase
@@ -54,7 +53,13 @@ def default_open_input_sdf(inputDef):
     return input, suppl
 
 
-def default_open_input_json(inputDef):
+def default_open_input_json(inputDef, lazy=True):
+    """Open the given input as JSON array of Squonk MoleculeObjects
+
+    :param inputDef: The name of the input file, or None if to use STDIN. If filename ends with .gz will be gunzipped
+    :param lazy: Use lazy loading of the JSON. If True will allow handling of large datasets without being loaded into memory,
+    but may be less robust and will be slower.
+    """
     if inputDef:
         if inputDef.lower().endswith('.gz'):
             input = gzip.open(inputDef)
@@ -62,7 +67,10 @@ def default_open_input_json(inputDef):
             input = open(inputDef, 'r')
     else:
         input = sys.stdin
-    suppl = generate_mols_from_json(input)
+    if lazy:
+        suppl = generate_mols_from_json(StreamJsonListLoader(input))
+    else:
+        suppl = generate_mols_from_json(json.load(input))
     return input, suppl
 
 
@@ -84,11 +92,13 @@ def default_open_output(outputDef, defaultOutput, outputFormat):
     return output,writer,outputBase
 
 
-'''
-This is a temp hack to write the minila metadata that squonk needs.
-Will needs to be replaced with something that allows something more complete to be written.
-'''
+
 def write_basic_squonk_datasetmetadata_hack(outputBase):
+    """This is a temp hack to write the minimal metadata that Squonk needs.
+    Will needs to be replaced with something that allows something more complete to be written.
+
+    :param outputBase: Base name for the file to write to
+    """
     d = {}
     d['type'] = 'org.squonk.types.MoleculeObject'
     s = json.dumps(d)
@@ -183,10 +193,11 @@ def generate_mols_from_json(input):
     """
     j=0
     #for item in items(input, "item"):
-    for item in json.load(input):
+    for item in input:
         j+=1
         mol = create_mol_from_props(item)
         yield mol
+
 
 
 class JsonWriter:
