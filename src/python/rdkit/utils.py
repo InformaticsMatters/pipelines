@@ -119,10 +119,13 @@ def default_open_output_json(outputDef, outputBase):
     return output,writer
 
 
-'''
-Write the metrics data
-'''
+
 def write_metrics(baseName, values):
+    """Write the metrics data
+
+    :param baseName: The base name of the output files. e.g. extensions will be appended to this base name
+    :param values dictionary of values to write
+    """
     m = open(baseName  + '_metrics.txt', 'w')
     for key in values:
         m.write(key + '=' + str(values[key]) + "\n")
@@ -153,10 +156,12 @@ def parse_mol_simple(my_type, txt):
     return mol
 
 
-'''
-Function to get the RDKit mol from MoleculeObject JSON
-'''
-def parse_mol_json(molobj):
+
+def create_mol_from_props(molobj):
+    """Function to get the RDKit mol from MoleculeObject JSON
+
+    :param molobj: Python dictionary containing the molecule's properties
+    """
     #print "reading mol",molobj["uuid"],molobj["format"]
     molstr = str(molobj["source"])
     # Get the format and use this as a starting point to work out
@@ -171,15 +176,16 @@ def parse_mol_json(molobj):
     return mol
 
 
-'''
-Create a supplier of RDKit Mol objects from the json
-'''
 def generate_mols_from_json(input):
+    """Create a supplier of RDKit Mol objects from the json
+
+    :param input: file like object containing the json representation of the molecules
+    """
     j=0
     #for item in items(input, "item"):
     for item in json.load(input):
         j+=1
-        mol = parse_mol_json(item)
+        mol = create_mol_from_props(item)
         yield mol
 
 

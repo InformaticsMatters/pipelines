@@ -1,18 +1,28 @@
 
 version = 1.0
 
+task cleanDist(type: Delete) {
+    group = 'Distribution'
+    delete 'dist'
+}
+
+
 task dist(type: Zip) {
+    group = 'Distribution'
+    dependsOn cleanDist
+
     destinationDir = file('dist')
     baseName = 'pipelines'
 
-    from('src/python/pipelines') {
+    from('src/python') {
         includes = ['**/*.py','**/*.nf','**/*.ded']
         into 'pipelines'
     }
 }
 
 
+
 task wrapper(type: Wrapper) {
-    gradleVersion = '3.2.1'
+    gradleVersion = '3.3'
     jarFile = 'wrapper/wrapper.jar'
 }
