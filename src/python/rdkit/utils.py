@@ -42,15 +42,52 @@ def default_open_input(inputDef, inputFormat):
 
 
 def default_open_input_sdf(inputDef):
+    """Open the input as a SD file (possibly gzipped if ending with .gz) according to RDKit's ForwardSDMolSupplier
+
+    :param inputDef: The name of the file. If None then STDIN is used (and assumed not to be gzipped)
+    """
     if inputDef:
-        if inputDef.lower().endswith('.gz'):
-            input = gzip.open(inputDef)
-        else:
-            input = open(inputDef, 'r')
+        input = open_file(inputDef)
     else:
         input = sys.stdin
     suppl = Chem.ForwardSDMolSupplier(input)
     return input, suppl
+
+
+def default_open_input_smiles(inputDef, delimiter='\t', smilesColumn=0, nameColumn=1, titleLine=False):
+    """Open the input as a file of smiles (possibly gzipped if ending with .gz) according to RDKit's SmilesMolSupplier
+
+    :param inputDef: The name of the file. If None then STDIN is used (and assumed not to be gzipped)
+    """
+    if inputDef:
+        input = open_file(inputDef)
+    else:
+        input = sys.stdin
+    # SmilesMolSupplier is a bit strange as it can't accept a file like object!
+    txt = input.read()
+    input.close()
+    suppl = Chem.SmilesMolSupplier()
+    suppl.SetData(txt, delimiter=delimiter, smilesColumn=smilesColumn, nameColumn=nameColumn, titleLine=titleLine)
+    return suppl
+
+
+def open_file(filename):
+    """Open the file as a SDF gunzipping it if it ends with .gz"""
+    if filename.lower().endswith('.gz'):
+        return gzip.open(filename)
+    else:
+        return open(filename, 'r')
+
+def open_smarts(filename):
+    """Very simple smarts parser that expects smarts expression (and nothing else) on each line (no header)"""
+    f = open(filename)
+    count = 0
+    for line in f:
+        count += 1
+        mol = Chem.MolFromSmarts(line)
+        if mol:
+            mol.SetIntProp("idx", count)
+        yield mol
 
 
 def default_open_input_json(inputDef, lazy=True):

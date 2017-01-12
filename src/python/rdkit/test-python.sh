@@ -8,13 +8,13 @@ msg_file_notCreated="\n========================== FILE NOT CREATED =============
 
 echo "Testing screen.py reading from STDIN and writing to STDOUT input as smiles"
 zcat ../../../data/dhfr_3d.sdf.gz | python screen.py\
-  --smiles 'C1N=C(C2=CC=CC=C2)C2=CC=CC=C2C2=C1C=NC(NC1=CC=CC=C1)=N2'\
+  --qsmiles 'C1N=C(C2=CC=CC=C2)C2=CC=CC=C2C2=C1C=NC(NC1=CC=CC=C1)=N2'\
   --simmin 0.45\
   -if sdf > /dev/null || echo -e $msg_fail
 
 echo "Testing screen.py reading from STDIN and writing to STDOUT input from molfile"
 zcat ../../../data/dhfr_3d.sdf.gz | python screen.py\
-  --molfile ../../../data/pyrimethamine.mol\
+  --qmolfile ../../../data/pyrimethamine.mol\
   --simmin 0.7\
   --simmax 0.8\
   -if sdf > /dev/null || echo -e $msg_fail
@@ -24,7 +24,7 @@ python screen.py\
   -i ../../../data/dhfr_3d.sdf.gz\
   -o ../../../tmp/screen2\
   -of sdf\
-  --smiles 'C1N=C(C2=CC=CC=C2)C2=CC=CC=C2C2=C1C=NC(NC1=CC=CC=C1)=N2'\
+  --qsmiles 'C1N=C(C2=CC=CC=C2)C2=CC=CC=C2C2=C1C=NC(NC1=CC=CC=C1)=N2'\
   --simmin 0.45\
   -if sdf > /dev/null || echo -e $msg_fail
 if [ ! -f  ../../../tmp/screen2.sdf.gz ]
@@ -37,13 +37,17 @@ python screen.py\
   -i ../../../data/nci100.data.gz\
   -o ../../../tmp/screen3\
   -of json\
-  --smiles 'C1N=C(C2=CC=CC=C2)C2=CC=CC=C2C2=C1C=NC(NC1=CC=CC=C1)=N2'\
+  --qsmiles 'C1N=C(C2=CC=CC=C2)C2=CC=CC=C2C2=C1C=NC(NC1=CC=CC=C1)=N2'\
   --simmin 0.45\
   -if json > /dev/null || echo -e $msg_fail
 if [ ! -f  ../../../tmp/screen3.data.gz ]
 then
     echo -e $msg_file_notCreated
 fi
+
+echo "Testing screen_multi.py reading taget form sdf file, query as json file and writing to STDOUT"
+zcat ../../../data/dhfr_3d.sdf.gz | python screen_multi.py\
+  -if sdf --qjson ../../../data/nci100.data.gz --simmin 0.55 > /dev/null || echo -e $msg_fail
 
 
 echo "Testing conformers.py reading from STDIN and writing to STDOUT"

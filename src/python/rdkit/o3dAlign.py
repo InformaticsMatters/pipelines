@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 
 import utils, conformers
-from rdkit import Chem, RDConfig
-from rdkit.Chem import AllChem, rdMolAlign
+from rdkit import Chem
+from rdkit.Chem import rdMolAlign
 import argparse
-
 
 
 

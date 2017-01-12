@@ -1,7 +1,7 @@
 { "serviceConfig": {
-  "id": "pipelines.rdkit.screen.basic",
-  "name": "RDKit Similarity Screening",
-  "description": "RDKit Similarity Screening",
+  "id": "pipelines.rdkit.screen.multi",
+  "name": "RDKit Multi-similarity Screening",
+  "description": "RDKit Similarity Screening against multiple query structures",
   "tags": [ "rdkit", "screening", "similarity", "docker" ],
   "resourceUrl": null,
   "icon": "icons/filter_molecules.png",
@@ -12,7 +12,13 @@
       "primaryType": "org.squonk.dataset.Dataset",
       "secondaryType": "org.squonk.types.MoleculeObject",
       "mediaType": "application/x-squonk-dataset-molecule+json",
-      "name": "input"
+      "name": "query"
+    },{
+       "multiplicity": "ITEM",
+       "primaryType": "org.squonk.dataset.Dataset",
+       "secondaryType": "org.squonk.types.MoleculeObject",
+       "mediaType": "application/x-squonk-dataset-molecule+json",
+       "name": "target"
     }
   ],
   "outputDescriptors": [
@@ -50,62 +56,43 @@
       "visible": true
     },
     {
-      "modes": [
-        "User"
-      ],
-      "editable": true,
-      "visible": true,
-      "description": "Query molecule as smiles",
-      "label": "Query molecule",
-      "key": "arg.query",
-      "typeDescriptor": {
-        "type": "org.squonk.options.types.Structure",
-        "formats": [
-          "smiles"
-        ],
-        "molType": "DISCRETE",
-        "@class": "org.squonk.options.MoleculeTypeDescriptor"
-      },
-      "@class": "org.squonk.options.OptionDescriptor"
-    },
-    {
-      "modes": [
-        "User"
-      ],
-      "@class": "org.squonk.options.OptionDescriptor",
-      "typeDescriptor": {
-        "type": "java.lang.Float",
-        "@class": "org.squonk.options.SimpleTypeDescriptor"
-      },
-      "key": "arg.simmin",
-      "label": "Threshold (min)",
-      "description": "Lower Similarity threshold",
-      "defaultValue": [
-        "java.lang.Float",
-        0.7
-      ],
-      "visible": true,
-      "editable": true
-    },
-    {
-      "modes": [
-        "User"
-      ],
-      "@class": "org.squonk.options.OptionDescriptor",
-      "typeDescriptor": {
-        "type": "java.lang.Float",
+          "modes": [
+            "User"
+          ],
+          "@class": "org.squonk.options.OptionDescriptor",
+          "typeDescriptor": {
+            "type": "java.lang.Float",
             "@class": "org.squonk.options.SimpleTypeDescriptor"
           },
-      "key": "arg.simmax",
-      "label": "Threshold (max)",
-      "description": "Upper Similarity threshold",
-      "defaultValue": [
-      "java.lang.Float",
-        1.0
-      ],
-      "visible": true,
-      "editable": true
-    },
+          "key": "arg.simmin",
+          "label": "Threshold (min)",
+          "description": "Lower Similarity threshold",
+          "defaultValue": [
+            "java.lang.Float",
+            0.7
+          ],
+          "visible": true,
+          "editable": true
+        },
+        {
+          "modes": [
+            "User"
+          ],
+          "@class": "org.squonk.options.OptionDescriptor",
+          "typeDescriptor": {
+            "type": "java.lang.Float",
+                "@class": "org.squonk.options.SimpleTypeDescriptor"
+              },
+          "key": "arg.simmax",
+          "label": "Threshold (max)",
+          "description": "Upper Similarity threshold",
+          "defaultValue": [
+          "java.lang.Float",
+            1.0
+          ],
+          "visible": true,
+          "editable": true
+        },
     {
       "modes": [
         "User"
@@ -160,10 +147,10 @@
   "executorClassName": "org.squonk.execution.steps.impl.DefaultDockerExecutorStep"
   },
 
-  "inputRoutes": [ "FILE" ],
+  "inputRoutes": [ "FILE", "FILE" ],
   "outputRoutes": [ "FILE" ],
   "imageName": "informaticsmatters/rdkit",
-  "command": "python /pipelines/rdkit/screen.py -i input.data.gz -if json -o output -of json --qsmiles '${query_source}' --simmin ${simmin} --simmax ${simmax} -d ${descriptor} -m ${metric} --meta",
+  "command": "python /pipelines/rdkit/screen_multi.py -i target.data.gz -if json --qjson query.data.gz -o output -of json --simmin ${simmin} --simmax ${simmax} -d ${descriptor} -m ${metric} --meta",
   "volumes": {
       "pipelines/rdkit": "/pipelines/rdkit"
     }
