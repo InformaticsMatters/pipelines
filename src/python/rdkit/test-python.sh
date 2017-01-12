@@ -14,7 +14,7 @@ zcat ../../../data/dhfr_3d.sdf.gz | python screen.py\
 
 echo "Testing screen.py reading from STDIN and writing to STDOUT input from molfile"
 zcat ../data/dhfr_3d.sdf.gz | python screen.py\
-  --molfile ../../../data/pyrimethamine.mol\
+  --molfile ../../../> data/pyrimethamine.mol\
   --simmin 0.5\
   --simmax 0.8\
   --informat sdf > /dev/null || echo -e $msg_fail

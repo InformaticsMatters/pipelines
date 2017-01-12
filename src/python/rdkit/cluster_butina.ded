@@ -1,10 +1,10 @@
 { "serviceConfig": {
-  "id": "pipelines.rdkit.screen.basic",
-  "name": "RDKit Similarity Screening",
-  "description": "RDKit Similarity Screening",
-  "tags": [ "rdkit", "screening", "similarity", "docker" ],
+  "id": "pipelines.rdkit.cluster.butina",
+  "name": "RDKit Butina Clustering",
+  "description": "Clustering similar molecules using RDKit Butina clustering",
+  "tags": [ "rdkit", "clustering", "similarity", "butina", "docker" ],
   "resourceUrl": null,
-  "icon": "icons/filter_molecules.png",
+  "icon": "icons/clustering.png",
 
   "inputDescriptors": [
     {
@@ -48,25 +48,6 @@
       ],
       "defaultValue": "latest",
       "visible": true
-    },
-    {
-      "modes": [
-        "User"
-      ],
-      "editable": true,
-      "visible": true,
-      "description": "Query molecule as smiles",
-      "label": "Query molecule",
-      "key": "arg.query",
-      "typeDescriptor": {
-        "type": "org.squonk.options.types.Structure",
-        "formats": [
-          "smiles"
-        ],
-        "molType": "DISCRETE",
-        "@class": "org.squonk.options.MoleculeTypeDescriptor"
-      },
-      "@class": "org.squonk.options.OptionDescriptor"
     },
     {
       "modes": [
@@ -144,7 +125,7 @@
   "inputRoutes": [ "FILE" ],
   "outputRoutes": [ "FILE" ],
   "imageName": "informaticsmatters/rdkit",
-  "command": "python /pipelines/rdkit/screen.py -i input.data.gz -if json -o output -of json --smiles '${query_source}' --simmin ${threshold} -d ${descriptor} -m ${metric} --meta",
+  "command": "python /pipelines/rdkit/cluster_butina.py -i input.data.gz -if json -o output -of json -t ${threshold} -d ${descriptor} -m ${metric} --meta",
   "volumes": {
       "pipelines/rdkit": "/pipelines/rdkit"
     }

@@ -5,7 +5,7 @@ task dist(type: Zip) {
     destinationDir = file('dist')
     baseName = 'pipelines'
 
-    from('src/python/pipelines') {
+    from('src/python') {
         includes = ['**/*.py','**/*.nf','**/*.ded']
         into 'pipelines'
     }
