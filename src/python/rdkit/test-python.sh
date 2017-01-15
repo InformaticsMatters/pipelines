@@ -7,13 +7,13 @@ msg_file_notCreated="\n========================== FILE NOT CREATED =============
 
 
 echo "Testing screen.py reading from STDIN and writing to STDOUT input as smiles"
-zcat ../../../data/dhfr_3d.sdf.gz | python screen.py\
+gunzip -c ../../../data/dhfr_3d.sdf.gz | python screen.py\
   --qsmiles 'C1N=C(C2=CC=CC=C2)C2=CC=CC=C2C2=C1C=NC(NC1=CC=CC=C1)=N2'\
   --simmin 0.45\
   -if sdf > /dev/null || echo -e $msg_fail
 
 echo "Testing screen.py reading from STDIN and writing to STDOUT input from molfile"
-zcat ../../../data/dhfr_3d.sdf.gz | python screen.py\
+gunzip -c ../../../data/dhfr_3d.sdf.gz | python screen.py\
   --qmolfile ../../../data/pyrimethamine.mol\
   --simmin 0.7\
   --simmax 0.8\
@@ -46,21 +46,21 @@ then
 fi
 
 echo "Testing screen_multi.py reading taget form sdf file, query as json file and writing to STDOUT"
-zcat ../../../data/dhfr_3d.sdf.gz | python screen_multi.py\
+gunzip -c ../../../data/dhfr_3d.sdf.gz | python screen_multi.py\
   -if sdf --qjson ../../../data/nci100.data.gz --simmin 0.55 > /dev/null || echo -e $msg_fail
 
 
 echo "Testing conformers.py reading from STDIN and writing to STDOUT"
-zcat ../../../data/Kinase_inhibs.sdf.gz | python conformers.py -n 2 -if sdf > /dev/null || echo -e $msg_fail
+gunzip -c ../../../data/Kinase_inhibs.sdf.gz | python conformers.py -n 2 -if sdf > /dev/null || echo -e $msg_fail
 
 echo "Testing o3dAlign.py reading from STDIN and writing to STDOUT"
-zcat ../../../data/Kinase_inhibs.sdf.gz | python o3dAlign.py\
+gunzip -c ../../../data/Kinase_inhibs.sdf.gz | python o3dAlign.py\
   ../../../data/pyrimethamine.mol -n 2 -t 10 -if sdf > /dev/null || echo -e $msg_fail
 
 echo "Testing filter.py reading from STDIN and writing to STDOUT"
-zcat ../../../data/Kinase_inhibs.sdf.gz | python filter.py --hacmin 25 --hacmax 30 -if sdf > /dev/null || echo -e $msg_fail
+gunzip -c ../../../data/Kinase_inhibs.sdf.gz | python filter.py --hacmin 25 --hacmax 30 -if sdf > /dev/null || echo -e $msg_fail
 
 echo "Testing cluster_butina.py reading from STDIN and writing to STDOUT"
-zcat ../../../data/Kinase_inhibs.sdf.gz | python cluster_butina.py -t 0.6 -if sdf > /dev/null || echo -e $msg_fail
+gunzip -c ../../../data/Kinase_inhibs.sdf.gz | python cluster_butina.py -t 0.6 -if sdf > /dev/null || echo -e $msg_fail
 
 echo "Finished"
