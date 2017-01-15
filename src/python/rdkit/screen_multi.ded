@@ -55,44 +55,21 @@
       "defaultValue": "latest",
       "visible": true
     },
+
     {
-          "modes": [
-            "User"
-          ],
-          "@class": "org.squonk.options.OptionDescriptor",
-          "typeDescriptor": {
-            "type": "java.lang.Float",
-            "@class": "org.squonk.options.SimpleTypeDescriptor"
-          },
-          "key": "arg.simmin",
-          "label": "Threshold (min)",
-          "description": "Lower Similarity threshold",
-          "defaultValue": [
-            "java.lang.Float",
-            0.7
-          ],
-          "visible": true,
-          "editable": true
-        },
-        {
-          "modes": [
-            "User"
-          ],
-          "@class": "org.squonk.options.OptionDescriptor",
-          "typeDescriptor": {
-            "type": "java.lang.Float",
-                "@class": "org.squonk.options.SimpleTypeDescriptor"
-              },
-          "key": "arg.simmax",
-          "label": "Threshold (max)",
-          "description": "Upper Similarity threshold",
-          "defaultValue": [
-          "java.lang.Float",
-            1.0
-          ],
-          "visible": true,
-          "editable": true
-        },
+      "@class":"org.squonk.options.OptionDescriptor",
+      "modes":["User"],
+      "typeDescriptor":{"@class":"org.squonk.options.SimpleTypeDescriptor", "type":"org.squonk.types.NumberRange$Float"},
+      "key":"arg.sim",
+      "label":"Similarity",
+      "description":"Similarity threshold (1.0 is identical)",
+      "minValues": 1,
+      "maxValues": 1,
+      "defaultValue":{"@class":"org.squonk.types.NumberRange$Float", "minValue":0.7,"maxValue":1.0},
+      "visible":true,
+      "editable":true
+    },
+
     {
       "modes": [
         "User"
@@ -150,7 +127,7 @@
   "inputRoutes": [ "FILE", "FILE" ],
   "outputRoutes": [ "FILE" ],
   "imageName": "informaticsmatters/rdkit",
-  "command": "python /pipelines/rdkit/screen_multi.py -i target.data.gz -if json --qjson query.data.gz -o output -of json --simmin ${simmin} --simmax ${simmax} -d ${descriptor} -m ${metric} --meta",
+  "command": "python /pipelines/rdkit/screen_multi.py -i target.data.gz -if json --qjson query.data.gz -o output -of json --simmin ${sim.minValue} --simmax ${sim.maxValue} -d ${descriptor} -m ${metric} --meta",
   "volumes": {
       "pipelines/rdkit": "/pipelines/rdkit"
     }
