@@ -153,7 +153,7 @@
   "inputRoutes": [ "FILE" ],
   "outputRoutes": [ "FILE" ],
   "imageName": "informaticsmatters/rdkit",
-  "command": "python /pipelines/rdkit/conformers.py -i input.data.gz -if json -o output -of json -n $num -a $attempts -r $prune -c $method -t $threshold -e $minimize --meta",
+  "command": "python /pipelines/rdkit/conformers.py -i input.data.gz -if json -o output -of json -n $num -c $method${binding.variables.containsKey('attempts') ? ' -a ' + binding.variables.get('attempts') : ''}${binding.variables.containsKey('prune') ? ' -r ' + binding.variables.get('prune') : ''}${binding.variables.containsKey('threshold') ? ' -t ' + binding.variables.get('threshold') : ''}${binding.variables.containsKey('minimize') ? ' -e ' + binding.variables.get('minimize') : ''} --meta",
   "volumes": {
       "pipelines/rdkit": "/pipelines/rdkit"
     }

@@ -115,7 +115,7 @@ def main():
     parser.add_argument('-n', '--num', type=int, default=1, help='number of conformers to generate')
     parser.add_argument('-a', '--attempts', type=int, default=0, help='number of attempts')
     parser.add_argument('-r', '--rmsd', type=float, default=1.0, help='prune RMSD threshold')
-    parser.add_argument('-c', '--cluster', choices=['rmsd', 'tfd'], help='Cluster method (rmsd or tfd). If None then no clustering')
+    parser.add_argument('-c', '--cluster', type=str.lower, choices=['rmsd', 'tdf'], help='Cluster method (RMSD or TFD). If None then no clustering')
     parser.add_argument('-t', '--threshold', type=float, help='cluster threshold (default of 2.0 for RMSD and 0.3 for TFD)')
     parser.add_argument('-e', '--emin', type=int, default=0, help='energy minimisation iterations (default of 0 means none)')
     utils.add_default_io_args(parser)

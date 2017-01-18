@@ -244,9 +244,9 @@ class JsonWriter:
         self.file.write('[')
         self.count = 0
 
-    def write(self, mol):
+    def write(self, mol, includeStereo=False, confId=-1, kekulize=True, forceV3000=False):
         d = {}
-        d['source'] = Chem.MolToMolBlock(mol)
+        d['source'] = Chem.MolToMolBlock(mol, includeStereo=includeStereo, confId=confId, kekulize=kekulize, forceV3000=forceV3000)
         d['format'] = 'mol'
         props = mol.GetPropsAsDict()
         if 'uuid' in props:

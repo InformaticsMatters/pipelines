@@ -72,10 +72,8 @@ def main():
 
     parser = argparse.ArgumentParser(description='RDKit screen')
     parser.add_argument('-t', '--threshold', type=float, default=0.7, help='similarity clustering threshold (1.0 means identical)')
-    parser.add_argument('-d', '--descriptor', choices=list(descriptors.keys()), default='rdkit', help='descriptor or fingerprint type (default rdkit)')
-    parser.add_argument('-m', '--metric',
-                    choices=list(metrics.keys()),
-                    default='tanimoto', help='similarity metric (default tanimoto)')
+    parser.add_argument('-d', '--descriptor', type=str.lower, choices=list(descriptors.keys()), default='rdkit', help='descriptor or fingerprint type (default rdkit)')
+    parser.add_argument('-m', '--metric', type=str.lower, choices=list(metrics.keys()), default='tanimoto', help='similarity metric (default tanimoto)')
     utils.add_default_io_args(parser)
 
     args = parser.parse_args()
