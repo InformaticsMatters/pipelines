@@ -15,7 +15,7 @@ task dist(type: Zip) {
     baseName = 'pipelines'
 
     from('src/python') {
-        includes = ['**/*.py','**/*.nf','**/*.ded']
+        includes = ['**/*.py','**/*.nf','**/*.dsd']
         into 'pipelines'
     }
 }
