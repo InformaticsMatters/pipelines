@@ -1,4 +1,4 @@
-mport utils, os
+import utils, os
 import sys, gzip, argparse
 from rdkit import Chem
 from rdkit.Chem import AllChem
