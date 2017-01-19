@@ -119,6 +119,8 @@ def main():
     parser.add_argument('-t', '--threshold', type=float, help='cluster threshold (default of 2.0 for RMSD and 0.3 for TFD)')
     parser.add_argument('-e', '--emin', type=int, default=0, help='energy minimisation iterations (default of 0 means none)')
     utils.add_default_io_args(parser)
+    parser.add_argument('--smiles', help='input structure as smiles (incompatible with using files or stdin for input)')
+
     args = parser.parse_args()
 
     if not args.threshold:
@@ -128,8 +130,14 @@ def main():
             args.threshold = 2.0
         
     utils.log("Conformers Args: ",args)
-        
-    input,output,suppl,writer,output_base = utils.default_open_input_output(args.input, args.informat, args.output, 'conformers', args.outformat)
+
+    if args.smiles:
+        mol = Chem.MolFromSmiles(args.smiles)
+        suppl = [mol]
+        input = None
+        output,writer,output_base = utils.default_open_output(args.output, 'conformers', args.outformat)
+    else:
+        input,output,suppl,writer,output_base = utils.default_open_input_output(args.input, args.informat, args.output, 'conformers', args.outformat)
 
     # OK, all looks good so we can hope that things will run OK.
     # But before we start lets write the metadata so that the results can be handled.
@@ -159,8 +167,9 @@ def main():
         write_conformers(m, i, conformerPropsDict, minEnergy, writer)
         count = count+ m.GetNumConformers()
         i +=1
-  
-    input.close()
+
+    if input:
+        input.close()
     writer.flush()
     writer.close()
     output.close()
