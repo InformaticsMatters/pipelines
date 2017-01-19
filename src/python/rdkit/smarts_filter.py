@@ -19,7 +19,7 @@ field_Reactgroup = "poised"
 def main():
     ### command line args defintions #########################################
 
-    parser = argparse.ArgumentParser(description='RDKit screen')
+    parser = argparse.ArgumentParser(description='RDKit smarts filter')
     parser.add_argument('--smiles', help='query structure as smiles (incompatible with -molfile arg)')
     parser.add_argument('--molfile',
                         help='query structure as filename in molfile format (incompatible with -smiles arg)')
@@ -33,7 +33,7 @@ def main():
         raise ValueError("Must specify output location")
 
     input, output, suppl, writer, output_base = utils.default_open_input_output(args.input, args.informat, args.output,
-                                                                                'screen', args.outformat)
+                                                                                'smarts_filter', args.outformat)
 
     ### Define the filter chooser - lots of logic possible
     poised_filter = True
@@ -82,7 +82,7 @@ def main():
     output.close()
 
     if args.meta:
-        utils.write_metrics(output_base, {'__InputCount__': i, '__OutputCount__': count, 'RDKitScreen': count})
+        utils.write_metrics(output_base, {'__InputCount__': i, '__OutputCount__': count, 'SmartsFilter': count})
 
     return count
 
