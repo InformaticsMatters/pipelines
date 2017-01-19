@@ -1,0 +1,99 @@
+{ "serviceConfig": {
+  "id": "rdkit.smarts_filter.basic",
+  "name": "RDKit Docker Smarts Filter",
+  "description": "RDKit Docker Smarts Filter",
+  "tags": [ "rdkit", "docker", "smarts" ,"filter", "poised"],
+  "resourceUrl": null,
+  "icon": "icons/filter_molecules.png",
+
+  "inputDescriptors": [
+    {
+      "multiplicity": "ITEM",
+      "primaryType": "org.squonk.dataset.Dataset",
+      "secondaryType": "org.squonk.types.MoleculeObject",
+      "mediaType": "application/x-squonk-dataset-molecule+json",
+      "name": "input"
+    }
+  ],
+  "outputDescriptors": [
+    {
+      "multiplicity": "ITEM",
+      "primaryType": "org.squonk.dataset.Dataset",
+      "secondaryType": "org.squonk.types.MoleculeObject",
+      "mediaType": "application/x-squonk-dataset-molecule+json",
+      "name": "output"
+    }
+  ],
+
+  "optionDescriptors": [
+    {
+      "modes": [
+        "User"
+      ],
+      "@class": "org.squonk.options.OptionDescriptor",
+      "typeDescriptor": {
+        "type": "java.lang.String",
+        "@class": "org.squonk.options.SimpleTypeDescriptor"
+      },
+      "key": "docker.executor.id",
+      "label": "DockerExecutorDescriptor ID",
+      "description": "DockerExecutorDescriptor ID - do not change",
+      "defaultValue": "rdkit.screen.basic",
+      "visible": false,
+      "editable": false
+    },
+    {
+      "modes": [
+        "User"
+      ],
+      "editable": true,
+      "@class": "org.squonk.options.OptionDescriptor",
+      "typeDescriptor": {
+        "type": "java.lang.String",
+        "@class": "org.squonk.options.SimpleTypeDescriptor"
+      },
+      "key": "dockerImageVersion",
+      "label": "RDKit version",
+      "description": "Version of the RDKit Docker image to execute",
+      "values": [
+        "latest",
+        "Release_2016_09_2",
+        "Release_2016_03_1",
+        "Release_2015_09_2",
+        "Release_2015_09_1"
+      ],
+      "defaultValue": "latest",
+      "visible": true
+    },
+    {
+      "modes": [
+        "User"
+      ],
+      "@class": "org.squonk.options.OptionDescriptor",
+      "typeDescriptor": {
+        "type": "java.lang.String",
+        "@class": "org.squonk.options.SimpleTypeDescriptor"
+      },
+      "key": "arg.filter",
+      "label": "Filter",
+      "description": "Smarts library to filter",
+      "defaultValue": [
+        "java.lang.String",
+        "Poised"
+      ],
+      "visible": true,
+      "editable": true
+    },
+  ],
+  "executorClassName": "org.squonk.execution.steps.impl.DefaultDockerExecutorStep"
+  },
+
+  "inputRoutes": [ "FILE" ],
+  "outputRoutes": [ "FILE" ],
+  "imageName": "informaticsmatters/rdkit",
+  "command": "python /pipelines/rdkit/smarts_filterpy -i input.data.gz -if json -o output ",
+  // What is this?
+  "volumes": {
+      "pipelines/rdkit": "/pipelines/rdkit"
+    }
+}
