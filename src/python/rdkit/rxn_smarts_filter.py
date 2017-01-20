@@ -1,28 +1,17 @@
+#!/usr/bin/env python
+
 import utils, os
-import sys, gzip, argparse
-from rdkit import Chem
-from rdkit.Chem import AllChem
-from rdkit.Chem import MACCSkeys
-from rdkit import DataStructs
-from rdkit.Chem.Fingerprints import FingerprintMols
+import argparse
 
-### start field name defintions #########################################
-#TODO TIM ??? WHAt are these
-
-field_Reactgroup = "poised"
 
 ### start main execution #########################################
-
-# Define SMARTS patterns here
-
 
 def main():
     ### command line args defintions #########################################
 
     parser = argparse.ArgumentParser(description='RDKit smarts filter')
     parser.add_argument('--smiles', help='query structure as smiles (incompatible with -molfile arg)')
-    parser.add_argument('--molfile',
-                        help='query structure as filename in molfile format (incompatible with -smiles arg)')
+    parser.add_argument('--molfile', help='query structure as filename in molfile format (incompatible with -smiles arg)')
     utils.add_default_io_args(parser)
     parser.add_argument('-q', '--quiet', action='store_true', help='Quiet mode')
 
@@ -36,19 +25,12 @@ def main():
                                                                                 'smarts_filter', args.outformat)
 
     ### Define the filter chooser - lots of logic possible
+    # SMARTS patterns are defined in poised_filter.py. Currently this is hardcoded.
+    # Should make this configurable so that this can be specified by the user at some stage.
     poised_filter = True
     if poised_filter == True:
         from poised_filter import Filter
         filter_to_use = Filter()
-
-    # OK, all looks good so we can hope that things will run OK.
-    # But before we start lets write the metadata so that the results can be handled.
-    if args.meta:
-        t = open(output_base + '_types.txt', 'w')
-        t.write(field_Reactgroup+'\n')
-        #TODO TIM I don't understand this??t.write(field_Similarity + '=integer\n')
-        t.flush()
-        t.close()
 
     i = 0
     count = 0
@@ -78,13 +60,13 @@ def main():
 
     writer.flush()
     writer.close()
-    input.close()
-    output.close()
+    if input:
+        input.close()
+    if output:
+        output.close()
 
     if args.meta:
         utils.write_metrics(output_base, {'__InputCount__': i, '__OutputCount__': count, 'SmartsFilter': count})
-
-    return count
 
 
 if __name__ == "__main__":

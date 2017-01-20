@@ -4,7 +4,7 @@ import utils
 from rdkit import Chem
 from rdkit.Chem import AllChem, TorsionFingerprints
 from rdkit.ML.Cluster import Butina
-import gzip, collections
+import collections
 import argparse
 
 
@@ -141,21 +141,21 @@ def main():
 
     # OK, all looks good so we can hope that things will run OK.
     # But before we start lets write the metadata so that the results can be handled.
-    if args.meta:
-        t = open(output_base + '_types.txt', 'w')
-        t.write(field_StructureNum + '=integer\n')
-        t.write(field_StructureNum + '=integer\n')
-        t.write(field_ConformerNum + '=integer\n')
-        t.write(field_EnergyAbs + '=double\n')
-        t.write(field_EnergyDelta + '=double\n')
-        if args.emin > 0:
-            t.write(field_MinimizationConverged + '=boolean\n')
-        if args.cluster:
-            t.write(field_RMSToCentroid + '=double\n')
-            t.write(field_ClusterNum + '=integer\n')
-            t.write(field_ClusterCentroid + '=integer\n')
-        t.flush()
-        t.close()
+    #if args.meta:
+    #    t = open(output_base + '_types.txt', 'w')
+    #    t.write(field_StructureNum + '=integer\n')
+    #    t.write(field_StructureNum + '=integer\n')
+    #    t.write(field_ConformerNum + '=integer\n')
+    #    t.write(field_EnergyAbs + '=double\n')
+    #    t.write(field_EnergyDelta + '=double\n')
+    #    if args.emin > 0:
+    #        t.write(field_MinimizationConverged + '=boolean\n')
+    #    if args.cluster:
+    #        t.write(field_RMSToCentroid + '=double\n')
+    #        t.write(field_ClusterNum + '=integer\n')
+    #        t.write(field_ClusterCentroid + '=integer\n')
+    #    t.flush()
+    #    t.close()
 
     i=0
     count=0

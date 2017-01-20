@@ -64,5 +64,5 @@ class Filter(object):
         """
         out_d = {}
         for x in self.starts:
-            out_d[x] = Chem.SDWriter(os.path.join(dir_base, x))
+            out_d[x] = Chem.SDWriter(os.path.join(dir_base, x + ".sdf"))
         return out_d
