@@ -4,6 +4,8 @@ import os
 
 class Filter(object):
 
+    # TODO - can the names be cleanup up (remove numbers and brackets)? Or do they mean something?
+
     def __init__(self, *args, **kwargs):
         self.poised_filters = {'Amides(1)': ['[#7:1][C;x0:2]=[O:3]>>[#7:1].Cl[C:2]=[O:3]'],
  'Benzimidazole(11)': ['[#7:1]1[#6:9][#7:2][#6:4]2[#6:3]1[#6:8][#6:7][#6:6][#6:5]2>>[#7:1][c:3]1[c:8][c:7][c:6][c:5][c:4]1[#7:2].Cl[#6:9]=O'],

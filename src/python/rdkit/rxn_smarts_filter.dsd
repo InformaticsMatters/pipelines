@@ -1,8 +1,8 @@
 { "serviceConfig": {
-  "id": "rdkit.smarts_filter.basic",
-  "name": "RDKit Docker Smarts Filter",
-  "description": "RDKit Docker Smarts Filter",
-  "tags": [ "rdkit", "docker", "smarts" ,"filter", "poised"],
+  "id": "rdkit.smarts_filter.reaction",
+  "name": "RDKit Reaction Smarts Filter",
+  "description": "RDKit Reaction Smarts Filter",
+  "tags": [ "rdkit", "docker", "smarts", "reaction" ,"filter", "poised"],
   "resourceUrl": null,
   "icon": "icons/filter_molecules.png",
 
@@ -30,22 +30,6 @@
       "modes": [
         "User"
       ],
-      "@class": "org.squonk.options.OptionDescriptor",
-      "typeDescriptor": {
-        "type": "java.lang.String",
-        "@class": "org.squonk.options.SimpleTypeDescriptor"
-      },
-      "key": "docker.executor.id",
-      "label": "DockerExecutorDescriptor ID",
-      "description": "DockerExecutorDescriptor ID - do not change",
-      "defaultValue": "rdkit.screen.basic",
-      "visible": false,
-      "editable": false
-    },
-    {
-      "modes": [
-        "User"
-      ],
       "editable": true,
       "@class": "org.squonk.options.OptionDescriptor",
       "typeDescriptor": {
@@ -64,26 +48,7 @@
       ],
       "defaultValue": "latest",
       "visible": true
-    },
-    {
-      "modes": [
-        "User"
-      ],
-      "@class": "org.squonk.options.OptionDescriptor",
-      "typeDescriptor": {
-        "type": "java.lang.String",
-        "@class": "org.squonk.options.SimpleTypeDescriptor"
-      },
-      "key": "arg.filter",
-      "label": "Filter",
-      "description": "Smarts library to filter",
-      "defaultValue": [
-        "java.lang.String",
-        "Poised"
-      ],
-      "visible": true,
-      "editable": true
-    },
+    }
   ],
   "executorClassName": "org.squonk.execution.steps.impl.DefaultDockerExecutorStep"
   },
@@ -91,8 +56,7 @@
   "inputRoutes": [ "FILE" ],
   "outputRoutes": [ "FILE" ],
   "imageName": "informaticsmatters/rdkit",
-  "command": "python /pipelines/rdkit/smarts_filterpy -i input.data.gz -if json -o output ",
-  // What is this?
+  "command": "python /pipelines/rdkit/rxn_smarts_filter.py -i input.data.gz -if json -o output -of json --meta",
   "volumes": {
       "pipelines/rdkit": "/pipelines/rdkit"
     }
