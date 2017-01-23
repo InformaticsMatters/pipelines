@@ -10,8 +10,6 @@ def main():
     ### command line args defintions #########################################
 
     parser = argparse.ArgumentParser(description='RDKit smarts filter')
-    parser.add_argument('--smiles', help='query structure as smiles (incompatible with -molfile arg)')
-    parser.add_argument('--molfile', help='query structure as filename in molfile format (incompatible with -smiles arg)')
     utils.add_default_io_args(parser)
     parser.add_argument('-q', '--quiet', action='store_true', help='Quiet mode')
 

@@ -1,18 +1,31 @@
+apply plugin: 'com.bmuschko.docker-remote-api'
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.bmuschko:gradle-docker-plugin:3.0.5'
+    }
+}
+
+import com.bmuschko.gradle.docker.tasks.image.Dockerfile
+import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
 
 version = 1.0
 
 task cleanDist(type: Delete) {
     group = 'Distribution'
-    delete 'dist'
+    delete 'build/dist'
 }
 
 
-task dist(type: Zip) {
+task copyDist(type: Copy) {
     group = 'Distribution'
     dependsOn cleanDist
 
-    destinationDir = file('dist')
-    baseName = 'pipelines'
+    destinationDir = file('build/dist')
 
     from('src/python') {
         includes = ['**/*.py','**/*.nf','**/*.dsd']
@@ -20,9 +33,42 @@ task dist(type: Zip) {
     }
 }
 
+task dist(type: Zip) {
+    group = 'Distribution'
+    dependsOn copyDist
 
+    destinationDir = file('build/dist')
+    baseName = 'pipelines'
+
+    from('build/dist/pipelines') {
+        into 'pipelines'
+    }
+}
 
 task wrapper(type: Wrapper) {
     gradleVersion = '3.3'
     jarFile = 'wrapper/wrapper.jar'
+}
+
+/** Build a Docker image
+ * run the generated image with something like this:
+ *
+ * docker run -it --rm informaticsmatters/pipelines bash
+ */
+docker {
+    certPath = null
+}
+
+task buildDockerFile(type: Dockerfile, dependsOn: copyDist) {
+
+    destFile = project.file('build/Dockerfile')
+    from "informaticsmatters/rdkit_java:Release_2016_09_2"
+    maintainer 'Tim Dudgeon <tdudgeon@informaticsmatters.com>'
+
+    addFile('dist/pipelines', "/pipelines")
+}
+
+task buildDockerImage(type: DockerBuildImage, dependsOn: buildDockerFile) {
+    inputDir = buildDockerFile.destFile.parentFile
+    tag = "informaticsmatters/pipelines"
 }
