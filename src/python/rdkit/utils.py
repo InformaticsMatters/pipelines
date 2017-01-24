@@ -21,10 +21,10 @@ def add_default_io_args(parser):
     parser.add_argument('--meta', action='store_true', help='Write metadata and metrics files')
 
 
-def default_open_input_output(inputDef, inputFormat, outputDef, defaultOutput, outputFormat):
+def default_open_input_output(inputDef, inputFormat, outputDef, defaultOutput, outputFormat, thinOutput=False):
     """Default approach to handling the inputs and outputs"""
     input, suppl = default_open_input(inputDef, inputFormat)
-    output,writer,outputBase = default_open_output(outputDef, defaultOutput, outputFormat)
+    output,writer,outputBase = default_open_output(outputDef, defaultOutput, outputFormat, thinOutput=thinOutput)
     return input,output,suppl,writer,outputBase
 
 
@@ -111,7 +111,7 @@ def default_open_input_json(inputDef, lazy=True):
     return input, suppl
 
 
-def default_open_output(outputDef, defaultOutput, outputFormat):
+def default_open_output(outputDef, defaultOutput, outputFormat, thinOutput=False):
     if not outputFormat:
         log("No output format specified - using sdf")
         outputFormat = 'sdf'
@@ -121,48 +121,60 @@ def default_open_output(outputDef, defaultOutput, outputFormat):
         outputBase = outputDef
 
     if outputFormat == 'sdf':
-        output,writer = default_open_output_sdf(outputDef, outputBase)
+        output,writer = default_open_output_sdf(outputDef, outputBase, thinOutput)
     elif outputFormat == 'json':
-        output,writer = default_open_output_json(outputDef, outputBase)
+        output,writer = default_open_output_json(outputDef, outputBase, thinOutput)
     else:
         raise ValueError('Unsupported output format')
     return output,writer,outputBase
 
 
 
-def write_basic_squonk_datasetmetadata_hack(outputBase):
+def write_basic_squonk_datasetmetadata_hack(outputBase, thinOutput):
     """This is a temp hack to write the minimal metadata that Squonk needs.
     Will needs to be replaced with something that allows something more complete to be written.
 
     :param outputBase: Base name for the file to write to
+    :param thinOutput: Write only new data, not structures. Result type will be BasicObject
     """
     d = {}
-    d['type'] = 'org.squonk.types.MoleculeObject'
+    if thinOutput:
+        d['type'] = 'org.squonk.types.BasicObject'
+    else:
+        d['type'] = 'org.squonk.types.MoleculeObject'
     s = json.dumps(d)
     meta = open(outputBase + '.metadata', 'w')
     meta.write(s)
     meta.close()
 
 
-def default_open_output_sdf(outputDef, outputBase):
+def default_open_output_sdf(outputDef, outputBase, thinOutput):
     if outputDef:
         output = gzip.open(outputDef + '.sdf.gz','w+')
     else:
         output = sys.stdout
-    writer = Chem.SDWriter(output)
-    return output,writer
+
+    if thinOutput:
+        writer = ThinSDWriter(output)
+    else:
+        writer = Chem.SDWriter(output)
+    return output, writer
 
 
-def default_open_output_json(outputDef, outputBase):
+def default_open_output_json(outputDef, outputBase, thinOutput):
 
     # this is a temp hack write some basic metadata that Squonk needs
-    write_basic_squonk_datasetmetadata_hack(outputBase)
+    write_basic_squonk_datasetmetadata_hack(outputBase, thinOutput)
 
     if outputDef:
         output = gzip.open(outputDef + '.data.gz','w+')
     else:
         output = sys.stdout
-    writer = JsonWriter(output)
+
+    if thinOutput:
+        writer = ThinJsonWriter(output)
+    else:
+        writer = ThickJsonWriter(output)
     return output,writer
 
 
@@ -178,6 +190,7 @@ def write_metrics(baseName, values):
         m.write(key + '=' + str(values[key]) + "\n")
     m.flush()
     m.close()
+
 
 
 def parse_mol_simple(my_type, txt):
@@ -237,7 +250,7 @@ def generate_mols_from_json(input):
 
 
 
-class JsonWriter:
+class ThickJsonWriter:
 
     def __init__(self, file):
         self.file = file
@@ -267,3 +280,51 @@ class JsonWriter:
 
     def flush(self):
         self.file.flush()
+
+class ThinJsonWriter:
+
+    def __init__(self, file):
+        self.file = file
+        self.file.write('[')
+        self.count = 0
+
+    def write(self, mol, includeStereo=False, confId=-1, kekulize=True, forceV3000=False):
+        d = {}
+        props = mol.GetPropsAsDict()
+        if 'uuid' in props:
+            d['uuid'] = props['uuid']
+            del props['uuid']
+        else:
+            d['uuid'] = str(uuid.uuid4())
+        d['values'] = props
+        json_str = json.dumps(d)
+        if self.count > 0:
+            self.file.write(',')
+        self.file.write(json_str)
+        self.count += 1
+
+    def close(self):
+        self.file.write(']')
+        self.file.close()
+
+    def flush(self):
+        self.file.flush()
+
+class ThinSDWriter:
+    def __init__(self, output):
+        self.count = 0
+        self.writer = Chem.SDWriter(output)
+
+    def write(self, mol):
+        emptyMol = Chem.Mol()
+        props = mol.GetPropsAsDict()
+        for key in props:
+            emptyMol.SetProp(key, str(props[key]))
+        self.writer.write(emptyMol)
+
+
+    def close(self):
+        self.writer.close()
+
+    def flush(self):
+        self.writer.flush()

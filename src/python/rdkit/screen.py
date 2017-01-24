@@ -56,6 +56,7 @@ def main():
     parser.add_argument('--mwmin', type=float, help='Min mol weight')
     parser.add_argument('--mwmax', type=float, help='Max mol weight')
     utils.add_default_io_args(parser)
+    parser.add_argument('--thin', action='store_true', help='Thin output mode')
     parser.add_argument('-q', '--quiet', action='store_true', help='Quiet mode')
 
     args = parser.parse_args()
@@ -73,7 +74,7 @@ def main():
     
     query_fp = descriptor(query_rdkitmol)
 
-    input,output,suppl,writer,output_base = utils.default_open_input_output(args.input, args.informat, args.output, 'screen', args.outformat)
+    input,output,suppl,writer,output_base = utils.default_open_input_output(args.input, args.informat, args.output, 'screen', args.outformat, thinOutput=args.thin)
 
     # OK, all looks good so we can hope that things will run OK.
     # But before we start lets write the metadata so that the results can be handled.

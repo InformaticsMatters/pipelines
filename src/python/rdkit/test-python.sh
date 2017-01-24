@@ -45,6 +45,34 @@ then
     echo -e $msg_file_notCreated
 fi
 
+echo "Testing screen.py reading and writing files using thin sdf"
+python screen.py\
+  -i ../../../data/dhfr_3d.sdf.gz\
+  -o ../../../tmp/screen2\
+  -of sdf\
+  --qsmiles 'C1N=C(C2=CC=CC=C2)C2=CC=CC=C2C2=C1C=NC(NC1=CC=CC=C1)=N2'\
+  --simmin 0.45\
+  -if sdf\
+  --thin > /dev/null || echo -e $msg_fail
+if [ ! -f  ../../../tmp/screen2.sdf.gz ]
+then
+    echo -e $msg_file_notCreated
+fi
+
+echo "Testing screen.py reading and writing files using thin json"
+python screen.py\
+  -i ../../../data/nci100.data.gz\
+  -o ../../../tmp/screen3\
+  -of json\
+  --qsmiles 'C1N=C(C2=CC=CC=C2)C2=CC=CC=C2C2=C1C=NC(NC1=CC=CC=C1)=N2'\
+  --simmin 0.45\
+  -if json\
+  --thin > /dev/null || echo -e $msg_fail
+if [ ! -f  ../../../tmp/screen3.data.gz ]
+then
+    echo -e $msg_file_notCreated
+fi
+
 echo "Testing screen_multi.py reading taget form sdf file, query as json file and writing to STDOUT"
 gunzip -c ../../../data/dhfr_3d.sdf.gz | python screen_multi.py\
   -if sdf --qjson ../../../data/nci100.data.gz --simmin 0.55 > /dev/null || echo -e $msg_fail

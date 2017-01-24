@@ -81,13 +81,15 @@ def main():
     ### command line args defintions #########################################
 
     parser = argparse.ArgumentParser(description='RDKit filter')
-    parser.add_argument('-f', '--fragment', choices=['hac', 'mw'], help='Find single fragment if more than one (hac = biggest by heavy atome count, mw = biggest by mol weight )')
+    parser.add_argument('-f', '--fragment', choices=['hac', 'mw'], help='Find single fragment if more than one (hac = biggest by heavy atom count, mw = biggest by mol weight )')
     parser.add_argument('--hacmin', type=int, help='Min heavy atom count')
     parser.add_argument('--hacmax', type=int, help='Max heavy atom count')
     parser.add_argument('--mwmin', type=float, help='Min mol weight')
     parser.add_argument('--mwmax', type=float, help='Max mol weight')
     parser.add_argument('-l', '--limit', type=int, help='Limit output to this many records')
     parser.add_argument('-c', '--chunksize', type=int, help='Split output into chunks of size c. Output will always be files. Names like filter01.sdf.gz, filter02.sdf.gz ...')
+    # WARNING: thin output is not appropriate when using --fragment
+    parser.add_argument('--thin', action='store_true', help='Thin output mode')
     parser.add_argument('-q', '--quiet', action='store_true', help='Quiet mode - suppress reporting reason for filtering')
     utils.add_default_io_args(parser)
     args = parser.parse_args()

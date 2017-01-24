@@ -75,6 +75,7 @@ def main():
     parser.add_argument('-d', '--descriptor', type=str.lower, choices=list(descriptors.keys()), default='rdkit', help='descriptor or fingerprint type (default rdkit)')
     parser.add_argument('-m', '--metric', type=str.lower, choices=list(metrics.keys()), default='tanimoto', help='similarity metric (default tanimoto)')
     utils.add_default_io_args(parser)
+    parser.add_argument('--thin', action='store_true', help='Thin output mode')
 
     args = parser.parse_args()
     utils.log("Cluster Args: ",args)

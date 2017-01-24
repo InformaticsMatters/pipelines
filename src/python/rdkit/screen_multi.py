@@ -63,6 +63,7 @@ def main():
     parser.add_argument('--mwmin', type=float, help='Min mol weight')
     parser.add_argument('--mwmax', type=float, help='Max mol weight')
     utils.add_default_io_args(parser)
+    parser.add_argument('--thin', action='store_true', help='Thin output mode')
     parser.add_argument('-q', '--quiet', action='store_true', help='Quiet mode')
 
     args = parser.parse_args()
