@@ -23,7 +23,7 @@ field_MinimizationConverged = 'MinimizationConverged'
 
 def process_mol_conformers(mol, i, numConfs, maxAttempts, pruneRmsThresh, clusterMethod, clusterThreshold, minimizeIterations):
     #utils.log("generating conformers for molecule",i)
-    # generate the confomers
+    # generate the conformers
     conformerIds = gen_conformers(mol, numConfs, maxAttempts, pruneRmsThresh, True, True, True)
     conformerPropsDict = {}
     minEnergy = 9999999999999
