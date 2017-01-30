@@ -8,13 +8,11 @@
 
   "inputDescriptors": [
     {
-      "multiplicity": "ITEM",
       "primaryType": "org.squonk.dataset.Dataset",
       "secondaryType": "org.squonk.types.MoleculeObject",
       "mediaType": "application/x-squonk-dataset-molecule+json",
       "name": "query"
     },{
-       "multiplicity": "ITEM",
        "primaryType": "org.squonk.dataset.Dataset",
        "secondaryType": "org.squonk.types.MoleculeObject",
        "mediaType": "application/x-squonk-dataset-molecule+json",
@@ -23,7 +21,6 @@
   ],
   "outputDescriptors": [
     {
-      "multiplicity": "ITEM",
       "primaryType": "org.squonk.dataset.Dataset",
       "secondaryType": "org.squonk.types.MoleculeObject",
       "mediaType": "application/x-squonk-dataset-molecule+json",
