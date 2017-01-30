@@ -96,7 +96,7 @@ gunzip -c ../../../data/Kinase_inhibs.sdf.gz | python cluster_butina.py -t 0.6 -
 echo "Testing rxn_smarts_filter.py reading from STDIN and writing to files"
 gunzip -c ../../../data/Kinase_inhibs.sdf.gz | python rxn_smarts_filter.py -if sdf -o ../../../tmp/rxn_smarts_filter1 || echo -e $msg_fail
 
-echo "Testing rxn_smarts_filter.py reading from sd file and writing to files"
-python rxn_smarts_filter.py -i ../../../data/Kinase_inhibs.sdf.gz -o ../../../tmp/rxn_smarts_filter2 || echo -e $msg_fail
+echo "Testing rxn_smarts_filter.py reading from sd file and writing to multiple files"
+python rxn_smarts_filter.py -i ../../../data/Kinase_inhibs.sdf.gz -o ../../../tmp/rxn_smarts_filter2 --multi || echo -e $msg_fail
 
 echo "Finished"
