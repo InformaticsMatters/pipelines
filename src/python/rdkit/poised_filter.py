@@ -1,10 +1,9 @@
 from rdkit import Chem
+from rdkit.Chem import AllChem
 
 import os
 
 class Filter(object):
-
-    # TODO - can the names be cleanup up (remove numbers and brackets)? Or do they mean something?
 
     def __init__(self, *args, **kwargs):
         self.poised_filters = {
@@ -40,9 +39,63 @@ class Filter(object):
  'Suzuki_Coupling': ['[#6;a:1]-[#6;a:2]>>[#6;a:2]Br.[#6;a:1]-[#5](-[#8])-[#8]'],
  'Triazole': ['[#6:6][n:1]1[c:3][c:4][n:2][n:5]1>>[#6:6][#7:1][#7:5]=[#7:2].[C:3]#[C:4]'],
  'Urea': ['[#7:1][C;x0]([#7:2])=O>>[#7:1].[#7:2]']}
+
+        # ++ means
+        # THEN
+        ## TODO Process these into reactions(and reaction sequences)
+        ## TODO Write code that takes a mol in previous and reacts it in this.
+        ## TODO Give to Tim and discuss on Wednesday
+        self.poised_reactions = {'Amides': ['[Cl,Br,I][C:2]=[O:3].[#7:1]>>[#7:1][C:2]=[O:3]',
+                    '[OH1][C:2]=[O:3].[#7:1]>>[#7:1][C:2]=[O:3]',
+                    '[NH2:1].Cl[C:2]=[O:3]>>[#7:1][C:2]=[O:3]',
+                    '[NH1:1].Cl[C:2]=[O:3]>>[#7:1][C:2]=[O:3]'],
+                                 'SNAr': ['[#7H2:1].[c:2]Br>>[c:2][PH1:1]',
+                  '[NH1:1].[c:2]Br>>[c:2][PH0:1]++[#15:1]>>[#7:1]',
+                  '[c:2]-[Cl,Br,I].[#7:1]>>[c:2]-[#7:1]'],
+                                 'Urea': ['[#7H2:1].[#7:2]>>[#7H1:1]C([#7:2])=O',
+                  '[NH1:1].[#7:2]>>[#7H0:1]C([#7:2])=O',
+                  '[#7:2]=C=O.[#7H2:1]>>[#7:1]-[#6](-[#7:2])=O',
+                      '[#7:2]=C=O.[#7;AH1:1]>>[#7:1]-[#6](-[#7:2])=O'],
+                                 'Suzuki Coupling':['[#6;a:2]-[#35,#53].[#6;a:1]-[#5](-[#8])-[#8]>>[#6;a:1]-[#6;a:2]',
+        '[#6;a:1]-[#5](-[#8])-[#8].[#6;a:2]-[#35,#53]>>[#6;a:1]-[#6;a:2]'],
+        'Sonogashira':['[C:1]#[C:2].[#6;a:3]-[#35,#53]>>[#6;a:3][C:1]#[C:2]',
+        '[#6;a:1]-[#35,#53].[C:2]#[C:3]>>[#6;a:1][C:2]#[C:3]'],
+                                 'Sulfonamide':['[#17,#35,#53][S:4](=[O:3])=[O:2].[#7:1]>>[#7:1][S:4](=[O:3])=[O:2]',
+                                                '[#7H2:1].Cl[S:2](=[O:3])=[O:4]>>[#7:1][S:2](=[O:3])=[O:4]',
+                                                '[#7H1:1].Cl[S:2](=[O:3])=[O:4]>>[#7:1][S:2](=[O:3])=[O:4]'],
+                                 'Reductive_Amination':['[#6H1:2]=O.[#7:1]>>[#6:2]-[P:1]',
+                                                        '[#6:3]-[#6:2](-[#6:4])=O.[#7:1]>>[#6:3]-[#6:2](-[#6:4])-[P:1]++[P:1]>>[N:1]',
+                                                        '[#7;AH2:1].[#6:4]-[#6:2](-[#6:3])=O>>[#6:4]-[P:2](-[#6:3])-[#7:1]',
+                                                        '[#7AH1:1].[#6:2]-[#6:3](-[#6:4])=O>>[#6:2]-[P:3](-[#6:4])-[#7:1]',
+                                                        '[#7AH2:1].[#6:4]-[#6H1:2]=O>>[#6:4]-[P:2]-[#7:1]',
+                                                        '[#7AH1:1].[#6:2]-[#6H1:3]=O>>[#6:2]-[P:3]-[#7:1]++[P:1]>>[C:1]'],
+                                 'N-Alkylation':['[#7H2:1].[#6;A:2]Br>>[#7:1]-[#15:2]',
+                                                 '[#7H1:1].[#6;A:2]Br>>[#7:1]-[#15:2]++[P:1]>>[C:1]',
+                                                 '[C:2][Cl,Br,I].[#7H2:1]>>[#7:1]-[#15:2]',
+                                                 '[C:2][Cl,Br,I].[#7H1:1]>>[#7:1]-[#15:2]++[P:1]>>[C:1]'],
+                                 'Ether_Coupling':['[#8H1:1].[#6;A:2]Br>>[#6:2]-[#8:1]',
+                                                   '[OH1:1].[n:3][#6;a:2]Br>>[O:1]-[#6:2][n:3]',
+                                                   '[#6;A:2][#17,#35,#53].[#8H1:1]>>[#6:2]-[#8:1]',
+                                                   '[n:3][c:2][#17,#35,#53].[#8H1:1]>>[n:3][c:2][#8:1]'],
+                                 'Ester_Coupling':['[Cl,Br,I][C:2]=[O:3].[#8:1]>>[#8:1][C:2]=[O:3]',
+                                                   '[OH1][C:2]=[O:3].[#8:1]>>[#8:1][C:2]=[O:3]',
+                                                   '[OH:1].Cl[C:2]=[O:3]>>[#8:1][C:2]=[O:3]'],
+                                 'Benzimidazole':['Cl[#6:9]=O.[#7:1][c:3]1[c:8][c:7][c:6][c:5][c:4]1[#7:2]>>[nH:1]1[c:9][n:2][c:4]2[c:5][c:6][c:7][c:8][c:3]12',
+                                                  '[OH][#6:9]=O.[#7:1][c:3]1[c:8][c:7][c:6][c:5][c:4]1[#7:2]>>[nH:1]1[c:9][n:2][c:4]2[c:5][c:6][c:7][c:8][c:3]12',
+                                                  '[N:1][c:3]1[c:8][c:7][c:6][c:5][c:4]1[N:2].Cl[#6:9]=O>>[nH:1]1[c:9][n:2][c:4]2[c:5][c:6][c:7][c:8][c:3]12',
+                                                  '[#7:1][c:3]1[c:8][c:7][c:6][c:5][c:4]1[#7:2].Cl[#6:9]=O>>[nH:1]1[c:9][n:2][c:4]2[c:5][c:6][c:7][c:8][c:3]12'],
+                                 'Triazole':['[C:3]#[C:4][#6:6].[#7:1][#7:5]=[#7:2]>>[#7:1]1[#6H:3]=[#6:4]([#6:6])[#7:2]=[#7:5]1',
+                                             '[#7:1]=[#7+:2]=[#7-:3]>>[#7:1][#7:2]=[#7:3]++[#7:1][#7:5]=[#7:2].[C:3]#[C:4][#6:6]>>[#7:1]1[#6H:3]=[#6:4]([#6:6])[#7:2]=[#7:5]1'],
+                                 'Benzoxazole':['Cl[#6:9]=O.[#7:1][c:3]1[c:8][c:7][c:6][c:5][c:4]1[#8:2]>>[n:1]1[c:9][o:2][c:4]2[c:5][c:6][c:7][c:8][c:3]12',
+                                                '[OH][#6:9]=O.[#7:1][c:3]1[c:8][c:7][c:6][c:5][c:4]1[#8:2]>>[n:1]1[c:9][o:2][c:4]2[c:5][c:6][c:7][c:8][c:3]12',
+                                                '[OH:1][c:3]1[c:8][c:7][c:6][c:5][c:4]1[NH2:2].Cl[#6:9]=O>>[o:1]1[c:9][n:2][c:4]2[c:5][c:6][c:7][c:8][c:3]12']
+        }
+        self.reacts = {}
         self.starts = {}
         for key in self.poised_filters:
-            self.starts[key] = [Chem.MolFromSmarts(x.split(">>")[0]) for x in self.poised_filters[key]]
+            self.starts[key] = [(Chem.MolFromSmarts(x.split(">>")[0]),AllChem.ReactionFromSmarts(x)) for x in self.poised_filters[key]]
+        for key in self.poised_reactions:
+            self.reacts[key] = [AllChem.ReactionFromSmarts(x) for x in self.poised_reactions[key]]
 
     def pass_filter(self, mol):
         """
@@ -51,13 +104,36 @@ class Filter(object):
         :param patterns: a dict of SMARTS patterns
         :return: a list of the reactions each mol can do.
         """
-
-        out_list = []
+        out_dict = {}
         for key in self.starts:
-            for patt in self.starts[key]:
+            for patt_rxn_pair in self.starts[key]:
+                patt = patt_rxn_pair[0]
+                rxn = patt_rxn_pair[1]
                 if mol.HasSubstructMatch(patt):
-                    out_list.append(key)
-        return out_list
+                    products = self.unique_products(rxn.RunReactants([mol]))
+                    if key in out_dict:
+                        out_dict[key].extend(products)
+                    else:
+                        out_dict[key] = products
+        return out_dict
+
+
+    def unique_products(self, ps, min_num_heavy_atoms=2):
+        """
+        Get all the unique products out
+        :param ps: the input reaction products
+        :param min_num_heavy_atoms: the minimum number of heavy atoms
+        :return:
+        """
+        uniqps = {}
+        for products in ps:
+            for p in products:
+                #### Filter out singletons
+                if p.GetNumHeavyAtoms() >= min_num_heavy_atoms:
+                    smi = Chem.MolToSmiles(p, isomericSmiles=True)
+                    uniqps[smi] = p
+        products = sorted(uniqps.keys())
+        return products
 
     def get_writers(self, dir_base):
         """
@@ -69,3 +145,38 @@ class Filter(object):
         for x in self.starts:
             out_d[x] = Chem.SDWriter(os.path.join(dir_base, x + ".sdf"))
         return out_d
+
+    def annotate_reagent(self, product, reactants, reaction_name):
+        """
+        Annotate the product with the input molecules (and their input molecules).
+        :param product:
+        :param reactants:
+        :param reaction_name:
+        :return:
+        """
+        reagent_delimiter = "WITH"
+        reaction_namer = "BYE"
+        reaction_delimiter = "AND"
+
+        smis = [Chem.MolToSmiles(x,isomericSmiles=True) for x in reactants]
+        current_reaction = reagent_delimiter.join(smis)+reaction_namer+reaction_name
+        provenances = [x.GetProp("SOURCE") for x in reactants if x.HasProp("SOURCE")]
+        product.SetProp("SOURCE",reaction_delimiter.join(provenances)+reaction_delimiter+current_reaction)
+
+
+    def perform_reaction(self, input_molecule, reaction_name, reactant_lib, writer,i):
+        """Take an input molecule and a library of reactants
+        React - and form the products.
+        :param input_molecule: the input molecule to be reacted
+        :param reaction_name: the name of the reaction (a string)
+        :param reactant_lib: an interable of molecules to react
+        :return:
+        """
+        rxn = self.reacts[reaction_name]
+        for reactant_mol in reactant_lib:
+            products = self.unique_products(rxn.RunReactants(input_molecule,reactant_mol,))
+            for product in products:
+                self.annotate_reagent(product, input_molecule, reactant_mol, reaction_name)
+                i+=1
+                writer.write(product)
+        return i

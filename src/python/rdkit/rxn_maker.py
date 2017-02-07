@@ -9,10 +9,14 @@ import argparse
 def main():
     ### command line args defintions #########################################
 
-    parser = argparse.ArgumentParser(description='RDKit rxn smarts filter')
+    parser = argparse.ArgumentParser(description='RDKit rxn process')
     utils.add_default_io_args(parser)
     parser.add_argument('-q', '--quiet', action='store_true', help='Quiet mode')
     parser.add_argument('-m', '--multi', action='store_true', help='Output one file for each reaction')
+    parser.add_argument('-r', '--reaction', action='store_true', help='Name of reaction to be run')
+    parser.add_argument('-rl', '--reagent_lib', help="Input SD file, if not defined the STDIN is used")
+    parser.add_argument('-rlf', '--reagent_lib_format', choices=['sdf', 'json'], help="Input format. When using STDIN this must be specified.")
+
 
     args = parser.parse_args()
     utils.log("Screen Args: ", args)
@@ -20,8 +24,10 @@ def main():
     if not args.output and args.multi:
         raise ValueError("Must specify output location when writing individual result files")
 
-    input, output, suppl, writer, output_base = utils.default_open_input_output(args.input, args.informat, args.output,
-                                                                                'rxn_smarts_filter', args.outformat)
+    input, suppl = utils.default_open_input(args.input, args.informat)
+    reagent_input, reagent_suppl = utils.default_open_input(args.reagent_lib, args.reagent_lib_format)
+    output, writer, output_base = utils.default_open_output(args.output, "rxn_maker", args.outformat)
+
 
     ### Define the filter chooser - lots of logic possible
     # SMARTS patterns are defined in poised_filter.py. Currently this is hardcoded.
@@ -31,10 +37,9 @@ def main():
         from poised_filter import Filter
         filter_to_use = Filter()
 
+
     i = 0
     count = 0
-
-
 
     if args.multi:
         dir_base = os.path.dirname(args.output)
@@ -44,26 +49,12 @@ def main():
         dir_base = None
 
     for mol in suppl:
-        i += 1
+        i+=1
         if mol is None: continue
         # Return a dict/class here - indicating which filters passed
-        filter_pass = filter_to_use.pass_filter(mol)
-        utils.log("Found",str(len(filter_pass)),"matches")
+        count = filter_to_use.perform_reaction(mol,args.reagent_lib,args.reaction,writer,count)
 
-        if filter_pass:
-            count += 1
-            for reaction in filter_pass:
-                print(filter_pass[reaction])
-                # Write the reaction and a comma seperated list of the synthons
-                mol.SetProp(reaction, ",".join(filter_pass[reaction]))
-                if args.multi:
-                    writer_dict[reaction].write(mol)
-                    writer_dict[reaction].flush()
-            writer.write(mol)
-            writer.flush()
-    utils.log("Matched", count, "molecules from a total of", i)
-    if dir_base:
-        utils.log("Individual SD files found in: "+ dir_base)
+    utils.log("Created", count, "molecules from a total of ", i , "input molecules")
 
     writer.flush()
     writer.close()
