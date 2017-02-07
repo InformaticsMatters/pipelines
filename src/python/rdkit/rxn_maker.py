@@ -9,11 +9,18 @@ import argparse
 def main():
     ### command line args defintions #########################################
 
+    ### Define the reactions available
+    poised_filter = True
+    if poised_filter == True:
+        from poised_filter import Filter
+        filter_to_use = Filter()
+
+
     parser = argparse.ArgumentParser(description='RDKit rxn process')
     utils.add_default_io_args(parser)
     parser.add_argument('-q', '--quiet', action='store_true', help='Quiet mode')
     parser.add_argument('-m', '--multi', action='store_true', help='Output one file for each reaction')
-    parser.add_argument('-r', '--reaction', action='store_true', help='Name of reaction to be run')
+    parser.add_argument('-r', '--reaction', choices=filter_to_use.poised_reactions.keys(), help='Name of reaction to be run')
     parser.add_argument('-rl', '--reagent_lib', help="Input SD file, if not defined the STDIN is used")
     parser.add_argument('-rlf', '--reagent_lib_format', choices=['sdf', 'json'], help="Input format. When using STDIN this must be specified.")
 
@@ -29,13 +36,6 @@ def main():
     output, writer, output_base = utils.default_open_output(args.output, "rxn_maker", args.outformat)
 
 
-    ### Define the filter chooser - lots of logic possible
-    # SMARTS patterns are defined in poised_filter.py. Currently this is hardcoded.
-    # Should make this configurable so that this can be specified by the user at some stage.
-    poised_filter = True
-    if poised_filter == True:
-        from poised_filter import Filter
-        filter_to_use = Filter()
 
 
     i = 0
@@ -52,7 +52,7 @@ def main():
         i+=1
         if mol is None: continue
         # Return a dict/class here - indicating which filters passed
-        count = filter_to_use.perform_reaction(mol,args.reagent_lib,args.reaction,writer,count)
+        count = filter_to_use.perform_reaction(mol,args.reaction,reagent_suppl,writer,count)
 
     utils.log("Created", count, "molecules from a total of ", i , "input molecules")
 

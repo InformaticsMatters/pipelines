@@ -42,9 +42,7 @@ class Filter(object):
 
         # ++ means
         # THEN
-        ## TODO Process these into reactions(and reaction sequences)
-        ## TODO Write code that takes a mol in previous and reacts it in this.
-        ## TODO Give to Tim and discuss on Wednesday
+
         self.poised_reactions = {'Amides': ['[Cl,Br,I][C:2]=[O:3].[#7:1]>>[#7:1][C:2]=[O:3]',
                     '[OH1][C:2]=[O:3].[#7:1]>>[#7:1][C:2]=[O:3]',
                     '[NH2:1].Cl[C:2]=[O:3]>>[#7:1][C:2]=[O:3]',
@@ -95,7 +93,13 @@ class Filter(object):
         for key in self.poised_filters:
             self.starts[key] = [(Chem.MolFromSmarts(x.split(">>")[0]),AllChem.ReactionFromSmarts(x)) for x in self.poised_filters[key]]
         for key in self.poised_reactions:
-            self.reacts[key] = [AllChem.ReactionFromSmarts(x) for x in self.poised_reactions[key]]
+            self.reacts[key] = []
+            for x in self.poised_reactions[key]:
+                react_seq = []
+                for rxn in x.split("++"):
+                    react_seq.append(AllChem.ReactionFromSmarts(rxn))
+                self.reacts[key].append(react_seq)
+
 
     def pass_filter(self, mol):
         """
@@ -135,6 +139,8 @@ class Filter(object):
         products = sorted(uniqps.keys())
         return products
 
+
+
     def get_writers(self, dir_base):
         """
         Get all the writers of the SD files
@@ -164,6 +170,20 @@ class Filter(object):
         product.SetProp("SOURCE",reaction_delimiter.join(provenances)+reaction_delimiter+current_reaction)
 
 
+
+    def run_reaction(self,input_molecule,reactant_mol, react_seqs):
+        products = []
+        for react_seq in react_seqs:
+            rxn = react_seq[0]
+            products.extend(rxn.RunReactants((input_molecule, reactant_mol,)))
+            for i in range(1,len(react_seq)):
+                rxn = react_seq[i]
+                curr_prods = products
+                products = []
+                for p in curr_prods:
+                    products.extend(rxn.RunReactants(p,))
+        return products
+
     def perform_reaction(self, input_molecule, reaction_name, reactant_lib, writer,i):
         """Take an input molecule and a library of reactants
         React - and form the products.
@@ -172,11 +192,22 @@ class Filter(object):
         :param reactant_lib: an interable of molecules to react
         :return:
         """
-        rxn = self.reacts[reaction_name]
+        react_seq = self.reacts[reaction_name]
         for reactant_mol in reactant_lib:
-            products = self.unique_products(rxn.RunReactants(input_molecule,reactant_mol,))
+            if reactant_mol is None:
+                continue
+            products = [Chem.MolFromSmiles(x) for x in self.unique_products(self.run_reaction(input_molecule,reactant_mol,react_seq)) if Chem.MolFromSmiles(x)]
             for product in products:
-                self.annotate_reagent(product, input_molecule, reactant_mol, reaction_name)
+                self.annotate_reagent(product, [input_molecule, reactant_mol], reaction_name)
                 i+=1
                 writer.write(product)
         return i
+
+    def get_subs(self,mol,reaction_name):
+        """
+        Get all the substructures for a given reaction.
+        :param mol:
+        :param reaction_name:
+        :return:
+        """
+        return mol.GetProp(reaction_name).split(",")
