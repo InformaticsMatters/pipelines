@@ -198,7 +198,6 @@ class Filter(object):
                 continue
             products = [Chem.MolFromSmiles(x) for x in self.unique_products(self.run_reaction(input_molecule,reactant_mol,react_seq)) if Chem.MolFromSmiles(x)]
             for product in products:
-                self.annotate_reagent(product, [input_molecule, reactant_mol], reaction_name)
                 i+=1
                 writer.write(product)
         return i
