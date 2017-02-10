@@ -210,3 +210,6 @@ class Filter(object):
         :return:
         """
         return mol.GetProp(reaction_name).split(",")
+
+    def get_rxn_names(self):
+        return self.poised_filters.keys()

@@ -84,7 +84,7 @@ def main():
     if descriptor is None:
         raise ValueError('Invalid descriptor name ' + args.descriptor)
 
-    input,output,suppl,writer,output_base = utils.default_open_input_output(args.input, args.informat, args.output, 'cluster_butina', args.outformat)
+    input,output,suppl,writer,output_base = utils.default_open_input_output(args.input, args.informat, args.output, 'cluster_butina', args.outformat, thinOutput=args.thin)
 
     # generate fingerprints
     mols = [x for x in suppl if x is not None]

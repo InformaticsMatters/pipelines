@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import utils, os
+import utils, os, json
 import argparse
 
 
@@ -13,6 +13,7 @@ def main():
     utils.add_default_io_args(parser)
     parser.add_argument('-q', '--quiet', action='store_true', help='Quiet mode')
     parser.add_argument('-m', '--multi', action='store_true', help='Output one file for each reaction')
+    parser.add_argument('--thin', action='store_true', help='Thin output mode')
 
     args = parser.parse_args()
     utils.log("Screen Args: ", args)
@@ -20,8 +21,6 @@ def main():
     if not args.output and args.multi:
         raise ValueError("Must specify output location when writing individual result files")
 
-    input, output, suppl, writer, output_base = utils.default_open_input_output(args.input, args.informat, args.output,
-                                                                                'rxn_smarts_filter', args.outformat)
 
     ### Define the filter chooser - lots of logic possible
     # SMARTS patterns are defined in poised_filter.py. Currently this is hardcoded.
@@ -30,6 +29,17 @@ def main():
     if poised_filter == True:
         from poised_filter import Filter
         filter_to_use = Filter()
+    rxn_names = filter_to_use.get_rxn_names()
+    utils.log("Using",len(rxn_names),"reaction filters")
+    clsMappings = {}
+    for name in rxn_names:
+        # this is the Java class type for an array of MoleculeObjects
+        clsMappings[name] = "[Lorg.squonk.types.MoleculeObject;"
+
+
+    input, output, suppl, writer, output_base = utils.default_open_input_output(
+        args.input, args.informat, args.output,
+        'rxn_smarts_filter', args.outformat, thinOutput=args.thin, valueClassMappings=clsMappings)
 
     i = 0
     count = 0
@@ -51,15 +61,27 @@ def main():
         utils.log("Found",str(len(filter_pass)),"matches")
 
         if filter_pass:
+            props = {}
             count += 1
             for reaction in filter_pass:
-                print(filter_pass[reaction])
-                # Write the reaction and a comma seperated list of the synthons
-                mol.SetProp(reaction, ",".join(filter_pass[reaction]))
+                molObjList = []
+                # Write the reaction name as a newline separated list of the synthons to the mol object
+                # this is used in SDF output
+                mol.SetProp(reaction, "\n".join(filter_pass[reaction]))
+                # now write to the props is a way that can be used for the JSON output
+                for smiles in filter_pass[reaction]:
+                    # generate a dict that generates MoleculeObject JSON
+                    mo = utils.generate_molecule_object_dict(smiles, "smiles", None)
+                    molObjList.append(mo)
+                props[reaction] = molObjList
+
                 if args.multi:
                     writer_dict[reaction].write(mol)
                     writer_dict[reaction].flush()
-            writer.write(mol)
+            # write the output.
+            # In JSON format the props will override values set on the mol
+            # In SDF format the props are ignored so the values in the mol are used
+            writer.write(mol, props)
             writer.flush()
     utils.log("Matched", count, "molecules from a total of", i)
     if dir_base:
