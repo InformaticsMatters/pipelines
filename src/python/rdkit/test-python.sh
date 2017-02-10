@@ -99,4 +99,7 @@ gunzip -c ../../../data/Kinase_inhibs.sdf.gz | python rxn_smarts_filter.py -if s
 echo "Testing rxn_smarts_filter.py reading from sd file and writing to multiple files"
 python rxn_smarts_filter.py -i ../../../data/Kinase_inhibs.sdf.gz -o ../../../tmp/rxn_smarts_filter2 --multi || echo -e $msg_fail
 
+echo "Testing rxn_maker.py reading from files"
+python rxn_maker.py -i ../../../data/sulfonyl_chloride.sdf -r Sulfonamide -rl ../../../data/sdf-aliphatic-primary-amines-175.sdf.gz  -o ../../../tmp/rxnoutput || echo -e $msg_fail
+
 echo "Finished"
