@@ -117,6 +117,7 @@ class Filter(object):
                     products = self.unique_products(rxn.RunReactants([mol]))
                     if key in out_dict:
                         out_dict[key].extend(products)
+                        out_dict[key] = list(set(out_dict[key]))
                     else:
                         out_dict[key] = products
         return out_dict
