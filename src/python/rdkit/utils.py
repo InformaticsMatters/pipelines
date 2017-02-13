@@ -21,10 +21,12 @@ def add_default_io_args(parser):
     parser.add_argument('--meta', action='store_true', help='Write metadata and metrics files')
 
 
-def default_open_input_output(inputDef, inputFormat, outputDef, defaultOutput, outputFormat, thinOutput=False, valueClassMappings=None):
+def default_open_input_output(inputDef, inputFormat, outputDef, defaultOutput, outputFormat, thinOutput=False, valueClassMappings=None,
+                              datasetMetaProps=None, fieldMetaProps=None):
     """Default approach to handling the inputs and outputs"""
     input, suppl = default_open_input(inputDef, inputFormat)
-    output,writer,outputBase = default_open_output(outputDef, defaultOutput, outputFormat, thinOutput=thinOutput, valueClassMappings=valueClassMappings)
+    output,writer,outputBase = default_open_output(outputDef, defaultOutput, outputFormat, thinOutput=thinOutput,
+        valueClassMappings=valueClassMappings, datasetMetaProps=datasetMetaProps, fieldMetaProps=fieldMetaProps)
     return input,output,suppl,writer,outputBase
 
 
@@ -111,7 +113,7 @@ def default_open_input_json(inputDef, lazy=True):
     return input, suppl
 
 
-def default_open_output(outputDef, defaultOutput, outputFormat, thinOutput=False, valueClassMappings=None):
+def default_open_output(outputDef, defaultOutput, outputFormat, thinOutput=False, valueClassMappings=None, datasetMetaProps=None, fieldMetaProps=None):
     if not outputFormat:
         log("No output format specified - using sdf")
         outputFormat = 'sdf'
@@ -123,29 +125,45 @@ def default_open_output(outputDef, defaultOutput, outputFormat, thinOutput=False
     if outputFormat == 'sdf':
         output,writer = default_open_output_sdf(outputDef, outputBase, thinOutput)
     elif outputFormat == 'json':
-        output,writer = default_open_output_json(outputDef, outputBase, thinOutput, valueClassMappings)
+        output,writer = default_open_output_json(outputDef, outputBase, thinOutput, valueClassMappings, datasetMetaProps, fieldMetaProps)
     else:
         raise ValueError('Unsupported output format')
     return output,writer,outputBase
 
 
 
-def write_basic_squonk_datasetmetadata_hack(outputBase, thinOutput, valueClassMappings):
+def write_squonk_datasetmetadata(outputBase, thinOutput, valueClassMappings, datasetMetaProps, fieldMetaProps):
     """This is a temp hack to write the minimal metadata that Squonk needs.
     Will needs to be replaced with something that allows something more complete to be written.
 
     :param outputBase: Base name for the file to write to
     :param thinOutput: Write only new data, not structures. Result type will be BasicObject
     :param valueClasses: A dict that describes the Java class of the value properties (used by Squonk)
+    :param datasetMetaProps: A dict with metadata properties that describe the datset as a whole.
+            The keys used for these metadata are up to the user, but common ones include source, description, created, history.
+    :param fieldMetaProps: A list of dicts with the additional field metadata. Each dict has a key named fieldName whose value
+            is the name of the field being described, and a key name values wholes values is a map of metadata properties.
+            The keys used for these metadata are up to the user, but common ones include source, description, created, history.
     """
-    d = {}
+    meta = {}
+    props = {}
+    # TODO add created property - how to handle date formats?
+    if datasetMetaProps:
+        props.update(datasetMetaProps)
+
+    if fieldMetaProps:
+        meta["fieldMetaProps"] = fieldMetaProps
+
+    if len(props) > 0:
+        meta["properties"] = props
+
     if valueClassMappings:
-        d["valueClassMappings"] = valueClassMappings
+        meta["valueClassMappings"] = valueClassMappings
     if thinOutput:
-        d['type'] = 'org.squonk.types.BasicObject'
+        meta['type'] = 'org.squonk.types.BasicObject'
     else:
-        d['type'] = 'org.squonk.types.MoleculeObject'
-    s = json.dumps(d)
+        meta['type'] = 'org.squonk.types.MoleculeObject'
+    s = json.dumps(meta)
     meta = open(outputBase + '.metadata', 'w')
     meta.write(s)
     meta.close()
@@ -164,10 +182,10 @@ def default_open_output_sdf(outputDef, outputBase, thinOutput):
     return output, writer
 
 
-def default_open_output_json(outputDef, outputBase, thinOutput, valueClassMappings):
+def default_open_output_json(outputDef, outputBase, thinOutput, valueClassMappings, datasetMetaProps, fieldMetaProps):
 
-    # this is a temp hack write some basic metadata that Squonk needs
-    write_basic_squonk_datasetmetadata_hack(outputBase, thinOutput, valueClassMappings)
+    # this is writes the metadata that Squonk needs
+    write_squonk_datasetmetadata(outputBase, thinOutput, valueClassMappings, datasetMetaProps, fieldMetaProps)
 
     if outputDef:
         output = gzip.open(outputDef + '.data.gz','w+')

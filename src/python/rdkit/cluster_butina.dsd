@@ -1,6 +1,6 @@
 { "serviceConfig": {
   "id": "pipelines.rdkit.cluster.butina",
-  "name": "RDKit Butina Clustering",
+  "name": "RDKitButinaClustering",
   "description": "Clustering similar molecules using RDKit Butina clustering",
   "tags": [ "rdkit", "clustering", "similarity", "butina", "docker" ],
   "resourceUrl": null,

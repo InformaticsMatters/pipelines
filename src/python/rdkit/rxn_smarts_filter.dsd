@@ -1,6 +1,6 @@
 { "serviceConfig": {
   "id": "rdkit.smarts_filter.reaction",
-  "name": "RDKit Reaction Smarts Filter",
+  "name": "RDKitReactionSmartsFilter",
   "description": "RDKit Reaction Smarts Filter",
   "tags": [ "rdkit", "docker", "smarts", "reaction" ,"filter", "poised"],
   "resourceUrl": null,

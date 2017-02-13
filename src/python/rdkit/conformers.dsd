@@ -1,6 +1,6 @@
 { "serviceConfig": {
   "id": "pipelines.rdkit.conformer.basic",
-  "name": "RDKit Conformers",
+  "name": "RDKitConformers",
   "description": "Generate 3D conformers using RDKit",
   "tags": [ "rdkit", "conformer", "3d", "docker" ],
   "resourceUrl": null,

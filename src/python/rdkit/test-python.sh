@@ -93,8 +93,12 @@ gunzip -c ../../../data/Kinase_inhibs.sdf.gz | python filter.py --hacmin 25 --ha
 echo "Testing cluster_butina.py reading from STDIN and writing to STDOUT"
 gunzip -c ../../../data/Kinase_inhibs.sdf.gz | python cluster_butina.py -t 0.6 -if sdf > /dev/null || echo -e $msg_fail
 
-echo "Testing rxn_smarts_filter.py reading from STDIN and writing to files"
+echo "Testing rxn_smarts_filter.py reading from STDIN and writing to files using SDF"
 gunzip -c ../../../data/Kinase_inhibs.sdf.gz | python rxn_smarts_filter.py -if sdf -o ../../../tmp/rxn_smarts_filter1 || echo -e $msg_fail
+
+echo "Testing rxn_smarts_filter.py reading from STDIN and writing to files using JSON"
+gunzip -c ../../../data/nci100.data.gz | python rxn_smarts_filter.py -if json -o ../../../tmp/rxn_smarts_filter2 -of json --meta --thin || echo -e $msg_fail
+
 
 echo "Testing rxn_smarts_filter.py reading from sd file and writing to multiple files"
 python rxn_smarts_filter.py -i ../../../data/Kinase_inhibs.sdf.gz -o ../../../tmp/rxn_smarts_filter2 --multi || echo -e $msg_fail

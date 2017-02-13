@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import utils, os, json
+import utils, os
 import argparse
 
 
@@ -31,15 +31,21 @@ def main():
         filter_to_use = Filter()
     rxn_names = filter_to_use.get_rxn_names()
     utils.log("Using",len(rxn_names),"reaction filters")
+
+    # handle metadata
+    source = "rxn_smarts_filter.py"
+    datasetMetaProps = {"source":source, "description": "Reaction SMARTS filter"}
     clsMappings = {}
+    fieldMetaProps = []
+
     for name in rxn_names:
         # this is the Java class type for an array of MoleculeObjects
         clsMappings[name] = "[Lorg.squonk.types.MoleculeObject;"
-
+        fieldMetaProps.append({"fieldName":name, "values": {"source":source, "description":"Sythons from " + name + " reaction"}})
 
     input, output, suppl, writer, output_base = utils.default_open_input_output(
         args.input, args.informat, args.output,
-        'rxn_smarts_filter', args.outformat, thinOutput=args.thin, valueClassMappings=clsMappings)
+        'rxn_smarts_filter', args.outformat, thinOutput=args.thin, valueClassMappings=clsMappings, datasetMetaProps=datasetMetaProps, fieldMetaProps=fieldMetaProps)
 
     i = 0
     count = 0
