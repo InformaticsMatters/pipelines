@@ -1,0 +1,212 @@
+{ "serviceConfig": {
+  "id": "pipelines.rdkit.cluster.subsetpicker.simple",
+  "name": "RDKitDiverseSubsetPicker",
+  "description": "Diverse subset picker using RDKit Butina clustering",
+  "tags": [ "rdkit", "clustering", "similarity", "butina", "diverse", "subset", "docker" ],
+  "resourceUrl": null,
+  "icon": "icons/clustering.png",
+
+  "inputDescriptors": [
+    {
+      "primaryType": "org.squonk.dataset.Dataset",
+      "secondaryType": "org.squonk.types.MoleculeObject",
+      "mediaType": "application/x-squonk-dataset-molecule+json",
+      "name": "input"
+    }
+  ],
+  "outputDescriptors": [
+    {
+      "primaryType": "org.squonk.dataset.Dataset",
+      "secondaryType": "org.squonk.types.MoleculeObject",
+      "mediaType": "application/x-squonk-dataset-molecule+json",
+      "name": "output"
+    }
+  ],
+
+  "optionDescriptors": [
+    {
+      "modes": [
+        "User"
+      ],
+      "editable": true,
+      "@class": "org.squonk.options.OptionDescriptor",
+      "typeDescriptor": {
+        "type": "java.lang.String",
+        "@class": "org.squonk.options.SimpleTypeDescriptor"
+      },
+      "key": "dockerImageVersion",
+      "label": "RDKit version",
+      "description": "Version of the RDKit Docker image to execute",
+      "values": [
+        "latest",
+        "Release_2016_09_2",
+        "Release_2016_03_1",
+        "Release_2015_09_2",
+        "Release_2015_09_1"
+      ],
+      "defaultValue": "latest",
+      "visible": true,
+      "minValues":1,
+      "maxValues":1
+    },
+    {
+      "modes": [
+        "User"
+      ],
+      "@class": "org.squonk.options.OptionDescriptor",
+      "typeDescriptor": {
+        "type": "java.lang.Float",
+        "@class": "org.squonk.options.SimpleTypeDescriptor"
+      },
+      "key": "arg.threshold",
+      "label": "Threshold",
+      "description": "Similarity threshold",
+      "defaultValue": [
+        "java.lang.Float",
+        0.7
+      ],
+      "visible": true,
+      "editable": true,
+      "minValues":1,
+      "maxValues":1
+    },
+    {
+      "modes": [
+        "User"
+      ],
+      "editable": true,
+      "@class": "org.squonk.options.OptionDescriptor",
+      "typeDescriptor": {
+        "type": "java.lang.String",
+        "@class": "org.squonk.options.SimpleTypeDescriptor"
+      },
+      "key": "arg.descriptor",
+      "label": "Descriptor",
+      "description": "Descriptor/fingerprint to use",
+      "values": [
+        "maccs",
+        "morgan2",
+        "morgan3",
+        "rdkit"
+      ],
+      "defaultValue": "rdkit",
+      "visible": true,
+      "minValues":1,
+      "maxValues":1
+    },
+    {
+      "modes": [
+        "User"
+      ],
+      "editable": true,
+      "@class": "org.squonk.options.OptionDescriptor",
+      "typeDescriptor": {
+        "type": "java.lang.String",
+        "@class": "org.squonk.options.SimpleTypeDescriptor"
+      },
+      "key": "arg.metric",
+      "label": "Metric",
+      "description": "Similarity metric to use",
+      "values": [
+        "asymmetric",
+        "braunblanquet",
+        "cosine",
+        "dice",
+        "kulczynski",
+        "mcconnaughey",
+        "rogotgoldberg",
+        "russel",
+        "sokal",
+        "tanimoto"
+      ],
+      "defaultValue": "tanimoto",
+      "visible": true,
+      "minValues":1,
+      "maxValues":1
+    },
+    {
+      "modes": [
+        "User"
+      ],
+      "@class": "org.squonk.options.OptionDescriptor",
+      "typeDescriptor": {
+        "type": "java.lang.Float",
+        "@class": "org.squonk.options.SimpleTypeDescriptor"
+      },
+      "key": "arg.diversity",
+      "label": "Diversity",
+      "description": "Diversity threshold",
+      "defaultValue": [
+        "java.lang.Float",
+        0.9
+      ],
+      "visible": true,
+      "editable": true,
+      "minValues":0,
+      "maxValues":1
+    },
+    {
+      "modes": [
+        "User"
+      ],
+      "@class": "org.squonk.options.OptionDescriptor",
+      "typeDescriptor": {
+        "type": "java.lang.Integer",
+        "@class": "org.squonk.options.SimpleTypeDescriptor"
+      },
+      "key": "arg.count",
+      "label": "Count",
+      "description": "Max number of molecules to pick",
+
+      "visible": true,
+      "editable": true,
+      "minValues":0,
+      "maxValues":1
+    },
+    {
+      "modes": [
+        "User"
+      ],
+      "@class": "org.squonk.options.OptionDescriptor",
+      "typeDescriptor": {
+        "@class":"org.squonk.options.DatasetFieldTypeDescriptor",
+        "typeFilters":["java.lang.Number"],
+        "type":"java.lang.String"
+      },
+      "key": "arg.field",
+      "label": "Field to Optimise",
+      "description": "Field name whose values are to be optimised",
+      "visible": true,
+      "editable": true,
+      "minValues":0,
+      "maxValues":1
+    },
+    {
+      "modes": [
+        "User"
+      ],
+      "@class": "org.squonk.options.OptionDescriptor",
+      "typeDescriptor": {
+        "type": "java.lang.Boolean",
+        "@class": "org.squonk.options.SimpleTypeDescriptor"
+      },
+      "key": "arg.maximise",
+      "label": "Maximum field values",
+      "description": "Prefer molecules with higher values for the specified field",
+      "defaultValue": false,
+      "visible": true,
+      "editable": true
+    }
+
+  ],
+  "executorClassName": "org.squonk.execution.steps.impl.DefaultDockerExecutorStep"
+  },
+
+  "inputRoutes": [ "FILE" ],
+  "outputRoutes": [ "FILE" ],
+  "imageName": "informaticsmatters/rdkit",
+  "command": "python /pipelines/rdkit/cluster_butina.py -i input.data.gz -if json -o output -of json -t ${threshold} -d ${descriptor} -m ${metric} --num ${count} --exclude ${diversity} --field ${field} ${maximise ? '--max' : '--min'} --meta",
+  "volumes": {
+      "pipelines/rdkit": "/pipelines/rdkit"
+    }
+}

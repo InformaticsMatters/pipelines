@@ -249,11 +249,12 @@ def create_mol_from_props(molobj):
     molformat = molobj["format"]
     # Now parse it with RDKit
     mol = parse_mol_simple(molformat, molstr)
-    mol.SetProp("uuid", str(molobj["uuid"]))
-    values = molobj["values"]
-    if values:
-        for key in values:
-            mol.SetProp(str(key), str(values[key]))
+    if mol:
+        mol.SetProp("uuid", str(molobj["uuid"]))
+        values = molobj["values"]
+        if values:
+            for key in values:
+                mol.SetProp(str(key), str(values[key]))
     return mol
 
 
@@ -267,6 +268,9 @@ def generate_mols_from_json(input):
     for item in input:
         j+=1
         mol = create_mol_from_props(item)
+        if not mol:
+            log("Failed to create molecule - skipping")
+            continue
         yield mol
 
 def generate_molecule_object_dict(source, format, values):
