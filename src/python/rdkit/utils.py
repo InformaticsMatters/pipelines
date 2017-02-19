@@ -1,6 +1,7 @@
 from __future__ import print_function
 import sys, gzip, json, uuid
 from rdkit import Chem
+from rdkit.Chem import AllChem
 from sanifix import fix_mol
 from StreamJsonListLoader import StreamJsonListLoader
 
@@ -250,11 +251,11 @@ def create_mol_from_props(molobj):
     # Now parse it with RDKit
     mol = parse_mol_simple(molformat, molstr)
     if mol:
-        mol.SetProp("uuid", str(molobj["uuid"]))
-        values = molobj["values"]
-        if values:
+        if "values" in molobj:
+            values = molobj["values"]
             for key in values:
                 mol.SetProp(str(key), str(values[key]))
+        mol.SetProp("uuid", str(molobj["uuid"]))
     return mol
 
 
@@ -285,6 +286,9 @@ def generate_molecule_object_dict(source, format, values):
         m["values"] = values
     return m
 
+def generate_2d_coords(mol):
+    AllChem.Compute2DCoords(mol)
+
 class ThickJsonWriter:
 
     def __init__(self, file):
@@ -297,7 +301,6 @@ class ThickJsonWriter:
         d['source'] = Chem.MolToMolBlock(mol, includeStereo=includeStereo, confId=confId, kekulize=kekulize, forceV3000=forceV3000)
         d['format'] = 'mol'
         allProps = mol.GetPropsAsDict()
-        initialCount = len(allProps)
         if props:
             allProps.update(props)
 
@@ -306,7 +309,9 @@ class ThickJsonWriter:
             del allProps['uuid']
         else:
             d['uuid'] = str(uuid.uuid4())
-        d['values'] = allProps
+        if allProps:
+            d['values'] = allProps
+        #log("Mol:",d)
         json_str = json.dumps(d)
         if self.count > 0:
             self.file.write(',')
@@ -338,7 +343,8 @@ class ThinJsonWriter:
             del allProps['uuid']
         else:
             d['uuid'] = str(uuid.uuid4())
-        d['values'] = allProps
+        if allProps:
+            d['values'] = allProps
         json_str = json.dumps(d)
         if self.count > 0:
             self.file.write(',')

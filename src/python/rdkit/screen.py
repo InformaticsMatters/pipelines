@@ -76,14 +76,6 @@ def main():
 
     input,output,suppl,writer,output_base = utils.default_open_input_output(args.input, args.informat, args.output, 'screen', args.outformat, thinOutput=args.thin)
 
-    # OK, all looks good so we can hope that things will run OK.
-    # But before we start lets write the metadata so that the results can be handled.
-    #if args.meta:
-    #    t = open(output_base + '_types.txt', 'w')
-    #    t.write(field_Similarity + '=integer\n')
-    #    t.flush()
-    #    t.close()
-
     i=0
     count = 0
     for mol in suppl:

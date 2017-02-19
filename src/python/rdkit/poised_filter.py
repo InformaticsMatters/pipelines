@@ -1,5 +1,6 @@
 from rdkit import Chem
 from rdkit.Chem import AllChem
+import utils
 
 import os
 
@@ -190,16 +191,29 @@ class Filter(object):
         React - and form the products.
         :param input_molecule: the input molecule to be reacted
         :param reaction_name: the name of the reaction (a string)
-        :param reactant_lib: an interable of molecules to react
+        :param reactant_lib: an iterable of molecules to react
         :return:
         """
+        if input_molecule.HasProp('uuid'):
+            mol_uuid = input_molecule.GetProp('uuid')
+        else:
+            mol_uuid = None
         react_seq = self.reacts[reaction_name]
         for reactant_mol in reactant_lib:
             if reactant_mol is None:
                 continue
+            if reactant_mol.HasProp('uuid'):
+                reactant_uuid = reactant_mol.GetProp('uuid')
+            else:
+                reactant_uuid = None
             products = [Chem.MolFromSmiles(x) for x in self.unique_products(self.run_reaction(input_molecule,reactant_mol,react_seq)) if Chem.MolFromSmiles(x)]
             for product in products:
                 i+=1
+                utils.generate_2d_coords(product)
+                if mol_uuid:
+                    product.SetProp("source_uuid", mol_uuid)
+                if reactant_uuid:
+                    product.SetProp("reactant_uuid", reactant_uuid)
                 writer.write(product)
         return i
 

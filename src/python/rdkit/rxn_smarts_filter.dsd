@@ -1,8 +1,8 @@
 { "serviceConfig": {
-  "id": "rdkit.smarts_filter.reaction",
-  "name": "RDKitReactionSmartsFilter",
-  "description": "RDKit Reaction Smarts Filter",
-  "tags": [ "rdkit", "docker", "smarts", "reaction" ,"filter", "poised"],
+  "id": "pipelines.xchem.smarts_filter.reaction",
+  "name": "XChemReactionSmartsFilter",
+  "description": "XChem Reaction Smarts Filter",
+  "tags": [ "rdkit", "xchem", "docker", "smarts", "reaction" ,"filter", "poised"],
   "resourceUrl": null,
   "icon": "icons/filter_molecules.png",
 

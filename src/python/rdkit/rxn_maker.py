@@ -21,8 +21,8 @@ def main():
     parser.add_argument('-q', '--quiet', action='store_true', help='Quiet mode')
     parser.add_argument('-m', '--multi', action='store_true', help='Output one file for each reaction')
     parser.add_argument('-r', '--reaction', choices=filter_to_use.poised_reactions.keys(), help='Name of reaction to be run')
-    parser.add_argument('-rl', '--reagent_lib', help="Input SD file, if not defined the STDIN is used")
-    parser.add_argument('-rlf', '--reagent_lib_format', choices=['sdf', 'json'], help="Input format. When using STDIN this must be specified.")
+    parser.add_argument('-rl', '--reagent_lib', help="Reagent file, if not defined the STDIN is used")
+    parser.add_argument('-rlf', '--reagent_lib_format', choices=['sdf', 'json'], help="Reagent file format. When using STDIN this must be specified.")
 
 
     args = parser.parse_args()
@@ -34,8 +34,6 @@ def main():
     input, suppl = utils.default_open_input(args.input, args.informat)
     reagent_input, reagent_suppl = utils.default_open_input(args.reagent_lib, args.reagent_lib_format)
     output, writer, output_base = utils.default_open_output(args.output, "rxn_maker", args.outformat)
-
-
 
 
     i = 0
@@ -52,7 +50,7 @@ def main():
         i+=1
         if mol is None: continue
         # Return a dict/class here - indicating which filters passed
-        count = filter_to_use.perform_reaction(mol,args.reaction,reagent_suppl,writer,count)
+        count += filter_to_use.perform_reaction(mol,args.reaction,reagent_suppl,writer,count)
 
     utils.log("Created", count, "molecules from a total of ", i , "input molecules")
 
@@ -60,6 +58,8 @@ def main():
     writer.close()
     if input:
         input.close()
+    if reagent_input:
+        reagent_input.close()
     if output:
         output.close()
     # close the individual writers
@@ -68,7 +68,7 @@ def main():
             writer_dict[key].close()
 
     if args.meta:
-        utils.write_metrics(output_base, {'__InputCount__': i, '__OutputCount__': count, 'RxnSmartsFilter': count})
+        utils.write_metrics(output_base, {'__InputCount__': i, '__OutputCount__': count, 'RxnMaker': count})
 
 
 if __name__ == "__main__":
