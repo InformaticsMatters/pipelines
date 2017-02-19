@@ -1,6 +1,6 @@
 { "serviceConfig": {
   "id": "pipelines.xchem.reaction.maker.v1",
-  "name": "XChem Reaction Maker",
+  "name": "XChemReactionMaker",
   "description": "XChem react molecules and reactants",
   "tags": [ "rdkit", "xchem", "enumeration", "reaction", "docker" ],
   "resourceUrl": null,

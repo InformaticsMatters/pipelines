@@ -1,6 +1,6 @@
 { "serviceConfig": {
   "id": "pipelines.rdkit.screen.multi",
-  "name": "RDKit Multi-similarity Screening",
+  "name": "RDKitMultiSimilarityScreening",
   "description": "RDKit Similarity Screening against multiple query structures",
   "tags": [ "rdkit", "screening", "similarity", "docker" ],
   "resourceUrl": null,

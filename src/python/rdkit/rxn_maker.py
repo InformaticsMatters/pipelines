@@ -50,7 +50,7 @@ def main():
         i+=1
         if mol is None: continue
         # Return a dict/class here - indicating which filters passed
-        count += filter_to_use.perform_reaction(mol,args.reaction,reagent_suppl,writer,count)
+        count = filter_to_use.perform_reaction(mol,args.reaction,reagent_suppl,writer,count)
 
     utils.log("Created", count, "molecules from a total of ", i , "input molecules")
 
