@@ -186,7 +186,7 @@ class Filter(object):
                     products.extend(rxn.RunReactants(p,))
         return products
 
-    def perform_reaction(self, input_molecule, reaction_name, reactant_lib, writer,i):
+    def perform_reaction(self, input_molecule, reaction_name, reactant_mol, writer,i):
         """Take an input molecule and a library of reactants
         React - and form the products.
         :param input_molecule: the input molecule to be reacted
@@ -199,22 +199,19 @@ class Filter(object):
         else:
             mol_uuid = None
         react_seq = self.reacts[reaction_name]
-        for reactant_mol in reactant_lib:
-            if reactant_mol is None:
-                continue
-            if reactant_mol.HasProp('uuid'):
-                reactant_uuid = reactant_mol.GetProp('uuid')
-            else:
-                reactant_uuid = None
-            products = [Chem.MolFromSmiles(x) for x in self.unique_products(self.run_reaction(input_molecule,reactant_mol,react_seq)) if Chem.MolFromSmiles(x)]
-            for product in products:
-                i+=1
-                utils.generate_2d_coords(product)
-                if mol_uuid:
-                    product.SetProp("source_uuid", mol_uuid)
-                if reactant_uuid:
-                    product.SetProp("reactant_uuid", reactant_uuid)
-                writer.write(product)
+        if reactant_mol.HasProp('uuid'):
+            reactant_uuid = reactant_mol.GetProp('uuid')
+        else:
+            reactant_uuid = None
+        products = [Chem.MolFromSmiles(x) for x in self.unique_products(self.run_reaction(input_molecule,reactant_mol,react_seq)) if Chem.MolFromSmiles(x)]
+        for product in products:
+            i+=1
+            utils.generate_2d_coords(product)
+            if mol_uuid:
+                product.SetProp("source_uuid", mol_uuid)
+            if reactant_uuid:
+                product.SetProp("reactant_uuid", reactant_uuid)
+            writer.write(product)
         return i
 
     def get_subs(self,mol,reaction_name):

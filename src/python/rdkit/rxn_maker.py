@@ -32,7 +32,6 @@ def main():
         raise ValueError("Must specify output location when writing individual result files")
 
     input, suppl = utils.default_open_input(args.input, args.informat)
-    reagent_input, reagent_suppl = utils.default_open_input(args.reagent_lib, args.reagent_lib_format)
     output, writer, output_base = utils.default_open_output(args.output, "rxn_maker", args.outformat)
 
 
@@ -49,8 +48,13 @@ def main():
     for mol in suppl:
         i+=1
         if mol is None: continue
-        # Return a dict/class here - indicating which filters passed
-        count = filter_to_use.perform_reaction(mol,args.reaction,reagent_suppl,writer,count)
+        reagent_input, reagent_suppl = utils.default_open_input(args.reagent_lib, args.reagent_lib_format)
+        for r_mol in reagent_suppl:
+            if r_mol is None:
+                continue
+            # Return a dict/class here - indicating which filters passed
+            count = filter_to_use.perform_reaction(mol,args.reaction,r_mol,writer,count)
+
 
     utils.log("Created", count, "molecules from a total of ", i , "input molecules")
 
