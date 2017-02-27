@@ -92,8 +92,6 @@ def main():
             count +=1
             if not args.quiet:
                 utils.log(i,sim)
-            for name in mol.GetPropNames():
-                mol.ClearProp(name)
             mol.SetDoubleProp(field_Similarity, sim)
             writer.write(mol)
 

@@ -48,13 +48,13 @@
       "visible": true
     }
   ],
-  "executorClassName": "org.squonk.execution.steps.impl.DefaultDockerExecutorStep"
+  "executorClassName": "org.squonk.execution.steps.impl.ThinDatasetDockerExecutorStep"
   },
 
   "inputRoutes": [ "FILE" ],
   "outputRoutes": [ "FILE" ],
   "imageName": "informaticsmatters/rdkit",
-  "command": "python /pipelines/rdkit/rxn_smarts_filter.py -i input.data.gz -if json -o output -of json --meta",
+  "command": "python /pipelines/rdkit/rxn_smarts_filter.py -i input.data.gz -if json -o output -of json --thin --meta",
   "volumes": {
       "pipelines/rdkit": "/pipelines/rdkit"
     }

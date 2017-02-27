@@ -199,13 +199,13 @@
     }
 
   ],
-  "executorClassName": "org.squonk.execution.steps.impl.DefaultDockerExecutorStep"
+  "executorClassName": "org.squonk.execution.steps.impl.ThinDatasetDockerExecutorStep"
   },
-
+  "thinDescriptors": [{"input": "input", "output":"output", "filtering":true, "fieldDescriptors":[{"optionName":"arg.field","fieldName":"optimise"}]}],
   "inputRoutes": [ "FILE" ],
   "outputRoutes": [ "FILE" ],
   "imageName": "informaticsmatters/rdkit",
-  "command": "python /pipelines/rdkit/cluster_butina.py -i input.data.gz -if json -o output -of json -t ${threshold} -d ${descriptor} -m ${metric} --num ${count} --exclude ${diversity} --field ${field} ${maximise ? '--max' : '--min'} --meta",
+  "command": "python /pipelines/rdkit/cluster_butina.py -i input.data.gz -if json -o output -of json -t ${threshold} -d ${descriptor} -m ${metric} --num ${count} --exclude ${diversity} --field optimise ${maximise ? '--max' : '--min'} --thin --meta",
   "volumes": {
       "pipelines/rdkit": "/pipelines/rdkit"
     }

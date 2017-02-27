@@ -145,9 +145,9 @@
                "@class": "org.squonk.options.OptionDescriptor"
                }
   ],
-  "executorClassName": "org.squonk.execution.steps.impl.DefaultDockerExecutorStep"
+  "executorClassName": "org.squonk.execution.steps.impl.ThinDatasetDockerExecutorStep"
   },
-
+  "thinDescriptors": [{"input": "input"}],
   "inputRoutes": [ "FILE" ],
   "outputRoutes": [ "FILE" ],
   "imageName": "informaticsmatters/rdkit",
