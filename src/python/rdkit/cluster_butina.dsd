@@ -117,13 +117,13 @@
       "visible": true
     }
   ],
-  "executorClassName": "org.squonk.execution.steps.impl.DefaultDockerExecutorStep"
+  "executorClassName": "org.squonk.execution.steps.impl.ThinDatasetDockerExecutorStep"
   },
 
   "inputRoutes": [ "FILE" ],
   "outputRoutes": [ "FILE" ],
   "imageName": "informaticsmatters/rdkit",
-  "command": "python /pipelines/rdkit/cluster_butina.py -i input.data.gz -if json -o output -of json -t ${threshold} -d ${descriptor} -m ${metric} --meta",
+  "command": "python /pipelines/rdkit/cluster_butina.py -i input.data.gz -if json -o output -of json -t ${threshold} -d ${descriptor} -m ${metric} --thin --meta",
   "volumes": {
       "pipelines/rdkit": "/pipelines/rdkit"
     }

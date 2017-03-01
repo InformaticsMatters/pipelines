@@ -258,6 +258,11 @@ def create_mol_from_props(molobj):
         mol.SetProp("uuid", str(molobj["uuid"]))
     return mol
 
+def clear_mol_props(mol, exceptFor):
+    for p in mol.GetPropNames():
+        if p not in exceptFor:
+            mol.ClearProp(p)
+
 
 def generate_mols_from_json(input):
     """Create a supplier of RDKit Mol objects from the json
@@ -265,7 +270,6 @@ def generate_mols_from_json(input):
     :param input: file like object containing the json representation of the molecules
     """
     j=0
-    #for item in items(input, "item"):
     for item in input:
         j+=1
         mol = create_mol_from_props(item)

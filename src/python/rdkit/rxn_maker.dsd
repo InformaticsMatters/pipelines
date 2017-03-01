@@ -89,9 +89,12 @@
       "maxValues":1
     }
   ],
-  "executorClassName": "org.squonk.execution.steps.impl.DefaultDockerExecutorStep"
+  "executorClassName": "org.squonk.execution.steps.impl.ThinDatasetDockerExecutorStep"
   },
-
+  "thinDescriptors": [
+    {"input": "input"},
+    {"input": "reactants"}
+  ],
   "inputRoutes": [ "FILE", "FILE" ],
   "outputRoutes": [ "FILE" ],
   "imageName": "informaticsmatters/rdkit",

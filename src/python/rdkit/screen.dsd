@@ -119,7 +119,7 @@
         "asymmetric",
         "braunblanquet",
         "cosine",
-        #"dice",
+        "dice",
         "kulczynski",
         "mcconnaughey",
         "rogotgoldberg",
@@ -131,13 +131,13 @@
       "visible": true
     }
   ],
-  "executorClassName": "org.squonk.execution.steps.impl.DefaultDockerExecutorStep"
+  "executorClassName": "org.squonk.execution.steps.impl.ThinDatasetDockerExecutorStep"
   },
-
+  "thinDescriptors": [{"input": "input", "output":"output","filtering":true}],
   "inputRoutes": [ "FILE" ],
   "outputRoutes": [ "FILE" ],
   "imageName": "informaticsmatters/rdkit",
-  "command": "python /pipelines/rdkit/screen.py -i input.data.gz -if json -o output -of json --qsmiles '${query_source}' --simmin ${sim.minValue} --simmax ${sim.maxValue} -d ${descriptor} -m ${metric} --meta",
+  "command": "python /pipelines/rdkit/screen.py -i input.data.gz -if json -o output -of json --qsmiles '${query_source}' --simmin ${sim.minValue} --simmax ${sim.maxValue} -d ${descriptor} -m ${metric} --thin --meta",
   "volumes": {
       "pipelines/rdkit": "/pipelines/rdkit"
     }
