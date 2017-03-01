@@ -30,7 +30,7 @@ def generate_conformers(my_mol, NumOfConf, ref_mol, outputfile, coreSubstruct):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='RDKit conformers')
+    parser = argparse.ArgumentParser(description='RDKit constrained conformer generator')
     parser.add_argument('-n', '--num', type=int, default=10, help='number of conformers to generate')
     parser.add_argument('-r', '--refmol', help="Reference molecule file")
     parser.add_argument('-c', '--core_smi', help='Core substructure. If not specified - guessed using MCS', default='')
