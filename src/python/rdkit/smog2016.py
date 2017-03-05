@@ -39,7 +39,6 @@ def main():
     parser = argparse.ArgumentParser(description='SMoG2016 - Docking calculation.')
     utils.add_default_io_args(parser)
     parser.add_argument('-pdb', '--pdb_file', help="PDB file for scoring")
-
     args = parser.parse_args()
 
     smog_path = "/usr/local/SMoG2016_Rev1/"
@@ -48,16 +47,24 @@ def main():
 
     # Open up the input file
     input, suppl = utils.default_open_input(args.input, args.informat)
+    # Open the ouput file
     output, writer, output_base = utils.default_open_output(args.output, "SMoG2016", args.outformat)
+    out_sd = Chem.SDWriter(args.output)
 
     input_path = os.path.join(smog_path,"mol.sdf")
-    # Iter
+    # Iterate over the molecules
     for mol in suppl:
+        print("SCORING MOL")
         answer = run_and_get_ans(mol,input_path, args.pdb_file)
         mol.SetDoubleProp("SMoG2016_SCORE",answer)
+        print("SCORED MOL:"+str(answer))
+        print("SCORED MOL:"+Chem.MolToSmiles(mol))
         # Write ligand
         writer.write(mol)
-
+        out_sd.write(mol)
+        writer.flush()
+    # Close the file
+    writer.close()
 
 if __name__ == "__main__":
     main()
