@@ -14,10 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from rdkit import Chem
+from rdkit import Chem, rdBase
 from rdkit.Chem import AllChem
 from rdkit.Chem.MCS import FindMCS
-import os
 import utils
 import argparse
 
@@ -32,41 +31,68 @@ def generate_conformers(my_mol, NumOfConf, ref_mol, outputfile, coreSubstruct):
         coreSubstruct = guess_substruct(my_mol,ref_mol)
 
     # Creating core of reference ligand #
-    core1 = AllChem.DeleteSubstructs(AllChem.ReplaceSidechains(ref_mol,
-                                                               Chem.MolFromSmiles(coreSubstruct)),
+    core1 = AllChem.DeleteSubstructs(AllChem.ReplaceSidechains(ref_mol, Chem.MolFromSmiles(coreSubstruct)),
                                      Chem.MolFromSmiles('*'))
     core1.UpdatePropertyCache()
 
     # Generate conformers with constrained embed
     conf_lst = []
+    count = 0;
     for i in (xrange(NumOfConf)):
         conf_lst.append(Chem.AddHs(my_mol))
         AllChem.ConstrainedEmbed(conf_lst[i], core1, randomseed=i)
-        outputfile.write(conf_lst[i])
+        cleaned = Chem.RemoveHs(conf_lst[i])
+        outputfile.write(cleaned)
+        count+=1
+    return count
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='RDKit constrained conformer generator')
+    utils.add_default_io_args(parser)
     parser.add_argument('-n', '--num', type=int, default=10, help='number of conformers to generate')
     parser.add_argument('-r', '--refmol', help="Reference molecule file")
+    parser.add_argument('--refmolidx', help="Reference molecule index in file", type=int, default=1)
     parser.add_argument('-c', '--core_smi', help='Core substructure. If not specified - guessed using MCS', default='')
-    utils.add_default_io_args(parser)
 
 
     args = parser.parse_args()
     # Get the reference molecule
     ref_mol_input, ref_mol_suppl = utils.default_open_input(args.refmol, args.refmol)
     counter = 0
-    # Takes the last one in the SUPPL - sho
+    # Get the specified reference molecule. Default is the first
     for mol in ref_mol_suppl:
-        ref_mol = mol
         counter+=1
-    if counter >1:
-        raise ValueError("Only one molecule should be given as reference. "+str(counter)+" were given.")
+        if counter == args.refmolidx:
+            ref_mol = mol
+            break
+    ref_mol_input.close()
+
+    if counter < args.refmolidx:
+        raise ValueError("Invalid refmolidx. " + str(args.refmolidx) + " was specified but only " + str(counter) + " molecules were present in refmol.")
+
+
+    # handle metadata
+    source = "constrained_conf_gen.py"
+    datasetMetaProps = {"source":source, "description": "Constrained conformer generation using RDKit " + rdBase.rdkitVersion}
+    clsMappings = {"EmbedRMS": "java.lang.Float"}
+    fieldMetaProps = [{"fieldName":"EmbedRMS", "values": {"source":source, "description":"Embedding RMS value"}}]
 
     # Get the molecules
     input, suppl = utils.default_open_input(args.input, args.informat)
-    output, writer, output_base = utils.default_open_output(args.output, "rxn_maker", args.outformat)
+    output, writer, output_base = utils.default_open_output(args.output, "const_conf_gen", args.outformat,
+                                                            valueClassMappings=clsMappings, datasetMetaProps=datasetMetaProps, fieldMetaProps=fieldMetaProps)
 
+    inputs = 0
+    total = 0
     for mol in suppl:
-        generate_conformers(mol, args.num, ref_mol, writer, args.core_smi)
+        inputs += 1
+        if mol:
+            total += generate_conformers(mol, args.num, ref_mol, writer, args.core_smi)
+
+    input.close()
+    writer.close()
+
+    # write metrics
+    if args.meta:
+        utils.write_metrics(output_base, {'__InputCount__':inputs, '__OutputCount__':total,'RDKitConstrainedConformer':total})

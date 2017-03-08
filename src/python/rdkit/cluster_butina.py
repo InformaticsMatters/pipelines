@@ -14,11 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import argparse
-import utils
-from rdkit.Chem import AllChem
-from rdkit.Chem import MACCSkeys
-from rdkit import DataStructs
+import argparse,  utils
+from rdkit import DataStructs, rdBase
+from rdkit.Chem import AllChem, MACCSkeys
 from rdkit.Chem.Fingerprints import FingerprintMols
 from rdkit.ML.Cluster import Butina
 
@@ -193,7 +191,7 @@ def main():
 
     # handle metadata
     source = "cluster_butina.py"
-    datasetMetaProps = {"source":source, "description": "Butina clustering using RDKit"}
+    datasetMetaProps = {"source":source, "description": "Butina clustering using RDKit " + rdBase.rdkitVersion}
     clsMappings = {"Cluster": "java.lang.Integer"}
     fieldMetaProps = [{"fieldName":"Cluster", "values": {"source":source, "description":"Cluster number"}}]
 

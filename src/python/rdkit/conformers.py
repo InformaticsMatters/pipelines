@@ -15,7 +15,7 @@
 # limitations under the License.
 
 import utils
-from rdkit import Chem
+from rdkit import Chem, rdBase
 from rdkit.Chem import AllChem, TorsionFingerprints
 from rdkit.ML.Cluster import Butina
 import collections
@@ -46,7 +46,7 @@ def process_mol_conformers(mol, i, numConfs, maxAttempts, pruneRmsThresh, cluste
         # energy minimise (optional) and energy calculation
         props = collections.OrderedDict()
         energy = calc_energy(mol, conformerId, minimizeIterations, props)
-        if energy < minEnergy:
+        if energy and energy < minEnergy:
             minEnergy = energy
         conformerPropsDict[conformerId] = props
     # cluster the conformers
@@ -84,10 +84,11 @@ def write_conformers(mol, i, conformerPropsDict, minEnergy, writer):
         props = conformerPropsDict[id]
         for key in props:
             mol.SetProp(key, str(props[key]))
+        if field_EnergyAbs in props:
             energy = props[field_EnergyAbs]
-        if energy:
-            mol.SetDoubleProp(field_EnergyAbs, energy)
-            mol.SetDoubleProp(field_EnergyDelta, energy - minEnergy)
+            if energy:
+                mol.SetDoubleProp(field_EnergyAbs, energy)
+                mol.SetDoubleProp(field_EnergyDelta, energy - minEnergy)
         writer.write(mol, confId=id)
 
     
@@ -98,12 +99,16 @@ def gen_conformers(mol, numConfs=1, maxAttempts=1, pruneRmsThresh=0.1, useExpTor
     
 def calc_energy(mol, conformerId, minimizeIts, props):
     ff = AllChem.MMFFGetMoleculeForceField(mol, AllChem.MMFFGetMoleculeProperties(mol), confId=conformerId)
-    ff.Initialize()
-    if minimizeIts > 0:
-        props[field_MinimizationConverged] = ff.Minimize(maxIts=minimizeIts)
-    e = ff.CalcEnergy()
-    props[field_EnergyAbs] = e
-    return e
+    if ff:
+        # creating ff sometimes fails dues to bad atom types
+        ff.Initialize()
+        if minimizeIts > 0:
+            props[field_MinimizationConverged] = ff.Minimize(maxIts=minimizeIts)
+        e = ff.CalcEnergy()
+        props[field_EnergyAbs] = e
+        return e
+    else:
+        return None
     
 def cluster_conformers(mol, mode="RMSD", threshold=2.0):
     if mode == "TFD":
@@ -145,13 +150,34 @@ def main():
         
     utils.log("Conformers Args: ",args)
 
+    source = "conformers.py"
+    datasetMetaProps = {"source":source, "description": "Conformer generation using RDKit " + rdBase.rdkitVersion}
+    clsMappings = {
+        "RMSToCentroid": "java.lang.Float",
+        "EnergyDelta": "java.lang.Float",
+        "EnergyAbs": "java.lang.Float",
+        "ConformerNum": "java.lang.Integer",
+        "ClusterCentroid": "java.lang.Integer",
+        "ClusterNum": "java.lang.Integer",
+        "StructureNum": "java.lang.Integer"}
+    fieldMetaProps = [
+        {"fieldName":"RMSToCentroid",   "values": {"source":source, "description":"RMS distance to the cluster centroid"}},
+        {"fieldName":"EnergyDelta",     "values": {"source":source, "description":"Energy difference to lowest energy structure"}},
+        {"fieldName":"EnergyAbs",       "values": {"source":source, "description":"Absolute energy"}},
+        {"fieldName":"ConformerNum",    "values": {"source":source, "description":"Conformer number"}},
+        {"fieldName":"ClusterCentroid", "values": {"source":source, "description":"Conformer number of the cluster centroid"}},
+        {"fieldName":"ClusterNum",      "values": {"source":source, "description":"Cluster number"}},
+        {"fieldName":"StructureNum",    "values": {"source":source, "description":"Structure number this conformer was generated from"}}
+    ]
+
+
     if args.smiles:
         mol = Chem.MolFromSmiles(args.smiles)
         suppl = [mol]
         input = None
-        output,writer,output_base = utils.default_open_output(args.output, 'conformers', args.outformat)
+        output,writer,output_base = utils.default_open_output(args.output, 'conformers', args.outformat, valueClassMappings=clsMappings, datasetMetaProps=datasetMetaProps, fieldMetaProps=fieldMetaProps)
     else:
-        input,output,suppl,writer,output_base = utils.default_open_input_output(args.input, args.informat, args.output, 'conformers', args.outformat)
+        input,output,suppl,writer,output_base = utils.default_open_input_output(args.input, args.informat, args.output, 'conformers', args.outformat, valueClassMappings=clsMappings, datasetMetaProps=datasetMetaProps, fieldMetaProps=fieldMetaProps)
 
     # OK, all looks good so we can hope that things will run OK.
     # But before we start lets write the metadata so that the results can be handled.

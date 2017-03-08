@@ -70,7 +70,7 @@
                "modes": [  "User" ],
                "editable": true,
                "visible": true,
-               "description": "Number of attempts",
+               "description": "Number of attempts to generate conformers",
                "label": "Number of attempts",
                "key": "arg.attempts",
                "minValues": 0,

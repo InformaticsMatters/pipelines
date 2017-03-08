@@ -92,7 +92,7 @@ def default_open_input_smiles(inputDef, delimiter='\t', smilesColumn=0, nameColu
 
 
 def open_file(filename):
-    """Open the file as a SDF gunzipping it if it ends with .gz"""
+    """Open the file gunzipping it if it ends with .gz"""
     if filename.lower().endswith('.gz'):
         return gzip.open(filename)
     else:
@@ -230,6 +230,37 @@ def write_metrics(baseName, values):
     m.flush()
     m.close()
 
+
+def read_single_molecule(filename, index=1, format=None):
+    """Read a single molecule as a RDKit Mol object. This can come from a file in molfile or SDF format.
+    If SDF then you can also specify an index of the molecule that is read (default is the first)
+    """
+    mol = None
+    if format == 'mol' or filename.lower().endswith('.mol') or filename.lower().endswith('.mol.gz'):
+        file = open_file(filename)
+        mol = Chem.MolFromMolBlock(file.read())
+        file.close()
+    elif format == 'sdf' or filename.lower().endswith('.sdf') or filename.lower().endswith('.sdf.gz'):
+        file = open_file(filename)
+        supplier = Chem.ForwardSDMolSupplier(file)
+        for i in range(0,index):
+            if supplier.atEnd():
+                break
+            mol = supplier.next()
+        file.close()
+    elif format == 'json' or filename.lower().endswith('.data') or filename.lower().endswith('.data.gz'):
+        input, suppl = default_open_input_json(filename)
+        for i in range(0,index):
+            try:
+                mol = suppl.next()
+            except StopIteration:
+                break
+        input.close()
+
+    if not mol:
+        raise ValueError("Unable to read molecule")
+
+    return mol
 
 
 def parse_mol_simple(my_type, txt):
