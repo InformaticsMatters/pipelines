@@ -168,10 +168,10 @@ def create_simple_writer(outputDef, defaultOutput, outputFormat, fieldNames, com
 
         write_squonk_datasetmetadata(outputBase, True, valueClassMappings, datasetMetaProps, fieldMetaProps)
 
-        return TsvWriter(open_output(outputDef, 'data', compress))
+        return BasicObjectWriter(open_output(outputDef, 'data', compress)), outputBase
 
     elif outputFormat == 'tsv':
-        return TsvWriter(open_output(outputDef, 'tsv', compress))
+        return TsvWriter(open_output(outputDef, 'tsv', compress), fieldNames), outputBase
 
     else:
         raise ValueError("Unsupported format: " + outputFormat)
