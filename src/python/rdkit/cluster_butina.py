@@ -57,15 +57,17 @@ def ClusterFps(fps, metric, cutoff):
     # dist is the part of the distance matrix below the diagonal as an array:
     # 1.0, 2.0, 2.1, 3.0, 3.1, 3.2 ...
     nfps = len(fps)
+    matrix = []
     for i in range(1,nfps):
 
         func = metrics[metric]
         sims = func(fps[i],fps[:i])
         dists.extend([1-x for x in sims])
+        matrix.append(sims)
 
     # now cluster the data:
     cs = Butina.ClusterData(dists,nfps,cutoff,isDistData=True)
-    return cs,dists
+    return cs,dists,matrix
 
 def ClustersToMap(clusters):
     d = {}
@@ -156,7 +158,7 @@ def main():
 
     ### command line args defintions #########################################
 
-    parser = argparse.ArgumentParser(description='RDKit screen')
+    parser = argparse.ArgumentParser(description='RDKit Butina Cluster')
     parser.add_argument('-t', '--threshold', type=float, default=0.7, help='similarity clustering threshold (1.0 means identical)')
     parser.add_argument('-d', '--descriptor', type=str.lower, choices=list(descriptors.keys()), default='rdkit', help='descriptor or fingerprint type (default rdkit)')
     parser.add_argument('-m', '--metric', type=str.lower, choices=list(metrics.keys()), default='tanimoto', help='similarity metric (default tanimoto)')
@@ -205,7 +207,7 @@ def main():
 
     ### do clustering
     utils.log("Clustering with descriptor",args.descriptor,"metric",args.metric,"and threshold",args.threshold)
-    clusters, dists = ClusterFps(fps, args.metric, 1.0 - args.threshold)
+    clusters, dists, matrix = ClusterFps(fps, args.metric, 1.0 - args.threshold)
 
     utils.log("Found",len(clusters),"clusters")
 

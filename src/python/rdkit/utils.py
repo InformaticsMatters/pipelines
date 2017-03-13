@@ -21,6 +21,8 @@ from rdkit import Chem
 from rdkit.Chem import AllChem
 from sanifix import fix_mol
 from StreamJsonListLoader import StreamJsonListLoader
+from BasicObjectWriter import BasicObjectWriter
+from TsvWriter import TsvWriter
 
 
 
@@ -30,13 +32,18 @@ def log(*args, **kwargs):
     """
     print(*args, file=sys.stderr, **kwargs)
 
-
-def add_default_io_args(parser):
+def add_default_input_args(parser):
     parser.add_argument('-i', '--input', help="Input SD file, if not defined the STDIN is used")
-    parser.add_argument('-o', '--output', help="Base name for output file (no extension). If not defined then SDTOUT is used for the structures and output is used as base name of the other files.")
     parser.add_argument('-if', '--informat', choices=['sdf', 'json'], help="Input format. When using STDIN this must be specified.")
+
+def add_default_output_args(parser):
+    parser.add_argument('-o', '--output', help="Base name for output file (no extension). If not defined then SDTOUT is used for the structures and output is used as base name of the other files.")
     parser.add_argument('-of', '--outformat', choices=['sdf', 'json'], help="Output format. Defaults to 'sdf'.")
     parser.add_argument('--meta', action='store_true', help='Write metadata and metrics files')
+
+def add_default_io_args(parser):
+    add_default_input_args(parser)
+    add_default_output_args(parser)
 
 
 def default_open_input_output(inputDef, inputFormat, outputDef, defaultOutput, outputFormat, thinOutput=False, valueClassMappings=None,
@@ -131,7 +138,7 @@ def default_open_input_json(inputDef, lazy=True):
     return input, suppl
 
 
-def default_open_output(outputDef, defaultOutput, outputFormat, thinOutput=False, valueClassMappings=None, datasetMetaProps=None, fieldMetaProps=None):
+def default_open_output(outputDef, defaultOutput, outputFormat, compress=True, thinOutput=False, valueClassMappings=None, datasetMetaProps=None, fieldMetaProps=None):
     if not outputFormat:
         log("No output format specified - using sdf")
         outputFormat = 'sdf'
@@ -141,14 +148,48 @@ def default_open_output(outputDef, defaultOutput, outputFormat, thinOutput=False
         outputBase = outputDef
 
     if outputFormat == 'sdf':
-        output,writer = default_open_output_sdf(outputDef, outputBase, thinOutput)
+        output,writer = default_open_output_sdf(outputDef, outputBase, thinOutput, compress)
     elif outputFormat == 'json':
-        output,writer = default_open_output_json(outputDef, outputBase, thinOutput, valueClassMappings, datasetMetaProps, fieldMetaProps)
+        output,writer = default_open_output_json(outputDef, outputBase, thinOutput, compress, valueClassMappings, datasetMetaProps, fieldMetaProps)
     else:
         raise ValueError('Unsupported output format')
     return output,writer,outputBase
 
 
+def create_simple_writer(outputDef, defaultOutput, outputFormat, fieldNames, compress=True, valueClassMappings=None, datasetMetaProps=None, fieldMetaProps=None):
+    """Create a simple writer suitable for writing flat data e.g. as BasicObject or TSV"""
+
+    if not outputDef:
+        outputBase = defaultOutput
+    else:
+        outputBase = outputDef
+
+    if outputFormat == 'json':
+
+        write_squonk_datasetmetadata(outputBase, True, valueClassMappings, datasetMetaProps, fieldMetaProps)
+
+        return TsvWriter(open_output(outputDef, 'data', compress))
+
+    elif outputFormat == 'tsv':
+        return TsvWriter(open_output(outputDef, 'tsv', compress))
+
+    else:
+        raise ValueError("Unsupported format: " + outputFormat)
+
+def open_output(basename, ext, compress):
+    if basename:
+        fname = basename + '.' + ext
+        if compress:
+            fname += ".gz"
+            return gzip.open(fname, 'w+')
+        else:
+            return open(fname, 'w+')
+    else:
+        if compress:
+            # TODO - work out how to write compressed data to STDOUT
+            return sys.stdout
+        else:
+            return sys.stdout
 
 def write_squonk_datasetmetadata(outputBase, thinOutput, valueClassMappings, datasetMetaProps, fieldMetaProps):
     """This is a temp hack to write the minimal metadata that Squonk needs.
@@ -187,11 +228,9 @@ def write_squonk_datasetmetadata(outputBase, thinOutput, valueClassMappings, dat
     meta.close()
 
 
-def default_open_output_sdf(outputDef, outputBase, thinOutput):
-    if outputDef:
-        output = gzip.open(outputDef + '.sdf.gz','w+')
-    else:
-        output = sys.stdout
+def default_open_output_sdf(outputDef, outputBase, thinOutput, compress):
+
+    output = open_output(outputDef, 'sdf', compress)
 
     if thinOutput:
         writer = ThinSDWriter(output)
@@ -200,22 +239,18 @@ def default_open_output_sdf(outputDef, outputBase, thinOutput):
     return output, writer
 
 
-def default_open_output_json(outputDef, outputBase, thinOutput, valueClassMappings, datasetMetaProps, fieldMetaProps):
+def default_open_output_json(outputDef, outputBase, thinOutput, compress, valueClassMappings, datasetMetaProps, fieldMetaProps):
 
     # this is writes the metadata that Squonk needs
     write_squonk_datasetmetadata(outputBase, thinOutput, valueClassMappings, datasetMetaProps, fieldMetaProps)
 
-    if outputDef:
-        output = gzip.open(outputDef + '.data.gz','w+')
-    else:
-        output = sys.stdout
+    output = open_output(outputDef, 'data', compress)
 
     if thinOutput:
         writer = ThinJsonWriter(output)
     else:
         writer = ThickJsonWriter(output)
     return output,writer
-
 
 
 def write_metrics(baseName, values):
