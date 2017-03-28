@@ -55,7 +55,7 @@ def split(input, informat, fieldName, outputBase):
                 writer = writers[s]
             else:
                 name = outputBase + s
-                output, writer = utils.default_open_output_sdf(name, outputBase, False, gzip=False)
+                output, writer = utils.default_open_output_sdf(name, outputBase, False, False)
                 filenames.append(name + '.sdf')
                 outputs.append(output)
                 writers[s] = writer
