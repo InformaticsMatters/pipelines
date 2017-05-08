@@ -52,7 +52,7 @@ def fragment(mol, mode, quiet=False):
         
         # copy the properties across
         for name in mol.GetPropNames():
-            biggest_mol.PutProp(name, mol.GetProp(name))
+            biggest_mol.SetProp(name, mol.GetProp(name))
         return biggest_mol
             
 def filter_by_heavy_atom_count(mol, minCount, maxCount, quiet=False):

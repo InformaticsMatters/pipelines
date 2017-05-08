@@ -1,0 +1,73 @@
+{
+  "serviceConfig": {
+    "id": "pipelines.pli.v1",
+    "name": "PLI score",
+    "description": "Score docked conformations using PLI",
+    "tags": [
+      "pli",
+      "docking",
+      "scoring",
+      "3d",
+      "docker"
+    ],
+    "resourceUrl": null,
+    "icon": "icons/filter_molecules.png",
+    "inputDescriptors": [
+      {
+        "primaryType": "org.squonk.dataset.Dataset",
+        "secondaryType": "org.squonk.types.MoleculeObject",
+        "mediaType": "application/x-squonk-dataset-molecule+json",
+        "name": "input"
+      },
+      {
+        "primaryType": "org.squonk.types.PDBFile",
+        "mediaType": "chemical/x-pdb",
+        "name": "protein"
+      }
+    ],
+    "outputDescriptors": [
+      {
+        "primaryType": "org.squonk.dataset.Dataset",
+        "secondaryType": "org.squonk.types.MoleculeObject",
+        "mediaType": "application/x-squonk-dataset-molecule+json",
+        "name": "output"
+      }
+    ],
+    "optionDescriptors": [
+      {
+        "modes": [
+          "User"
+        ],
+        "editable": true,
+        "visible": true,
+        "label": "Score threshold",
+        "description": "Keep only molecules with scores better than this value",
+        "key": "arg.threshold",
+        "minValues": 0,
+        "maxValues": 1,
+        "typeDescriptor": {
+          "type": "java.lang.Float",
+          "@class": "org.squonk.options.SimpleTypeDescriptor"
+        },
+        "@class": "org.squonk.options.OptionDescriptor"
+      }
+    ],
+    "executorClassName": "org.squonk.execution.steps.impl.ThinDatasetDockerExecutorStep"
+  },
+  "thinDescriptors": [
+    {
+      "input": "input"
+    }
+  ],
+  "inputRoutes": [
+    "FILE", "FILE"
+  ],
+  "outputRoutes": [
+    "FILE"
+  ],
+  "imageName": "abradle/pli",
+    "command": "source activate my-rdkit-env && python /pipelines/rdkit/plip.py -i input.data.gz -pdb protein.pdb.gz -o output -of json",
+  "volumes": {
+    "pipelines/rdkit": "/pipelines/rdkit"
+  }
+}
