@@ -88,9 +88,26 @@
         "maxValues": 1,
         "defaultValue": 1,
         "typeDescriptor": {
-        "type": "java.lang.Integer",
-        "@class": "org.squonk.options.SimpleTypeDescriptor"
+          "type": "java.lang.Integer",
+          "@class": "org.squonk.options.SimpleTypeDescriptor"
+        },
+        "@class": "org.squonk.options.OptionDescriptor"
       },
+      {
+        "modes": [
+          "User"
+        ],
+        "editable": true,
+        "visible": true,
+        "description": "Core smiles to constrain (optional)",
+        "label": "Core smiles",
+        "key": "arg.coresmiles",
+        "minValues": 0,
+        "maxValues": 1,
+        "typeDescriptor": {
+          "type": "java.lang.String",
+          "@class": "org.squonk.options.SimpleTypeDescriptor"
+        },
         "@class": "org.squonk.options.OptionDescriptor"
       }
     ],
@@ -108,7 +125,7 @@
     "FILE"
   ],
   "imageName": "informaticsmatters/rdkit",
-  "command": "python /pipelines/rdkit/constrained_conf_gen.py -i input.data.gz -o output -of json -n $num -r refMol.data.gz --refmolidx $refmolidx --meta",
+  "command": "python /pipelines/rdkit/constrained_conf_gen.py -i input.data.gz -o output -of json -n $num -r refMol.data.gz --refmolidx $refmolidx${binding.variables.containsKey('coresmiles') ? ' -c \"' + binding.variables.get('coresmiles') + '\"': ''} --meta",
   "volumes": {
     "pipelines/rdkit": "/pipelines/rdkit"
   }
