@@ -30,11 +30,12 @@ SUCCESS = 0
 
 def run_and_get_ans(mol):
     global PDB_PATH
-    smogmol = tempfile.NamedTemporaryFile("w",delete=True).name
+    smogmol = tempfile.NamedTemporaryFile("w",suffix=".sdf",delete=True).name
     out_f = open(smogmol, "w")
     out_f.write(Chem.MolToMolBlock(mol))
     out_f.close()
     # Run command
+    utils.log(["/usr/local/SMoG2016_Rev1/SMoG2016.exe", PDB_PATH, smogmol, "DeltaG"])
     proc = subprocess.Popen(["/usr/local/SMoG2016_Rev1/SMoG2016.exe", PDB_PATH, smogmol, "DeltaG"],
                             stdout=subprocess.PIPE)
     # Parse the output
@@ -48,35 +49,43 @@ def run_and_get_ans(mol):
 def run_dock(mol):
     global COUNTER
     global SUCCESS
+    global THRESHOLD
     answer = run_and_get_ans(mol)
+    COUNTER+=1
     if answer is None:
         utils.log("FAILED MOL", Chem.MolToSmiles(mol))
-    else:
-        mol.SetDoubleProp("SMoG2016_SCORE", answer)
-        utils.log("SCORED MOL:", Chem.MolToSmiles(mol), answer)
-        # Write ligand
-        lock.acquire()
-        SUCCESS+=1
-        WRITER.write(mol)
-        WRITER.flush()
-        lock.release()
-    COUNTER+=1
+        return
+    if THRESHOLD is not None:
+        print(answer,THRESHOLD)
+        if answer > THRESHOLD:
+            utils.log("UNDER THRESHOLD", Chem.MolToSmiles(mol))
+            return
+    mol.SetDoubleProp("SMoG2016_SCORE", answer)
+    utils.log("SCORED MOL:", Chem.MolToSmiles(mol), answer)
+    # Write ligand
+    lock.acquire()
+    SUCCESS+=1
+    WRITER.write(mol)
+    WRITER.flush()
+    lock.release()
+    return
 
 def main():
-    global WRITER
+    global WRITER,THRESHOLD
     global PDB_PATH
     parser = argparse.ArgumentParser(description='SMoG2016 - Docking calculation.')
     utils.add_default_io_args(parser)
     parser.add_argument('--no-gzip', action='store_true', help='Do not compress the output (STDOUT is never compressed')
     parser.add_argument('-pdb', '--pdb_file', help="PDB file for scoring")
+    parser.add_argument('-threshold', '--threshold', help="The maximum score to allow", default=None)
     args = parser.parse_args()
 
     smog_path = "/usr/local/SMoG2016_Rev1/"
+    THRESHOLD = float(args.threshold)
     PDB_PATH = args.pdb_file
     # Open up the input file
     input, suppl = utils.default_open_input(args.input, args.informat)
     # Open the ouput file
-
     output, WRITER, output_base = utils.default_open_output(args.output, "SMoG2016", args.outformat, compress=not args.no_gzip)
 
     # Cd to the route of the action

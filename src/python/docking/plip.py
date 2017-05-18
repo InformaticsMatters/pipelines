@@ -29,6 +29,7 @@ PDB_PATH = ""
 WRITER = ""
 COUNTER = 0
 SUCCESS = 0
+THRESHOLD = None
 
 
 def run_and_get_ans(mol, pdb_path):
@@ -48,12 +49,15 @@ def run_and_get_ans(mol, pdb_path):
     return json.loads(me)
 
 def run_dock(mol):
-    global WRITER,COUNTER,SUCCESS
+    global WRITER,COUNTER,SUCCESS,THRESHOLD
     answer_dict = run_and_get_ans(mol, PDB_PATH)
+    COUNTER += 1
     if not answer_dict:
         utils.log("FAILED MOL", Chem.MolToSmiles(mol))
-        COUNTER+=1
         return
+    if THRESHOLD is not None:
+        if answer_dict["system"]["pliff_score"] > THRESHOLD:
+            return
     for ans in answer_dict["system"]:
         if ans.startswith(u"pliff"):
             mol.SetDoubleProp(str(ans), answer_dict["system"][ans])
@@ -65,19 +69,22 @@ def run_dock(mol):
     lock.release()
 
 def main():
-    global PDB_PATH,WRITER
+    global PDB_PATH,WRITER,THRESHOLD
     parser = argparse.ArgumentParser(description='SMoG2016 - Docking calculation.')
     utils.add_default_io_args(parser)
     parser.add_argument('--no-gzip', action='store_true', help='Do not compress the output (STDOUT is never compressed')
     parser.add_argument('-pdb', '--pdb_file', help="PDB file for scoring")
+    parser.add_argument('-threshold', '--threshold', help="The maximum score to allow", default=None)
+
     args = parser.parse_args()
 
     # Open up the input file
     input, suppl = utils.default_open_input(args.input, args.informat)
     # Open the ouput file
+    output, WRITER, output_base = utils.default_open_output(args.output, "plip", args.outformat, compress=not args.no_gzip)
 
     PDB_PATH = args.pdb_file
-    output, WRITER, output_base = utils.default_open_output(args.output, "plip", args.outformat, compress=not args.no_gzip)
+    THRESHOLD = float(args.threshold)
 
     # Iterate over the molecules
     pool = ThreadPool(multiprocessing.cpu_count())
