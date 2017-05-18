@@ -14,10 +14,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import utils, conformers
+import argparse
+
 from rdkit import Chem, rdBase
 from rdkit.Chem import rdMolAlign
-import argparse
+
+import conformers
+from src.python import utils
 
 ### start field name defintions #########################################
 
@@ -40,7 +43,7 @@ def doO3Dalign(i, mol, qmol, threshold, perfect_score, writer, conformerProps=No
         
     #utils.log("Best score = ",best_score)
     if not threshold or perfect_score - best_score < threshold:
-        utils.log(i,align,score,Chem.MolToSmiles(mol,isomericSmiles=True))
+        utils.log(i, align, score, Chem.MolToSmiles(mol, isomericSmiles=True))
         mol.SetDoubleProp(field_O3DAScore, score)
         if conformerProps and minEnergy:
             eAbs = conformerProps[conf_id][(conformers.field_EnergyAbs)]
@@ -68,7 +71,7 @@ def main():
     utils.add_default_io_args(parser)
 
     args = parser.parse_args()
-    utils.log("o3dAlign Args: ",args)
+    utils.log("o3dAlign Args: ", args)
 
     qmol = utils.read_single_molecule(args.query, index=args.qmolidx)
     qmol = Chem.RemoveHs(qmol)
@@ -94,7 +97,7 @@ def main():
     pyO3A = rdMolAlign.GetO3A(qmol2, qmol)
     perfect_align = pyO3A.Align()
     perfect_score = pyO3A.Score()
-    utils.log('Perfect score:',perfect_align,perfect_score,Chem.MolToSmiles(qmol,isomericSmiles=True), qmol.GetNumAtoms())
+    utils.log('Perfect score:', perfect_align, perfect_score, Chem.MolToSmiles(qmol, isomericSmiles=True), qmol.GetNumAtoms())
 
     i=0
     count = 0
@@ -118,7 +121,7 @@ def main():
     output.close()
 
     if args.meta:
-        utils.write_metrics(output_base, {'__InputCount__':i, '__OutputCount__':count,'RDKitO3DAlign':total})
+        utils.write_metrics(output_base, {'__InputCount__':i, '__OutputCount__':count, 'RDKitO3DAlign':total})
 
 if __name__ == "__main__":
     main()

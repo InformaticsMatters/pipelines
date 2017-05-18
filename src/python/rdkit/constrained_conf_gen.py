@@ -14,11 +14,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import argparse
+
 from rdkit import Chem, rdBase
 from rdkit.Chem import AllChem
 from rdkit.Chem.MCS import FindMCS
-import utils
-import argparse
+
+from src.python import utils
 
 
 def guess_substruct(mol_one, mol_two):
@@ -95,4 +97,4 @@ if __name__ == '__main__':
 
     # write metrics
     if args.meta:
-        utils.write_metrics(output_base, {'__InputCount__':inputs, '__OutputCount__':total,'RDKitConstrainedConformer':total})
+        utils.write_metrics(output_base, {'__InputCount__':inputs, '__OutputCount__':total, 'RDKitConstrainedConformer':total})

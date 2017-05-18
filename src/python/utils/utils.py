@@ -19,10 +19,10 @@ from __future__ import print_function
 import sys, gzip, json, uuid
 from rdkit import Chem
 from rdkit.Chem import AllChem
-from sanifix import fix_mol
-from StreamJsonListLoader import StreamJsonListLoader
-from BasicObjectWriter import BasicObjectWriter
-from TsvWriter import TsvWriter
+from src.python.rdkit.sanifix import fix_mol
+from src.python.rdkit.StreamJsonListLoader import StreamJsonListLoader
+from src.python.rdkit.BasicObjectWriter import BasicObjectWriter
+from src.python.rdkit.TsvWriter import TsvWriter
 
 
 

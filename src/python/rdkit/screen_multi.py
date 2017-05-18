@@ -14,12 +14,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import utils, filter
-import sys, gzip, argparse
+import argparse
+
+from rdkit import DataStructs
 from rdkit.Chem import AllChem
 from rdkit.Chem import MACCSkeys
-from rdkit import DataStructs
 from rdkit.Chem.Fingerprints import FingerprintMols
+
+import filter
+from src.python import utils
 
 ### start field name defintions #########################################
 
@@ -81,7 +84,7 @@ def main():
     parser.add_argument('-q', '--quiet', action='store_true', help='Quiet mode')
 
     args = parser.parse_args()
-    utils.log("Screen Args: ",args)
+    utils.log("Screen Args: ", args)
 
     descriptor = descriptors[args.descriptor.lower()]
     metric = metrics[args.metric.lower()]
@@ -89,7 +92,7 @@ def main():
     propName = args.qprop
     if args.qsmiles:
         queryMolsupplier = utils.default_open_input_smiles(args.qsmiles, delimiter=args.qsmilesDelimiter, smilesColumn=args.qsmilesColumn,
-            nameColumn=args.qsmilesNameColumn, titleLine=args.qsmilesTitleLine)
+                                                           nameColumn=args.qsmilesNameColumn, titleLine=args.qsmilesTitleLine)
         queryInput = None
     elif args.qsdf:
         queryInput, queryMolsupplier = utils.default_open_input_sdf(args.qsdf)
@@ -108,7 +111,7 @@ def main():
         if q:
             queryFps[q] = descriptor(q)
         else:
-            utils.log("WARNING: Failed to parse Molecule",count)
+            utils.log("WARNING: Failed to parse Molecule", count)
     if queryInput:
         queryInput.close()
 
@@ -146,7 +149,7 @@ def main():
             if sim >= args.simmin and sim <= args.simmax:
                 hits += 1
                 if not args.quiet:
-                    utils.log(i,idx,sim)
+                    utils.log(i, idx, sim)
                 if sim > bestScore:
                     bestScore = sim
                     bestIdx = idx
@@ -167,7 +170,7 @@ def main():
             mol.SetIntProp(field_Similarity + "_Count", hits)
             writer.write(mol)
 
-    utils.log("Found",count,"similar molecules")
+    utils.log("Found", count, "similar molecules")
 
     writer.flush()
     writer.close()
@@ -175,7 +178,7 @@ def main():
     output.close()
 
     if args.meta:
-        utils.write_metrics(output_base, {'__InputCount__':i, '__OutputCount__':count,'RDKitScreen':count})
+        utils.write_metrics(output_base, {'__InputCount__':i, '__OutputCount__':count, 'RDKitScreen':count})
 
     return count
     

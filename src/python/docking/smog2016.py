@@ -14,9 +14,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import argparse
 import os
+import subprocess
+
 from rdkit import Chem
-import utils,argparse,subprocess
+
+from src.python import utils
 
 
 def run_and_get_ans(mol, pdb_path):

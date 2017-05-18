@@ -14,10 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import argparse, collections, uuid
+import argparse
+import collections
+import uuid
+
 from rdkit import rdBase
 
-import utils, cluster_butina, BasicObjectWriter
+import cluster_butina
+from src.python import utils
 
 ### start field name defintions #########################################
 
@@ -93,7 +97,7 @@ def main():
     parser.add_argument('-q', '--quiet', action='store_true', help='Quiet mode')
 
     args = parser.parse_args()
-    utils.log("Cluster Matrix Args: ",args)
+    utils.log("Cluster Matrix Args: ", args)
 
     descriptor = cluster_butina.descriptors[args.descriptor]
     if descriptor is None:
@@ -125,7 +129,7 @@ def main():
     fieldNames['M2'] = 'M2'
 
     writer,output_base = utils.create_simple_writer(args.output, 'cluster_butina_matrix', args.outformat, fieldNames,
-                                            valueClassMappings=clsMappings, datasetMetaProps=datasetMetaProps, fieldMetaProps=fieldMetaProps)
+                                                    valueClassMappings=clsMappings, datasetMetaProps=datasetMetaProps, fieldMetaProps=fieldMetaProps)
 
 
     ### generate fingerprints
@@ -135,14 +139,14 @@ def main():
 
 
     ### do clustering
-    utils.log("Clustering with descriptor",args.descriptor,"metric",args.metric,"and threshold",args.threshold)
+    utils.log("Clustering with descriptor", args.descriptor, "metric", args.metric, "and threshold", args.threshold)
     clusters, dists, matrix, = cluster_butina.ClusterFps(fps, args.metric, 1.0 - args.threshold)
-    utils.log("Found",len(clusters),"clusters")
+    utils.log("Found", len(clusters), "clusters")
 
     MapClusterToMols(clusters, mols)
 
     if not args.quiet:
-        utils.log("Clusters:",clusters)
+        utils.log("Clusters:", clusters)
 
     writer.writeHeader()
 
@@ -169,7 +173,7 @@ def main():
     writer.close()
 
     if args.meta:
-        utils.write_metrics(output_base, {'__InputCount__':i, '__OutputCount__':count,'RDKitCluster':i})
+        utils.write_metrics(output_base, {'__InputCount__':i, '__OutputCount__':count, 'RDKitCluster':i})
 
 
 def create_values(mols, x, y, dist):

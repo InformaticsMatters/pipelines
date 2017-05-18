@@ -1,10 +1,10 @@
 {
   "serviceConfig": {
-    "id": "pipelines.rdkit.smog2016.v1",
-    "name": "SMOG2016",
-    "description": "Score docked conformations using Smog2016",
+    "id": "pipelines.pli.v1",
+    "name": "PLI score",
+    "description": "Score docked conformations using PLI",
     "tags": [
-      "smog2016",
+      "pli",
       "docking",
       "scoring",
       "3d",
@@ -65,9 +65,9 @@
   "outputRoutes": [
     "FILE"
   ],
-  "imageName": "abradle/smog2016",
-    "command": "python /pipelines/rdkit/smog2016.py -i input.data.gz -pdb protein.pdb.gz -o output -of json",
+  "imageName": "abradle/pli",
+    "command": "source activate my-rdkit-env && python /pipelines/docking/plip.py -i input.data.gz -pdb protein.pdb.gz -o output -of json",
   "volumes": {
-    "pipelines/rdkit": "/pipelines/rdkit"
+    "pipelines/docking": "/pipelines/docking"
   }
 }

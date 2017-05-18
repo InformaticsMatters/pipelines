@@ -15,7 +15,8 @@
 # limitations under the License.
 
 import argparse
-import utils
+
+from src.python import utils
 
 
 def main():
@@ -28,7 +29,7 @@ def main():
     parser.add_argument('-f', '--field', required=True, help="field to use to split input. Output files will have the name of this field's value")
 
     args = parser.parse_args()
-    utils.log("Splitter Args: ",args)
+    utils.log("Splitter Args: ", args)
 
     filenames = split(args.input, args.informat, args.field, args.output)
     utils.log("Files generated:", " ".join(filenames))
@@ -62,7 +63,7 @@ def split(input, informat, fieldName, outputBase):
             writer.write(mol)
 
 
-    utils.log("Generated",len(writers),"outputs from",i,"records")
+    utils.log("Generated", len(writers), "outputs from", i, "records")
 
     input.close()
     for k in writers: writers[k].close()

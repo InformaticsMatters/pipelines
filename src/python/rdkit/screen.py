@@ -14,13 +14,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import utils, filter
-import sys, gzip, argparse
+import argparse
+
 from rdkit import Chem
+from rdkit import DataStructs
 from rdkit.Chem import AllChem
 from rdkit.Chem import MACCSkeys
-from rdkit import DataStructs
 from rdkit.Chem.Fingerprints import FingerprintMols
+
+import filter
+from src.python.utils import utils
 
 ### start field name defintions #########################################
 
@@ -74,7 +77,7 @@ def main():
     parser.add_argument('-q', '--quiet', action='store_true', help='Quiet mode')
 
     args = parser.parse_args()
-    utils.log("Screen Args: ",args)
+    utils.log("Screen Args: ", args)
 
     descriptor = descriptors[args.descriptor.lower()]
     metric = metrics[args.metric.lower()]
@@ -105,11 +108,11 @@ def main():
         if sim >= args.simmin and sim <= args.simmax:
             count +=1
             if not args.quiet:
-                utils.log(i,sim)
+                utils.log(i, sim)
             mol.SetDoubleProp(field_Similarity, sim)
             writer.write(mol)
 
-    utils.log("Found",count,"similar molecules")
+    utils.log("Found", count, "similar molecules")
 
     writer.flush()
     writer.close()
@@ -117,7 +120,7 @@ def main():
     output.close()
 
     if args.meta:
-        utils.write_metrics(output_base, {'__InputCount__':i, '__OutputCount__':count,'RDKitScreen':count})
+        utils.write_metrics(output_base, {'__InputCount__':i, '__OutputCount__':count, 'RDKitScreen':count})
 
     return count
     

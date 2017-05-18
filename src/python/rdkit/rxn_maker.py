@@ -14,8 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import utils, os
 import argparse
+import os
+
+from src.python import utils
 
 
 ### start main execution #########################################
@@ -70,7 +72,7 @@ def main():
             count = filter_to_use.perform_reaction(mol,args.reaction,r_mol,writer,count)
 
 
-    utils.log("Created", count, "molecules from a total of ", i , "input molecules")
+    utils.log("Created", count, "molecules from a total of ", i, "input molecules")
 
     writer.flush()
     writer.close()

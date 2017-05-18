@@ -14,9 +14,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
+import argparse
+import json
+import subprocess
+
 from rdkit import Chem
-import utils,argparse,subprocess,json
+
+from src.python import utils
 
 
 def run_and_get_ans(mol, pdb_path):
@@ -52,7 +56,7 @@ def main():
     for mol in suppl:
         answer_dict = run_and_get_ans(mol, args.pdb_file)
         if not answer_dict:
-            utils.log("FAILED MOL",Chem.MolToSmiles(mol))
+            utils.log("FAILED MOL", Chem.MolToSmiles(mol))
             continue
         for ans in answer_dict["system"]:
             if ans.startswith(u"pliff"):
