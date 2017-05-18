@@ -20,7 +20,7 @@ from rdkit import Chem, rdBase
 from rdkit.Chem import AllChem
 from rdkit.Chem.MCS import FindMCS
 
-from src.python import utils
+from src.python.utils import utils
 
 
 def guess_substruct(mol_one, mol_two):
@@ -82,7 +82,7 @@ if __name__ == '__main__':
 
     # Get the molecules
     input, suppl = utils.default_open_input(args.input, args.informat)
-    output, writer, output_base = utils.default_open_output(args.output, "const_conf_gen", args.outformat,
+    output, WRITER, output_base = utils.default_open_output(args.output, "const_conf_gen", args.outformat,
                                                             valueClassMappings=clsMappings, datasetMetaProps=datasetMetaProps, fieldMetaProps=fieldMetaProps)
 
     inputs = 0
@@ -90,10 +90,10 @@ if __name__ == '__main__':
     for mol in suppl:
         inputs += 1
         if mol:
-            total += generate_conformers(mol, args.num, ref_mol, writer, args.core_smi)
+            total += generate_conformers(mol, args.num, ref_mol, WRITER, args.core_smi)
 
     input.close()
-    writer.close()
+    WRITER.close()
 
     # write metrics
     if args.meta:

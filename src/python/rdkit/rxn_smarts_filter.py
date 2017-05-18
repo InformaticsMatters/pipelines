@@ -17,7 +17,7 @@
 import argparse
 import os
 
-from src.python import utils
+from src.python.utils import utils
 
 
 ### start main execution #########################################

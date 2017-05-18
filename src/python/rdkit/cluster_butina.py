@@ -21,7 +21,7 @@ from rdkit.Chem import AllChem, MACCSkeys
 from rdkit.Chem.Fingerprints import FingerprintMols
 from rdkit.ML.Cluster import Butina
 
-from src.python import utils
+from src.python.utils import utils
 
 descriptors = {
     #'atompairs':   lambda m: Pairs.GetAtomPairFingerprint(m),

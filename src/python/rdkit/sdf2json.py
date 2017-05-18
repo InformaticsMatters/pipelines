@@ -16,7 +16,7 @@
 
 import argparse
 
-from src.python import utils
+from src.python.utils import utils
 
 
 def main():

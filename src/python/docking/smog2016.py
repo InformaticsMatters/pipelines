@@ -17,30 +17,54 @@
 import argparse
 import os
 import subprocess
-
+from multiprocessing.dummy import Pool as ThreadPool
 from rdkit import Chem
+from src.python.utils import utils
+import tempfile
+import threading
+lock = threading.Lock()
+PDB_PATH = ""
+WRITER = ""
+COUNTER = 0
+SUCCESS = 0
 
-from src.python import utils
-
-
-def run_and_get_ans(mol, pdb_path):
-    smogmol = '/tmp/smogmol.sdf'
+def run_and_get_ans(mol):
+    global PDB_PATH
+    smogmol = tempfile.NamedTemporaryFile("w",delete=True).name
     out_f = open(smogmol, "w")
     out_f.write(Chem.MolToMolBlock(mol))
     out_f.close()
     # Run command
-    proc = subprocess.Popen(["/usr/local/SMoG2016_Rev1/SMoG2016.exe", pdb_path, smogmol, "DeltaG"],
+    proc = subprocess.Popen(["/usr/local/SMoG2016_Rev1/SMoG2016.exe", PDB_PATH, smogmol, "DeltaG"],
                             stdout=subprocess.PIPE)
     # Parse the output
     me = proc.stdout.read()
     if not me:
         # TODO - shouldn't we fail instead?
-        return 100.0
+        return None
     answer = float(me.split("DeltaG")[1].strip())
     return answer
 
-def main():
+def run_dock(mol):
+    global COUNTER
+    global SUCCESS
+    answer = run_and_get_ans(mol)
+    if answer is None:
+        utils.log("FAILED MOL", Chem.MolToSmiles(mol))
+    else:
+        mol.SetDoubleProp("SMoG2016_SCORE", answer)
+        utils.log("SCORED MOL:", Chem.MolToSmiles(mol), answer)
+        # Write ligand
+        lock.acquire()
+        SUCCESS+=1
+        WRITER.write(mol)
+        WRITER.flush()
+        lock.release()
+    COUNTER+=1
 
+def main():
+    global WRITER
+    global PDB_PATH
     parser = argparse.ArgumentParser(description='SMoG2016 - Docking calculation.')
     utils.add_default_io_args(parser)
     parser.add_argument('--no-gzip', action='store_true', help='Do not compress the output (STDOUT is never compressed')
@@ -48,28 +72,24 @@ def main():
     args = parser.parse_args()
 
     smog_path = "/usr/local/SMoG2016_Rev1/"
-
-
+    PDB_PATH = args.pdb_file
     # Open up the input file
     input, suppl = utils.default_open_input(args.input, args.informat)
     # Open the ouput file
 
-    output, writer, output_base = utils.default_open_output(args.output, "SMoG2016", args.outformat, compress=not args.no_gzip)
+    output, WRITER, output_base = utils.default_open_output(args.output, "SMoG2016", args.outformat, compress=not args.no_gzip)
 
     # Cd to the route of the action
     os.chdir(smog_path)
 
     # Iterate over the molecules
-    for mol in suppl:
-        #utils.log("SCORING MOL")
-        answer = run_and_get_ans(mol, args.pdb_file)
-        mol.SetDoubleProp("SMoG2016_SCORE",answer)
-        utils.log("SCORED MOL:", Chem.MolToSmiles(mol), answer)
-        # Write ligand
-        writer.write(mol)
-        writer.flush()
+    pool = ThreadPool(8)
+    pool.map(run_dock, suppl)
     # Close the file
-    writer.close()
+    WRITER.close()
+
+    if args.meta:
+        utils.write_metrics(output_base, {'__InputCount__': COUNTER, '__OutputCount__': SUCCESS, 'RxnMaker': SUCCESS})
 
 if __name__ == "__main__":
     main()

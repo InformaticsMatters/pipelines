@@ -19,8 +19,7 @@ import os
 from rdkit import Chem
 from rdkit.Chem import AllChem
 
-from src.python import utils
-
+from src.python.utils import utils
 
 class Filter(object):
 

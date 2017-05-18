@@ -21,7 +21,7 @@ from rdkit import Chem, rdBase
 from rdkit.Chem import AllChem, TorsionFingerprints
 from rdkit.ML.Cluster import Butina
 
-from src.python import utils
+from src.python.utils import utils
 
 ### start field name defintions #########################################
 
