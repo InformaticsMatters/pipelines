@@ -16,14 +16,16 @@
 
 import argparse
 import json
-import subprocess
-
-from multiprocessing.dummy import Pool as ThreadPool
 import multiprocessing
-from rdkit import Chem
-from src.python.utils import utils
+import subprocess
 import tempfile
 import threading
+from multiprocessing.dummy import Pool as ThreadPool
+
+from rdkit import Chem
+
+from pipelines.utils import utils
+
 lock = threading.Lock()
 PDB_PATH = ""
 WRITER = ""

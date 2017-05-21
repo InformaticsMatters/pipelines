@@ -17,11 +17,14 @@
 import argparse
 import os
 import subprocess
-from multiprocessing.dummy import Pool as ThreadPool
-from rdkit import Chem
-from src.python.utils import utils
 import tempfile
 import threading
+from multiprocessing.dummy import Pool as ThreadPool
+
+from rdkit import Chem
+
+from pipelines.utils import utils
+
 lock = threading.Lock()
 PDB_PATH = ""
 WRITER = ""
@@ -35,7 +38,6 @@ def run_and_get_ans(mol):
     out_f.write(Chem.MolToMolBlock(mol))
     out_f.close()
     # Run command
-    utils.log(["/usr/local/SMoG2016_Rev1/SMoG2016.exe", PDB_PATH, smogmol, "DeltaG"])
     proc = subprocess.Popen(["/usr/local/SMoG2016_Rev1/SMoG2016.exe", PDB_PATH, smogmol, "DeltaG"],
                             stdout=subprocess.PIPE)
     # Parse the output
