@@ -14,8 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import utils
 import argparse
+
+from pipelines.utils import utils
 
 
 def main():
@@ -29,7 +30,7 @@ def main():
 
 
     args = parser.parse_args()
-    utils.log("Screen Args: ",args)
+    utils.log("Screen Args: ", args)
 
     if args.input:
         if args.input.lower().endswith(".sdf"):
@@ -38,13 +39,13 @@ def main():
             base = args.input[:-7]
         else:
             base = "json"
-    utils.log("Base:",base)
+    utils.log("Base:", base)
 
 
     input,output,suppl,writer,output_base = utils.default_open_input_output(args.input, "sdf", args.output, base, "json")
     if args.exclude:
         excludes = args.exclude.split(",")
-        utils.log("Excluding",excludes)
+        utils.log("Excluding", excludes)
     else:
         excludes = None
 
@@ -59,14 +60,14 @@ def main():
         writer.write(mol)
         count += 1
 
-    utils.log("Converted",count," molecules")
+    utils.log("Converted", count, " molecules")
 
     writer.flush()
     writer.close()
     input.close()
     output.close()
 
-    utils.write_metrics(output_base, {'__InputCount__':i, '__OutputCount__':count,'RDKitSdf2Json':count})
+    utils.write_metrics(output_base, {'__InputCount__':i, '__OutputCount__':count, 'RDKitSdf2Json':count})
 
     return count
     

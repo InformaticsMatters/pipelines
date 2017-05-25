@@ -14,11 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import argparse,  utils
+import argparse
+
 from rdkit import DataStructs, rdBase
 from rdkit.Chem import AllChem, MACCSkeys
 from rdkit.Chem.Fingerprints import FingerprintMols
 from rdkit.ML.Cluster import Butina
+
+from pipelines.utils import utils
 
 descriptors = {
     #'atompairs':   lambda m: Pairs.GetAtomPairFingerprint(m),
@@ -113,7 +116,7 @@ def SelectDiverseSubset(mols, clusters, distances, count, field, maximise, score
                 pickedCount += 1
                 clusterIter += 1
                 if not quiet:
-                    utils.log("Cluster",clusterNum,"initialised with",molIndex)
+                    utils.log("Cluster", clusterNum, "initialised with", molIndex)
             else:
                 closestDist = GetClosestDistance(distances, molIndex, pick)
                 #utils.log("Closest score",closestDist)
@@ -122,16 +125,16 @@ def SelectDiverseSubset(mols, clusters, distances, count, field, maximise, score
                     pickedCount += 1
                     clusterIter += 1
                     if not quiet:
-                        utils.log("Cluster",clusterNum,"added",molIndex,"with score",closestDist)
+                        utils.log("Cluster", clusterNum, "added", molIndex, "with score", closestDist)
                 elif not quiet:
-                    utils.log("Cluster",clusterNum, "discarded",molIndex,"with score",closestDist)
+                    utils.log("Cluster", clusterNum, "discarded", molIndex, "with score", closestDist)
         else: # cluster has been exhausted
             #utils.log("Cluster",clusterNum,"exhasted")
             clusterIter += 1
 
         totalIter += 1
 
-    utils.log("Picked",pickedCount,"using",totalIter,"iterations")
+    utils.log("Picked", pickedCount, "using", totalIter, "iterations")
     return pickedList
 
 def GetDistance(idx1, idx2, distances):
@@ -175,7 +178,7 @@ def main():
     parser.add_argument('--thin', action='store_true', help='Thin output mode')
 
     args = parser.parse_args()
-    utils.log("Cluster Args: ",args)
+    utils.log("Cluster Args: ", args)
 
     descriptor = descriptors[args.descriptor]
     if descriptor is None:
@@ -198,7 +201,7 @@ def main():
     fieldMetaProps = [{"fieldName":"Cluster", "values": {"source":source, "description":"Cluster number"}}]
 
     input,output,suppl,writer,output_base = utils.default_open_input_output(args.input, args.informat, args.output, 'cluster_butina', args.outformat,
-        thinOutput=args.thin, valueClassMappings=clsMappings, datasetMetaProps=datasetMetaProps, fieldMetaProps=fieldMetaProps)
+                                                                            thinOutput=args.thin, valueClassMappings=clsMappings, datasetMetaProps=datasetMetaProps, fieldMetaProps=fieldMetaProps)
 
     ### generate fingerprints
     mols = [x for x in suppl if x is not None]
@@ -206,10 +209,10 @@ def main():
     input.close()
 
     ### do clustering
-    utils.log("Clustering with descriptor",args.descriptor,"metric",args.metric,"and threshold",args.threshold)
+    utils.log("Clustering with descriptor", args.descriptor, "metric", args.metric, "and threshold", args.threshold)
     clusters, dists, matrix = ClusterFps(fps, args.metric, 1.0 - args.threshold)
 
-    utils.log("Found",len(clusters),"clusters")
+    utils.log("Found", len(clusters), "clusters")
 
     ### generate diverse subset if specified
     if args.num:
@@ -219,11 +222,11 @@ def main():
     else:
         finalClusters = clusters
 
-    utils.log("Found",len(finalClusters),"clusters")
+    utils.log("Found", len(finalClusters), "clusters")
     lookup = ClustersToMap(finalClusters)
 
     if not args.quiet:
-        utils.log("Final Clusters:",finalClusters)
+        utils.log("Final Clusters:", finalClusters)
 
     ### write the results
     i = 0
@@ -243,7 +246,7 @@ def main():
     output.close()
 
     if args.meta:
-        utils.write_metrics(output_base, {'__InputCount__':i, '__OutputCount__':result_count,'RDKitCluster':i})
+        utils.write_metrics(output_base, {'__InputCount__':i, '__OutputCount__':result_count, 'RDKitCluster':i})
 
 if __name__ == "__main__":
     main()

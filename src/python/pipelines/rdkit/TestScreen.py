@@ -1,5 +1,8 @@
-import unittest, sys
+import sys
+import unittest
+
 import screen
+
 
 class TestScreen(unittest.TestCase):
 

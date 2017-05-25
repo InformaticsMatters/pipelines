@@ -14,11 +14,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
+
 from rdkit import Chem
 from rdkit.Chem import AllChem
-import utils
 
-import os
+from pipelines.utils import utils
+
 
 class Filter(object):
 

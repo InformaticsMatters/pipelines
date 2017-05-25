@@ -14,8 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import utils, os
 import argparse
+import os
+
+from pipelines.utils import utils
 
 
 ### start main execution #########################################
@@ -44,7 +46,7 @@ def main():
         from poised_filter import Filter
         filter_to_use = Filter()
     rxn_names = filter_to_use.get_rxn_names()
-    utils.log("Using",len(rxn_names),"reaction filters")
+    utils.log("Using", len(rxn_names), "reaction filters")
 
     # handle metadata
     source = "rxn_smarts_filter.py"
@@ -78,7 +80,7 @@ def main():
         if mol is None: continue
         # Return a dict/class here - indicating which filters passed
         filter_pass = filter_to_use.pass_filter(mol)
-        utils.log("Found",str(len(filter_pass)),"matches")
+        utils.log("Found", str(len(filter_pass)), "matches")
 
         if filter_pass:
             props = {}
@@ -105,7 +107,7 @@ def main():
             writer.flush()
     utils.log("Matched", count, "molecules from a total of", i)
     if dir_base:
-        utils.log("Individual SD files found in: "+ dir_base)
+        utils.log("Individual SD files found in: " + dir_base)
 
     writer.flush()
     writer.close()

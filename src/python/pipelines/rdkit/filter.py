@@ -14,11 +14,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import utils
-import sys, gzip
+import argparse
+import gzip
+import sys
+
 from rdkit import Chem
 from rdkit.Chem import Descriptors
-import argparse
+
+from pipelines.utils import utils
+
 
 ### start function definitions #########################################
 
@@ -59,11 +63,11 @@ def filter_by_heavy_atom_count(mol, minCount, maxCount, quiet=False):
     hac = mol.GetNumHeavyAtoms()
     if minCount is not None and hac < minCount:
         if not quiet:
-            utils.log("HAC",hac,"<", minCount)
+            utils.log("HAC", hac, "<", minCount)
         return False
     if maxCount is not None and hac > maxCount:
         if not quiet:
-            utils.log("HAC",hac,">", maxCount)
+            utils.log("HAC", hac, ">", maxCount)
         return False
     return True
 
@@ -71,11 +75,11 @@ def filter_by_molwt(mol, minMw, maxMw, quiet=False):
     mw = Descriptors.MolWt(mol)
     if minMw is not None and mw < minMw:
         if not quiet:
-            utils.log("MolWt",mw,"<",minMw)
+            utils.log("MolWt", mw, "<", minMw)
         return False
     if maxMw is not None and mw > maxMw:
         if not quiet:
-            utils.log("MolWt",mw,">", maxMw)
+            utils.log("MolWt", mw, ">", maxMw)
         return False
     return True
     
@@ -107,7 +111,7 @@ def main():
     parser.add_argument('-q', '--quiet', action='store_true', help='Quiet mode - suppress reporting reason for filtering')
     utils.add_default_io_args(parser)
     args = parser.parse_args()
-    utils.log("Filter Args: ",args)
+    utils.log("Filter Args: ", args)
         
     input,suppl = utils.default_open_input(args.input, args.informat)
     if args.output:
@@ -155,9 +159,9 @@ def main():
         count += 1
         writer.write(mol)
 
-    utils.log("Filtered",i,"down to",count,"molecules")
+    utils.log("Filtered", i, "down to", count, "molecules")
     if args.chunksize:
-        utils.log("Wrote",chunkCount,"chunks")
+        utils.log("Wrote", chunkCount, "chunks")
 
     writer.flush()
     writer.close()
@@ -165,7 +169,7 @@ def main():
     output.close()
 
     if args.meta:
-        utils.write_metrics(output_base, {'__InputCount__':i, '__OutputCount__':count,'RDKitFilter':i})
+        utils.write_metrics(output_base, {'__InputCount__':i, '__OutputCount__':count, 'RDKitFilter':i})
 
     
 if __name__ == "__main__":

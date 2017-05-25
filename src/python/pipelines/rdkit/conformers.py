@@ -14,13 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import utils
+import argparse
+import collections
+
 from rdkit import Chem, rdBase
 from rdkit.Chem import AllChem, TorsionFingerprints
 from rdkit.ML.Cluster import Butina
-import collections
-import argparse
 
+from pipelines.utils import utils
 
 ### start field name defintions #########################################
 
@@ -148,7 +149,7 @@ def main():
         else:
             args.threshold = 2.0
         
-    utils.log("Conformers Args: ",args)
+    utils.log("Conformers Args: ", args)
 
     source = "conformers.py"
     datasetMetaProps = {"source":source, "description": "Conformer generation using RDKit " + rdBase.rdkitVersion}
@@ -215,7 +216,7 @@ def main():
     output.close()
 
     if args.meta:
-        utils.write_metrics(output_base, {'__InputCount__':i, '__OutputCount__':count,'RDKitConformer':count})
+        utils.write_metrics(output_base, {'__InputCount__':i, '__OutputCount__':count, 'RDKitConformer':count})
 
 
 if __name__ == "__main__":
