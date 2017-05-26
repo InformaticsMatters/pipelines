@@ -39,6 +39,7 @@
       "description": "Version of the RDKit Docker image to execute",
       "values": [
         "latest",
+        "Release_2017_03_1",
         "Release_2016_09_2",
         "Release_2016_03_1",
         "Release_2015_09_2",
@@ -151,8 +152,8 @@
   "inputRoutes": [ "FILE" ],
   "outputRoutes": [ "FILE" ],
   "imageName": "informaticsmatters/rdkit",
-  "command": "python /pipelines/rdkit/conformers.py -i input.data.gz -if json -o output -of json -n $num -c $method${binding.variables.containsKey('attempts') ? ' -a ' + binding.variables.get('attempts') : ''}${binding.variables.containsKey('prune') ? ' -r ' + binding.variables.get('prune') : ''}${binding.variables.containsKey('threshold') ? ' -t ' + binding.variables.get('threshold') : ''}${binding.variables.containsKey('minimize') ? ' -e ' + binding.variables.get('minimize') : ''} --meta",
+  "command": "cp -r /pipelines /tmp/pipelines && pip install -e /tmp/pipelines && python -m pipelines.rdkit.conformers -i input.data.gz -if json -o output -of json -n $num -c $method${binding.variables.containsKey('attempts') ? ' -a ' + binding.variables.get('attempts') : ''}${binding.variables.containsKey('prune') ? ' -r ' + binding.variables.get('prune') : ''}${binding.variables.containsKey('threshold') ? ' -t ' + binding.variables.get('threshold') : ''}${binding.variables.containsKey('minimize') ? ' -e ' + binding.variables.get('minimize') : ''} --meta",
   "volumes": {
-      "pipelines/rdkit": "/pipelines/rdkit"
+    "pipelines": "/pipelines"
     }
 }
