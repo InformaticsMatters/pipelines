@@ -98,7 +98,7 @@ def main():
     WRITER.close()
 
     if args.meta:
-        utils.write_metrics(output_base, {'__InputCount__': COUNTER, '__OutputCount__': SUCCESS, 'RxnMaker': SUCCESS})
+        utils.write_metrics(output_base, {'__InputCount__': COUNTER, '__OutputCount__': SUCCESS, 'PLI': SUCCESS})
 
 if __name__ == "__main__":
     main()
