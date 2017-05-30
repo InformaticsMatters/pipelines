@@ -95,10 +95,86 @@ If not specified then STDOUT should be used. Output file names ending with
 from the file name (e.g. when using STDOUT). Values would be sdf or json.
  
 --meta: Write additional metadata and metrics (mostly relevant to Squonk's 
-JSON format). Default is not to write.
+JSON format - see below). Default is not to write.
 
 --thin: Write output in thin format (only present where this makes sense).
 Default is not to use thin format.
+
+### UUIDs
+
+The JSON format for input and oputput makes heavy use of UUIDs that uniquely 
+identify each structure. Generally speaking, if the structure is not changed 
+(e.g. properties are just being added to input structures) then the existing 
+UUID should be retained so that UUIDs in the output match those from the input.
+However if new structures are being generated (e.g. in reaction enumeration
+or conformer generation) then new UUIDs MUST be generated as there is no longer
+a straight relationship between the input and output structures. Instead you
+probably want to store the UUID of the source structure(s) as a field(s) in 
+the output. To allow correlation of the outputs to the inputs (e.g. for conformer
+generation output the source molecule UUID as a field so that each conformer 
+identifies which source molecule it was derived from.
+
+When not using JSON format the need to handle UUIDs does not necessarily apply
+(though if there is a field named 'uuid' in the input it will be respected accordingly). 
+To accommodate this you are recommended to ALSO specify the input molecule number
+(1 based index) as an output field independent of whether UUIDs are being handled
+as a "poor man's" approach to correlating the outputs to the inputs.
+
+### Filtering
+
+When a service that filters molecules special attention is needed to ensure 
+that the molecules are output in the same order as the input (obviously skipping
+structures that are filtered out). Also the .dsd file needs special care. For
+instance take a look at the "thinDescriptors" section of src/pipelines/rdkit/screen.dsd
+
+When using multi-threaded execution this is especially important as results 
+will usually not come back in exactly the same order as the input.
+
+### Metrics
+
+To provide information about what happened you are strongly recommended to generate
+a metrics output file (e.g. output_metrics.txt). This file allows to provide 
+feedback about what happened. The contents of this file are fairly simple,
+each line having a
+
+`key=value`
+
+syntax. Keys beginning and ending with __ (2 underscores) have magical meaning. 
+All other keys are treated as metrics that are recorded against that execution.
+The current magical values that are recognised are:
+
+InputCount: The total count of records (structures) that are processed
+OutputCount: The count of output records
+
+Here is a typical metrics file:
+
+```
+__InputCount__=360
+__OutputCount__=22
+PLI=360
+
+```
+
+It defines the input and output counts and specifies that 360 PLI 'units' 
+should be recorded as being consumed during execution.
+
+The purpose of the metrics is primarily to be able to chage for utilisation, but 
+even if not charging (which is often the case) then it is still good practice
+to record the utilisation.
+
+### Metadata
+
+Squonk's JSON format requires additional metadata to allow proper handling
+of the JSON. Writing detailed metadata is optional, but recommended. If 
+not present then Squonk will use a minimal representation of metadata, but 
+it's recommended to provide this directly so that additional information can
+be added. 
+
+At the very minimum Squonk needs to know the type of dataset (e.g. MoleculeObject
+or BasicObject), but this should be handled for you automatically if you use
+the utils.default_open_output* methods. Better though to also specify metadata for
+the field types when you do this. See e.g. conformers.py for an example of 
+how to do this.
 
 ## Contact
 
