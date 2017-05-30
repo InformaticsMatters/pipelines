@@ -44,6 +44,7 @@ def generate_conformers(molIdx, my_mol, NumOfConf, ref_mol, outputfile, coreSubs
         conf_lst.append(Chem.AddHs(my_mol))
         AllChem.ConstrainedEmbed(conf_lst[i], core1, randomseed=i)
         cleaned = Chem.RemoveHs(conf_lst[i])
+        cleaned.ClearProp("uuid")
         if my_mol.HasProp("uuid"):
             cleaned.SetProp("SourceMolUUID", my_mol.GetProp("uuid"))
         cleaned.SetIntProp("SourceMolNum", molIdx)
