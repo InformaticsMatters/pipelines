@@ -77,20 +77,22 @@ def main():
     parser.add_argument('--no-gzip', action='store_true', help='Do not compress the output (STDOUT is never compressed')
     parser.add_argument('-pdb', '--pdb_file', help="PDB file for scoring")
     parser.add_argument('-t', '--threshold', help="The maximum score to allow", default=None)
+    parser.add_argument('--thin', action='store_true', help='Thin output mode')
 
     args = parser.parse_args()
 
     # Open up the input file
     input, suppl = utils.default_open_input(args.input, args.informat)
     # Open the ouput file
-    output, WRITER, output_base = utils.default_open_output(args.output, "plip", args.outformat, compress=not args.no_gzip)
+    output, WRITER, output_base = utils.default_open_output(args.output, "plip", args.outformat, compress=not args.no_gzip, thinOutput=args.thin)
 
     PDB_PATH = args.pdb_file
     if args.threshold:
         THRESHOLD = float(args.threshold)
 
     # Iterate over the molecules
-    pool = ThreadPool(multiprocessing.cpu_count())
+    #pool = ThreadPool(multiprocessing.cpu_count())
+    pool = ThreadPool(1)
     pool.map(run_dock, suppl)
     pool.close()
     pool.join()
@@ -98,7 +100,7 @@ def main():
     WRITER.close()
 
     if args.meta:
-        utils.write_metrics(output_base, {'__InputCount__': COUNTER, '__OutputCount__': SUCCESS, 'PLI': SUCCESS})
+        utils.write_metrics(output_base, {'__InputCount__': COUNTER, '__OutputCount__': SUCCESS, 'PLI': COUNTER})
 
 if __name__ == "__main__":
     main()

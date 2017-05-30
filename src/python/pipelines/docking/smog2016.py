@@ -80,6 +80,8 @@ def main():
     parser.add_argument('--no-gzip', action='store_true', help='Do not compress the output (STDOUT is never compressed')
     parser.add_argument('-pdb', '--pdb_file', help="PDB file for scoring")
     parser.add_argument('-t', '--threshold', help="The maximum score to allow", default=None)
+    parser.add_argument('--thin', action='store_true', help='Thin output mode')
+
     args = parser.parse_args()
 
     smog_path = "/usr/local/SMoG2016_Rev1/"
@@ -101,7 +103,7 @@ def main():
     WRITER.close()
 
     if args.meta:
-        utils.write_metrics(output_base, {'__InputCount__': COUNTER, '__OutputCount__': SUCCESS, 'SMoG2016': SUCCESS})
+        utils.write_metrics(output_base, {'__InputCount__': COUNTER, '__OutputCount__': SUCCESS, 'SMoG2016': COUNTER})
 
 if __name__ == "__main__":
     main()
