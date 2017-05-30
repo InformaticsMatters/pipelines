@@ -76,7 +76,7 @@ def main():
     utils.add_default_io_args(parser)
     parser.add_argument('--no-gzip', action='store_true', help='Do not compress the output (STDOUT is never compressed')
     parser.add_argument('-pdb', '--pdb_file', help="PDB file for scoring")
-    parser.add_argument('-threshold', '--threshold', help="The maximum score to allow", default=None)
+    parser.add_argument('-t', '--threshold', help="The maximum score to allow", default=None)
 
     args = parser.parse_args()
 
@@ -86,7 +86,8 @@ def main():
     output, WRITER, output_base = utils.default_open_output(args.output, "plip", args.outformat, compress=not args.no_gzip)
 
     PDB_PATH = args.pdb_file
-    THRESHOLD = float(args.threshold)
+    if args.threshold:
+        THRESHOLD = float(args.threshold)
 
     # Iterate over the molecules
     pool = ThreadPool(multiprocessing.cpu_count())

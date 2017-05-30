@@ -79,11 +79,12 @@ def main():
     utils.add_default_io_args(parser)
     parser.add_argument('--no-gzip', action='store_true', help='Do not compress the output (STDOUT is never compressed')
     parser.add_argument('-pdb', '--pdb_file', help="PDB file for scoring")
-    parser.add_argument('-threshold', '--threshold', help="The maximum score to allow", default=None)
+    parser.add_argument('-t', '--threshold', help="The maximum score to allow", default=None)
     args = parser.parse_args()
 
     smog_path = "/usr/local/SMoG2016_Rev1/"
-    THRESHOLD = float(args.threshold)
+    if args.threshold:
+        THRESHOLD = float(args.threshold)
     PDB_PATH = args.pdb_file
     # Open up the input file
     input, suppl = utils.default_open_input(args.input, args.informat)
