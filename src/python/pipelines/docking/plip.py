@@ -91,6 +91,7 @@ def main():
         THRESHOLD = float(args.threshold)
 
     # Iterate over the molecules
+    # TODO - restore parallel processing, but need to ensure the order of molecules is preserved
     #pool = ThreadPool(multiprocessing.cpu_count())
     pool = ThreadPool(1)
     pool.map(run_dock, suppl)

@@ -84,6 +84,8 @@ def main():
 
     args = parser.parse_args()
 
+    utils.log("SMoG2016 Args: ", args)
+
     smog_path = "/usr/local/SMoG2016_Rev1/"
     if args.threshold:
         THRESHOLD = float(args.threshold)
@@ -94,16 +96,22 @@ def main():
     output, WRITER, output_base = utils.default_open_output(args.output, "SMoG2016", args.outformat, compress=not args.no_gzip)
 
     # Cd to the route of the action
+    # TODO - can this be done without changing dir? It gives problems in finding the input files and in writing the metrics
+    cwd = os.getcwd()
     os.chdir(smog_path)
 
     # Iterate over the molecules
-    pool = ThreadPool(8)
+    # TODO - restore parallel processing, but need to ensure the order of molecules is preserved
+    pool = ThreadPool(1)
     pool.map(run_dock, suppl)
     # Close the file
     WRITER.close()
 
+    os.chdir(cwd)
     if args.meta:
         utils.write_metrics(output_base, {'__InputCount__': COUNTER, '__OutputCount__': SUCCESS, 'SMoG2016': COUNTER})
+
+    utils.log("SMoG2016 complete")
 
 if __name__ == "__main__":
     main()
