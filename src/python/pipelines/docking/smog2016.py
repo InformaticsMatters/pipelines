@@ -15,7 +15,7 @@
 # limitations under the License.
 
 import argparse
-import os
+import os,shutil
 import subprocess
 import tempfile
 import threading
@@ -89,7 +89,9 @@ def main():
     smog_path = "/usr/local/SMoG2016_Rev1/"
     if args.threshold:
         THRESHOLD = float(args.threshold)
-    PDB_PATH = args.pdb_file
+    PDB_PATH = "/tmp/pdb_file.pdb"
+    # Now copy it to prot_pdb.pdb -> silly SMOG bug
+    shutil.copy(args.pdb_file,PDB_PATH)
     # Open up the input file
     input, suppl = utils.default_open_input(args.input, args.informat)
     # Open the ouput file
