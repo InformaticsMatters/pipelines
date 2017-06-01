@@ -39,6 +39,7 @@
       "description": "Version of the RDKit Docker image to execute",
       "values": [
         "latest",
+        "Release_2017_03_1",
         "Release_2016_09_2",
         "Release_2016_03_1",
         "Release_2015_09_2",
@@ -123,8 +124,8 @@
   "inputRoutes": [ "FILE" ],
   "outputRoutes": [ "FILE" ],
   "imageName": "informaticsmatters/rdkit",
-  "command": "python /pipelines/rdkit/cluster_butina.py -i input.data.gz -if json -o output -of json -t ${threshold} -d ${descriptor} -m ${metric} --thin --meta",
+  "command": "cp -r /pipelines /tmp/pipelines && pip install -e /tmp/pipelines && python -m pipelines.rdkit.cluster_butina -i input.data.gz -if json -o output -of json -t ${threshold} -d ${descriptor} -m ${metric} --thin --meta",
   "volumes": {
-      "pipelines/rdkit": "/pipelines/rdkit"
+      "pipelines": "/pipelines"
     }
 }

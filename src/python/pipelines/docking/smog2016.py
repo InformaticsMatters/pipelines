@@ -79,11 +79,16 @@ def main():
     utils.add_default_io_args(parser)
     parser.add_argument('--no-gzip', action='store_true', help='Do not compress the output (STDOUT is never compressed')
     parser.add_argument('-pdb', '--pdb_file', help="PDB file for scoring")
-    parser.add_argument('-threshold', '--threshold', help="The maximum score to allow", default=None)
+    parser.add_argument('-t', '--threshold', help="The maximum score to allow", default=None)
+    parser.add_argument('--thin', action='store_true', help='Thin output mode')
+
     args = parser.parse_args()
 
+    utils.log("SMoG2016 Args: ", args)
+
     smog_path = "/usr/local/SMoG2016_Rev1/"
-    THRESHOLD = float(args.threshold)
+    if args.threshold:
+        THRESHOLD = float(args.threshold)
     PDB_PATH = args.pdb_file
     # Open up the input file
     input, suppl = utils.default_open_input(args.input, args.informat)
@@ -91,16 +96,22 @@ def main():
     output, WRITER, output_base = utils.default_open_output(args.output, "SMoG2016", args.outformat, compress=not args.no_gzip)
 
     # Cd to the route of the action
+    # TODO - can this be done without changing dir? It gives problems in finding the input files and in writing the metrics
+    cwd = os.getcwd()
     os.chdir(smog_path)
 
     # Iterate over the molecules
-    pool = ThreadPool(8)
+    # TODO - restore parallel processing, but need to ensure the order of molecules is preserved
+    pool = ThreadPool(1)
     pool.map(run_dock, suppl)
     # Close the file
     WRITER.close()
 
+    os.chdir(cwd)
     if args.meta:
-        utils.write_metrics(output_base, {'__InputCount__': COUNTER, '__OutputCount__': SUCCESS, 'RxnMaker': SUCCESS})
+        utils.write_metrics(output_base, {'__InputCount__': COUNTER, '__OutputCount__': SUCCESS, 'SMoG2016': COUNTER})
+
+    utils.log("SMoG2016 complete")
 
 if __name__ == "__main__":
     main()

@@ -44,7 +44,7 @@ task copyDist(type: Copy) {
     destinationDir = file('build/dist')
 
     from('src/python') {
-        includes = ['**/*.py','**/*.nf','**/*.dsd']
+        includes = ['**/*.py','**/*.nf','**/*.dsd','README.rst']
         into 'pipelines'
     }
 }

@@ -27,7 +27,7 @@ def guess_substruct(mol_one, mol_two):
     """Code to find the substructure between two molecules."""
     return Chem.MolToSmiles(Chem.MolFromSmarts(FindMCS([mol_one,mol_two],completeRingsOnly=True,matchValences=True).smarts))
 
-def generate_conformers(my_mol, NumOfConf, ref_mol, outputfile, coreSubstruct):
+def generate_conformers(molIdx, my_mol, NumOfConf, ref_mol, outputfile, coreSubstruct):
     # Find the MCS if not given
     if not coreSubstruct:
         coreSubstruct = guess_substruct(my_mol,ref_mol)
@@ -44,6 +44,11 @@ def generate_conformers(my_mol, NumOfConf, ref_mol, outputfile, coreSubstruct):
         conf_lst.append(Chem.AddHs(my_mol))
         AllChem.ConstrainedEmbed(conf_lst[i], core1, randomseed=i)
         cleaned = Chem.RemoveHs(conf_lst[i])
+        cleaned.ClearProp("uuid")
+        if my_mol.HasProp("uuid"):
+            cleaned.SetProp("SourceMolUUID", my_mol.GetProp("uuid"))
+        cleaned.SetIntProp("SourceMolNum", molIdx)
+        cleaned.SetIntProp("ConformerNum", count + 1)
         outputfile.write(cleaned)
         count+=1
     return count
@@ -90,7 +95,7 @@ if __name__ == '__main__':
     for mol in suppl:
         inputs += 1
         if mol:
-            total += generate_conformers(mol, args.num, ref_mol, WRITER, args.core_smi)
+            total += generate_conformers(inputs, mol, args.num, ref_mol, WRITER, args.core_smi)
 
     input.close()
     WRITER.close()
