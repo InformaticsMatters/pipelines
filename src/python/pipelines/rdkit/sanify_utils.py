@@ -33,7 +33,8 @@ def enumerateTautomers(mol):
     """
     smiles = Chem.MolToSmiles(mol,isomericSmiles=True)
     tauts = enumerate_tautomers_smiles(smiles)
-    return [Chem.MolFromSmiles(x) for x in tauts]
+    ##TODO Append Parent molecule name
+    return  [Chem.MolFromSmiles(x) for x in tauts]
 
 def getCanonTautomer(mol):
     """
@@ -65,7 +66,6 @@ def enumerateStereoIsomers(mol):
                 mol.GetAtomWithIdx(atomId).SetChiralTag(Chem.rdchem.ChiralType.CHI_TETRAHEDRAL_CCW)
         outmol = copy(mol)
         out.append(outmol)
-        print Chem.MolToSmiles(mol,isomericSmiles=True)
     return out
 
 
