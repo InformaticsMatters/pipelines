@@ -62,7 +62,7 @@
     "FILE"
   ],
   "imageName": "abradle/smog2016",
-    "command": "cp -r /pipelines /tmp/pipelines && pip install -e /tmp/pipelines && python -m pipelines.docking.smog2016 -i input.data.gz -pdb \\$(pwd)/protein.pdb.gz -o output -of json --meta --thin${binding.variables.containsKey('threshold') ? ' -t ' + binding.variables.get('threshold') : ''}",
+    "command": "cp -r /pipelines /tmp/pipelines && pip install -e /tmp/pipelines && mv protein.pdb.gz protein_prot.pdb.gz && python -m pipelines.docking.smog2016 -i input.data.gz -pdb \\$(pwd)/protein_prot.pdb.gz -o output -of json --meta --thin${binding.variables.containsKey('threshold') ? ' -t ' + binding.variables.get('threshold') : ''}",
   "volumes": {
     "pipelines": "/pipelines"
   }
