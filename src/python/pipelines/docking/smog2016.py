@@ -89,6 +89,8 @@ def main():
     smog_path = "/usr/local/SMoG2016_Rev1/"
     if args.threshold:
         THRESHOLD = float(args.threshold)
+    else:
+        THRESHOLD = None
     PDB_PATH = args.pdb_file
     # Open up the input file
     input, suppl = utils.default_open_input(args.input, args.informat)
