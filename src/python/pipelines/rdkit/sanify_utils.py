@@ -2,6 +2,8 @@ from rdkit import Chem
 from copy import copy
 
 from molvs import enumerate_tautomers_smiles,canonicalize_tautomer_smiles,Standardizer
+from molvs.charge import Uncharger,Reionizer
+from standardiser import standardise
 
 standardizer = Standardizer()
 
@@ -67,5 +69,18 @@ def enumerateStereoIsomers(mol):
     return out
 
 
-def getStandardMolecule(mol):
+def molVsStandardizer(mol):
     return standardizer.standardize(mol)
+
+def flatkinsonStandardizer(mol):
+    return standardise.run(mol)
+
+STANDARD_MOL_METHODS = {"molvs": molVsStandardizer, "flatkinson": flatkinsonStandardizer}
+
+def getNeutralMolecule(mol):
+    uncharger = Uncharger()
+    return uncharger.uncharge(mol)
+
+def getReionisedMolecule(mol):
+    reioniser = Reionizer()
+    return reioniser.reionize(mol)

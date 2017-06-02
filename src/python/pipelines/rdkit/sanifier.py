@@ -18,12 +18,12 @@
 
 from pipelines.utils import utils
 import argparse
-from stereoutils import enumerateStereoIsomers,enumerateTautomers,getCanonTautomer,getStandardMolecule
+from sanify_utils import enumerateStereoIsomers,enumerateTautomers,getCanonTautomer,STANDARD_MOL_METHODS
 
 
 def write_out(mols,count,writer):
     for mol in mols:
-        count + 1
+        count += 1
         if mol is None: continue
         writer.write(mol)
     return count
@@ -33,10 +33,12 @@ def main():
     ### command line args defintions #########################################
 
     parser = argparse.ArgumentParser(description='RDKit molecule standardiser / enumerator')
-    utils.add_default_input_args(parser)
-    parser.add_argument('-et', '--enumerate_tauts', default=False, help='Enumarate all tautomers')
-    parser.add_argument('-es', '--enumerate_stereo', default=False, help='Enumarate all stereochem')
-    parser.add_argument('-st', '--standardize', default=True, help='Standardize molecules. Cannot  be true if enumerate is on.')
+    utils.add_default_io_args(parser)
+    parser.add_argument('-et', '--enumerate_tauts', default=False, help='Enumarate all tautomers', type=bool)
+    parser.add_argument('-es', '--enumerate_stereo', default=False, help='Enumarate all stereochem', type=bool)
+    parser.add_argument('-st', '--standardize', default=False, help='Standardize molecules. Cannot  be true if enumerate is on.', type=bool)
+    parser.add_argument('-stm','--standardize_method', default="molvs",choices=STANDARD_MOL_METHODS.keys(),help="Chose the method to standardize.")
+    parser.add_argument('--thin', action='store_true', help='Thin output mode')
 
     args = parser.parse_args()
 
@@ -45,6 +47,9 @@ def main():
 
     if args.standardize and args.enumerate_stereo:
         raise ValueError("Cannot Enumerate Stereo and Standardize")
+
+    if args.standardize:
+        getStandardMolecule = STANDARD_MOL_METHODS[args.standardize_method]
 
     input ,output ,suppl ,writer ,output_base = utils.default_open_input_output(args.input, args.informat, args.output, 'screen', args.outformat, thinOutput=args.thin)
     i=0
@@ -61,7 +66,7 @@ def main():
             count = write_out(enumerateTautomers(mol),count,writer)
 
 
-    utils.log("Found", count, "similar molecules")
+    utils.log("Cleaned up "+str(i)+" molecules, resulting in "+str(count)+" outputs")
 
     writer.flush()
     writer.close()
