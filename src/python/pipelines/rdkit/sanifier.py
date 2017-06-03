@@ -18,14 +18,14 @@
 
 from pipelines.utils import utils
 import argparse
-from sanify_utils import enumerateStereoIsomers,enumerateTautomers,getCanonTautomer,STANDARD_MOL_METHODS
+from sanify_utils import enumerateStereoIsomers,enumerateTautomers,STANDARD_MOL_METHODS
 
 
 def write_out(mols,count,writer):
     for mol in mols:
         count += 1
         if mol is None: continue
-        writer.write(mol)
+        writer.write(mol, format='smiles')
     return count
 
 def main():
@@ -34,24 +34,23 @@ def main():
 
     parser = argparse.ArgumentParser(description='RDKit molecule standardiser / enumerator')
     utils.add_default_io_args(parser)
-    parser.add_argument('-et', '--enumerate_tauts', default=False, help='Enumarate all tautomers', type=bool)
-    parser.add_argument('-es', '--enumerate_stereo', default=False, help='Enumarate all stereochem', type=bool)
-    parser.add_argument('-st', '--standardize', default=False, help='Standardize molecules. Cannot  be true if enumerate is on.', type=bool)
+    parser.add_argument('-et', '--enumerate_tauts', action='store_true', help='Enumerate all tautomers')
+    parser.add_argument('-es', '--enumerate_stereo', action='store_true', help='Enumerate all stereoisomers')
+    parser.add_argument('-st', '--standardize', action='store_true', help='Standardize molecules. Cannot  be true if enumerate is on.')
     parser.add_argument('-stm','--standardize_method', default="molvs",choices=STANDARD_MOL_METHODS.keys(),help="Chose the method to standardize.")
-    parser.add_argument('--thin', action='store_true', help='Thin output mode')
 
     args = parser.parse_args()
 
     if args.standardize and args.enumerate_tauts:
-        raise ValueError("Cannot Enumerate Tautomers and Standardize")
+        raise ValueError("Cannot Enumerate Tautomers and Standardise")
 
     if args.standardize and args.enumerate_stereo:
-        raise ValueError("Cannot Enumerate Stereo and Standardize")
+        raise ValueError("Cannot Enumerate Stereo and Standardise")
 
     if args.standardize:
         getStandardMolecule = STANDARD_MOL_METHODS[args.standardize_method]
 
-    input ,output ,suppl ,writer ,output_base = utils.default_open_input_output(args.input, args.informat, args.output, 'screen', args.outformat, thinOutput=args.thin)
+    input ,output ,suppl ,writer ,output_base = utils.default_open_input_output(args.input, args.informat, args.output, 'sanify', args.outformat)
     i=0
     count = 0
     for mol in suppl:
@@ -59,14 +58,36 @@ def main():
         if mol is None: continue
 
         if args.standardize:
-            count = write_out([getStandardMolecule(mol)],count,writer)
-        if args.enumerate_stereo:
-            count = write_out(enumerateStereoIsomers(mol),count,writer)
-        if args.enumerate_tauts:
-            count = write_out(enumerateTautomers(mol),count,writer)
+            # we keep the original UUID as there is still a 1-to-1 relationship between the input and outputs
+            std = getStandardMolecule(mol)
+            utils.log("STD:",i,std)
+            count = write_out([std],count,writer)
+        else:
+            # we want a new UUID generating as we are generating new molecules
+            mol.SetIntProp("SourceMolNum", i)
+            parentUuid = mol.GetProp("uuid")
+            if parentUuid:
+                mol.ClearProp("uuid")
+                mol.SetProp("SourceMolUUID", parentUuid)
 
+            results = []
+            results.append(mol)
 
-    utils.log("Cleaned up "+str(i)+" molecules, resulting in "+str(count)+" outputs")
+            if args.enumerate_tauts:
+                utils.log("Enumerating tautomers")
+                results = enumerateTautomers(mol)
+
+            if args.enumerate_stereo:
+                utils.log("Enumerating steroisomers")
+                mols = results
+                results = []
+                for m in mols:
+                    enumerated = enumerateStereoIsomers(m)
+                    results.extend(enumerated)
+
+            count = write_out(results,count,writer)
+
+    utils.log("Handled "+str(i)+" molecules, resulting in "+str(count)+" outputs")
 
     writer.flush()
     writer.close()
@@ -74,7 +95,7 @@ def main():
     output.close()
 
     if args.meta:
-        utils.write_metrics(output_base, {'__InputCount__':i, '__OutputCount__':count , 'RDKitScreen':count })
+        utils.write_metrics(output_base, {'__InputCount__':i, '__OutputCount__':count , 'RDKitSanify':count })
 
     return count
 

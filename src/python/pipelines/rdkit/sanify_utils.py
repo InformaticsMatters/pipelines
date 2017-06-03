@@ -1,6 +1,8 @@
 from rdkit import Chem
 from copy import copy
 
+from pipelines.utils import utils
+
 from molvs import enumerate_tautomers_smiles,canonicalize_tautomer_smiles,Standardizer
 from molvs.charge import Uncharger,Reionizer
 from standardiser import standardise
@@ -65,6 +67,7 @@ def enumerateStereoIsomers(mol):
             elif i == 1:
                 mol.GetAtomWithIdx(atomId).SetChiralTag(Chem.rdchem.ChiralType.CHI_TETRAHEDRAL_CCW)
         outmol = copy(mol)
+        utils.log("Enumerated ", Chem.MolToSmiles(mol, isomericSmiles=True))
         out.append(outmol)
     return out
 

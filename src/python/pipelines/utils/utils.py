@@ -241,7 +241,7 @@ def default_open_output_sdf(outputDef, outputBase, thinOutput, compress):
 
 def default_open_output_json(outputDef, outputBase, thinOutput, compress, valueClassMappings, datasetMetaProps, fieldMetaProps):
 
-    # this is writes the metadata that Squonk needs
+    # this writes the metadata that Squonk needs
     write_squonk_datasetmetadata(outputBase, thinOutput, valueClassMappings, datasetMetaProps, fieldMetaProps)
 
     output = open_output(outputDef, 'data', compress)
@@ -383,10 +383,18 @@ class ThickJsonWriter:
         self.file.write('[')
         self.count = 0
 
-    def write(self, mol, props=None, includeStereo=False, confId=-1, kekulize=True, forceV3000=False):
+    def write(self, mol, props=None, includeStereo=True, confId=-1, kekulize=True, forceV3000=False, format='mol'):
         d = {}
-        d['source'] = Chem.MolToMolBlock(mol, includeStereo=includeStereo, confId=confId, kekulize=kekulize, forceV3000=forceV3000)
-        d['format'] = 'mol'
+        if format == 'mol':
+            d['source'] = Chem.MolToMolBlock(mol, includeStereo=includeStereo, confId=confId, kekulize=kekulize, forceV3000=forceV3000)
+            d['format'] = 'mol'
+        elif format == 'smiles':
+            if kekulize:
+                Chem.Kekulize(mol)
+            d['source'] = Chem.MolToSmiles(mol, isomericSmiles=includeStereo, kekuleSmiles=kekulize)
+            d['format'] = 'smiles'
+        else:
+            raise ValueError("Unexpected format: " + format)
         allProps = mol.GetPropsAsDict()
         if props:
             allProps.update(props)
@@ -419,7 +427,7 @@ class ThinJsonWriter:
         self.file.write('[')
         self.count = 0
 
-    def write(self, mol, props=None, includeStereo=False, confId=-1, kekulize=True, forceV3000=False):
+    def write(self, mol, props=None, includeStereo=True, confId=-1, kekulize=True, forceV3000=False):
         d = {}
         allProps = mol.GetPropsAsDict()
         if props:
