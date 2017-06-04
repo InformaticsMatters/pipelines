@@ -1,7 +1,7 @@
 { "serviceConfig": {
-  "id": "pipelines.xchem.sanify.standardise.v1",
-  "name": "MoleculeStandardiser",
-  "description": "Molecule standardiser",
+  "id": "pipelines.xchem.sanify.standardise.molvs.v1",
+  "name": "MolVSStandardiser",
+  "description": "Molecule standardiser using MolVS",
   "tags": [ "rdkit", "xchem", "docker", "sanify", "reaction", "molvs", "standardiser", "standardizer"],
   "resourceUrl": null,
   "icon": "icons/transform_molecule.png",
@@ -47,35 +47,15 @@
       ],
       "defaultValue": "latest",
       "visible": true
-    },
-    {
-      "modes": [
-        "User"
-      ],
-      "editable": true,
-      "@class": "org.squonk.options.OptionDescriptor",
-      "typeDescriptor": {
-        "type": "java.lang.String",
-        "@class": "org.squonk.options.SimpleTypeDescriptor"
-      },
-      "key": "arg.standardiseMethod",
-      "label": "Standardise Method",
-      "description": "Use the molvs or flatkinson methods",
-      "values": [
-        "molvs",
-        "flatkinson"
-      ],
-      "defaultValue": "molvs",
-      "visible": true
     }
   ],
   "executorClassName": "org.squonk.execution.steps.impl.ThinDatasetDockerExecutorStep"
   },
-
+  "thinDescriptors": [{"input": "input", "preserve": false}],
   "inputRoutes": [ "FILE" ],
   "outputRoutes": [ "FILE" ],
   "imageName": "abradle/standardiser",
-  "command": "cp -r /pipelines /tmp/pipelines && pip install -e /tmp/pipelines && python -m pipelines.rdkit.sanifier -i input.data.gz -if json -o output -of json -st -stm $standardiseMethod --meta",
+  "command": "cp -r /pipelines /tmp/pipelines && pip install -e /tmp/pipelines && python -m pipelines.rdkit.sanifier -i input.data.gz -if json -o output -of json -st -stm molvs --meta",
   "volumes": {
       "pipelines": "/pipelines"
     }

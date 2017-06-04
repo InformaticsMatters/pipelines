@@ -17,7 +17,8 @@
 ### Use MolVS to do tautomer enumeration, sterochemistry enumeration, charge neutralisation.
 
 from pipelines.utils import utils
-import argparse
+import sys, argparse
+from rdkit import Chem
 from sanify_utils import enumerateStereoIsomers,enumerateTautomers,STANDARD_MOL_METHODS
 
 
@@ -52,15 +53,32 @@ def main():
 
     input ,output ,suppl ,writer ,output_base = utils.default_open_input_output(args.input, args.informat, args.output, 'sanify', args.outformat)
     i=0
-    count = 0
+    count=0
+    errors=0
     for mol in suppl:
         i +=1
         if mol is None: continue
 
         if args.standardize:
             # we keep the original UUID as there is still a 1-to-1 relationship between the input and outputs
-            std = getStandardMolecule(mol)
-            utils.log("STD:",i,std)
+            oldUUID = mol.GetProp("uuid")
+            inputCanSmiles = Chem.MolToSmiles(mol, isomericSmiles=True, canonical=True)
+            try:
+                std = getStandardMolecule(mol)
+                outputCanSmiles = Chem.MolToSmiles(std, isomericSmiles=True, canonical=True)
+                if oldUUID:
+                    std.SetProp("uuid", oldUUID)
+                #utils.log("Standardized", i, inputCanSmiles, ">>", outputCanSmiles)
+                if inputCanSmiles == outputCanSmiles:
+                    std.SetProp("Standardized", "False")
+                else:
+                    std.SetProp("Standardized", "True")
+            except:
+                errors += 1
+                utils.log("Error standardizing", sys.exc_info()[0])
+                std = mol
+                std.SetProp("Standardized", "Error")
+
             count = write_out([std],count,writer)
         else:
             # we want a new UUID generating as we are generating new molecules
@@ -95,7 +113,7 @@ def main():
     output.close()
 
     if args.meta:
-        utils.write_metrics(output_base, {'__InputCount__':i, '__OutputCount__':count , 'RDKitSanify':count })
+        utils.write_metrics(output_base, {'__InputCount__':i, '__OutputCount__':count, '__ErrorCount__':errors , 'RDKitSanify':count })
 
     return count
 
