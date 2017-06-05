@@ -70,23 +70,19 @@ def main():
                     std.SetProp("uuid", oldUUID)
                 #utils.log("Standardized", i, inputCanSmiles, ">>", outputCanSmiles)
                 if inputCanSmiles == outputCanSmiles:
-                    std.SetProp("Standardized", "False")
+                    std.SetProp("Standardised", "False")
                 else:
-                    std.SetProp("Standardized", "True")
+                    std.SetProp("Standardised", "True")
             except:
                 errors += 1
                 utils.log("Error standardizing", sys.exc_info()[0])
                 std = mol
-                std.SetProp("Standardized", "Error")
+                std.SetProp("Standardised", "Error")
 
             count = write_out([std],count,writer)
         else:
             # we want a new UUID generating as we are generating new molecules
-            mol.SetIntProp("SourceMolNum", i)
             parentUuid = mol.GetProp("uuid")
-            if parentUuid:
-                mol.ClearProp("uuid")
-                mol.SetProp("SourceMolUUID", parentUuid)
 
             results = []
             results.append(mol)
@@ -102,6 +98,12 @@ def main():
                 for m in mols:
                     enumerated = enumerateStereoIsomers(m)
                     results.extend(enumerated)
+
+            for m in results:
+                m.ClearProp("uuid")
+                m.SetIntProp("SourceMolNum", i)
+                if parentUuid:
+                    m.SetProp("SourceMolUUID", parentUuid)
 
             count = write_out(results,count,writer)
 

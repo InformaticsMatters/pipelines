@@ -17,7 +17,6 @@
 import argparse
 import subprocess
 
-
 from pipelines.utils import utils
 
 
@@ -27,17 +26,19 @@ def main():
     utils.add_default_io_args(parser)
     parser.add_argument('--no-gzip', action='store_true', help='Do not compress the output (STDOUT is never compressed')
     parser.add_argument('-pdb', '--pdb_file', help="PDB file for converting")
-    parser.add_argument('-prot', '--protonate', help="Set protonation at pH 7.4", default=False)
+    parser.add_argument('-prot', '--protonate', action='store_true', help="Set protonation at pH 7.4")
     parser.add_argument('-off', '--outputfomat', choices=["pdbqt","mol2"])
 
     args = parser.parse_args()
+
+    utils.log("Prepare Args: ", args)
 
     if args.outputfomat == "pdbqt":
         out_format = "-opdbqt"
     elif args.outputfomat == "mol2":
         out_format = "-omol2"
     else:
-        raise ValueError("Not accepted output format")
+        raise ValueError("Not accepted output format " + args.outputfomat)
 
     base_args = ["obabel", "-ipdb", args.pdb_file, out_format, "-O", args.output]
     if args.protonate:
