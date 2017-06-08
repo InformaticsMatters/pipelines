@@ -35,7 +35,6 @@
       "key": "arg.protonate",
       "label": "Protonate at pH",
       "description": "Optionally protonate side chains at this pH",
-      "defaultValue": true,
       "visible": true,
       "minValues": 0,
       "maxValues": 1
