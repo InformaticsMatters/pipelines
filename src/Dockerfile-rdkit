@@ -1,0 +1,14 @@
+FROM informaticsmatters/rdkit_nextflow
+MAINTAINER Tim Dudgeon <tdudgeon@informaticsmatters.com>
+
+USER root
+
+COPY python /home/rdkit/python
+RUN chown -R rdkit.rdkit /home/rdkit/python
+
+USER rdkit
+WORKDIR /home/rdkit
+
+# install pipelines python modules
+RUN pip install -e python
+

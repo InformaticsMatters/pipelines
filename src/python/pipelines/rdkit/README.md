@@ -2,6 +2,10 @@
 
 See test-python.sh for working examples. The ones listed here could be out of date.
 
+Examples of running some of these examples with the [Nextflow](http://nextflow.io) workflow system
+can be found [here](../../../nextflow/rdkit/README.md)
+
+
 ##1. screen.py
 Performs ligand based virtual screening using RDKit descriptors
 
@@ -76,23 +80,6 @@ Found 3 similar molecules
 Input pipe into Docker container using STDIN.
 Results sent from Docker container to STDOUT and redirected to file myfile.sdf
 
-### Execution in Nextflow
-Requires Nextflow to be installed.
-#### Native
-Requires RDKit to be installed
-
-
-#### Docker
-Uses RDKit provided by the container
-
-```sh
-nextflow run screen.nf --smiles 'C1N=C(C2=CC=CC=C2)C2=CC=CC=C2C2=C1C=NC(NC1=CC=CC=C1)=N2' -with-docker informaticsmatters/rdkit
-N E X T F L O W  ~  version 0.22.6
-Launching `screen.nf` [desperate_saha] - revision: b2fbd583dc
-[warm up] executor > local
-[88/18d787] Submitted process > rdkitScreen (1)
-Results: /Users/timbo/dev/git/pipelines/rdkit/work/88/18d787eea01ff4fd1c15db9e60ff4e/results.sdf.gz
-```
 
 ##2 conformers.py
 Generates 3D conformers
