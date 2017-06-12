@@ -81,7 +81,7 @@ Input pipe into Docker container using STDIN.
 Results sent from Docker container to STDOUT and redirected to file myfile.sdf
 
 
-##2 conformers.py
+## 2. conformers.py
 Generates 3D conformers
 
 ```sh
@@ -128,7 +128,7 @@ python conformers.py -i ../data/Kinase_inhibs.sdf.gz -n 5 -a 20 -c rmsd > out.sd
 Input specified using -i argument. Tries to generate 5 conformers using a maximum of 20 attempts, and clusters the conformers using RMSD distance.
 
 
-##3. o3dAlign.py
+## 3. o3dAlign.py
 Performs rigid 3D alignment of structures
 ```sh
 python o3dAlign.py -h
@@ -179,7 +179,7 @@ python o3dAlign.py ../data/pyrimethamine.mol -i ../data/dhfr_3d.sdf.gz -o o3da
 ```
 Aligns the 3D structures in the file dhfr_3d.sdf.gz to the 3D structure pyrimethamine.mol writing the output to o3da.sdf.gz
 
-##4. filter.py
+## 4. filter.py
 Filters and fixes molecules
 ```sh
 python filter.py -h
@@ -220,7 +220,7 @@ zcat ../data/Kinase_inhibs.sdf.gz | python filter.py --hacmin 25 --hacmax 30 -if
 ```
 
 
-##5. cluster_butina.py
+## 5. cluster_butina.py
 Molecule clustering using Butina method
 ```sh
 python cluster_butina.py -h

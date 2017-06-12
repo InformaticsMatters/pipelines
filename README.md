@@ -143,8 +143,9 @@ syntax. Keys beginning and ending with __ (2 underscores) have magical meaning.
 All other keys are treated as metrics that are recorded against that execution.
 The current magical values that are recognised are:
 
-InputCount: The total count of records (structures) that are processed
-OutputCount: The count of output records
+* InputCount: The total count of records (structures) that are processed
+* OutputCount: The count of output records
+* ErrorCount: The number of errors encountered
 
 Here is a typical metrics file:
 

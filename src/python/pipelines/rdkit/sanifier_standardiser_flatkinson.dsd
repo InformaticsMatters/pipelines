@@ -1,0 +1,62 @@
+{ "serviceConfig": {
+  "id": "pipelines.xchem.sanify.standardise.flatkinson.v1",
+  "name": "FlatkinsonStandardiser",
+  "description": "Molecule standardiser from Francis Atkinson",
+  "tags": [ "rdkit", "xchem", "docker", "sanify", "reaction", "flatkinson", "standardiser", "standardizer"],
+  "resourceUrl": null,
+  "icon": "icons/transform_molecule.png",
+
+  "inputDescriptors": [
+    {
+      "primaryType": "org.squonk.dataset.Dataset",
+      "secondaryType": "org.squonk.types.MoleculeObject",
+      "mediaType": "application/x-squonk-dataset-molecule+json",
+      "name": "input"
+    }
+  ],
+  "outputDescriptors": [
+    {
+      "primaryType": "org.squonk.dataset.Dataset",
+      "secondaryType": "org.squonk.types.MoleculeObject",
+      "mediaType": "application/x-squonk-dataset-molecule+json",
+      "name": "output"
+    }
+  ],
+
+  "optionDescriptors": [
+    {
+      "modes": [
+        "User"
+      ],
+      "editable": true,
+      "@class": "org.squonk.options.OptionDescriptor",
+      "typeDescriptor": {
+        "type": "java.lang.String",
+        "@class": "org.squonk.options.SimpleTypeDescriptor"
+      },
+      "key": "dockerImageVersion",
+      "label": "RDKit version",
+      "description": "Version of the RDKit Docker image to execute",
+      "values": [
+        "latest",
+        "Release_2017_03_1",
+        "Release_2016_09_2",
+        "Release_2016_03_1",
+        "Release_2015_09_2",
+        "Release_2015_09_1"
+      ],
+      "defaultValue": "latest",
+      "visible": true
+    }
+  ],
+  "executorClassName": "org.squonk.execution.steps.impl.ThinDatasetDockerExecutorStep"
+  },
+  "thinDescriptors": [{"input": "input", "preserve": false}],
+  "inputRoutes": [ "FILE" ],
+  "outputRoutes": [ "FILE" ],
+  "imageName": "abradle/standardiser",
+  "command": "cp -r /pipelines /tmp/pipelines && pip install -e /tmp/pipelines && python -m pipelines.rdkit.sanifier -i input.data.gz -if json -o output -of json -st -stm flatkinson --meta",
+  "volumes": {
+      "pipelines": "/pipelines"
+    }
+}
