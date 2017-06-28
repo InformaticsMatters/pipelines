@@ -14,7 +14,11 @@ on HPC-like environments.
 Currently it has some python scripts using RDKit (http://rdkit.org) to provide 
 basic cheminformatics and comp chem functionality, though other tools will 
 be coming soon, including some from the Java ecosystem.
-See [here](src/python/rdkit/README.md) for more info on the RDKit components.
+
+See [here](src/python/pipelines/rdkit/README.md) for more info on the RDKit components.
+
+See [here](src/nextflow/rdkit/README.md) for more info on running these in Nextflow.
+
 
 Note: this is experimental, everything is subject to change, and 
 there are no guarantees that anything works!
