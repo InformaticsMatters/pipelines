@@ -96,8 +96,10 @@
     {"input": "input"},
     {"input": "reactants"}
   ],
-  "inputRoutes": [ "FILE", "FILE" ],
-  "outputRoutes": [ "FILE" ],
+  "inputRoutes": [
+    {"route": "FILE"},
+    {"route": "FILE"} ],
+  "outputRoutes": [ {"route": "FILE"} ],
   "imageName": "informaticsmatters/rdkit",
   "command": "cp -r /pipelines /tmp/pipelines && pip install -e /tmp/pipelines && python -m pipelines.rdkit.rxn_maker -i input.data.gz --reagent_lib reactants.data.gz -o output --reaction ${reaction} -of json --meta",
   "volumes": {

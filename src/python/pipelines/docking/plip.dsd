@@ -56,10 +56,11 @@
   },
   "thinDescriptors": [{"input": "input", "output":"output","filtering":true}],
   "inputRoutes": [
-    "FILE", "FILE"
+    {"route": "FILE"},
+    {"route": "FILE"}
   ],
   "outputRoutes": [
-    "FILE"
+    {"route": "FILE"}
   ],
   "imageName": "abradle/pli",
     "command": "source activate my-rdkit-env && cp -r /pipelines /tmp/pipelines && pip install -e /tmp/pipelines && python -m pipelines.docking.plip -i input.data.gz -pdb protein.pdb.gz -o output -of json --meta --thin${binding.variables.containsKey('threshold') ? ' -t ' + binding.variables.get('threshold') : ''}",

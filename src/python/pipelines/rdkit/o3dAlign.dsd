@@ -120,10 +120,11 @@
     }
   ],
   "inputRoutes": [
-    "FILE", "FILE"
+    {"route": "FILE"},
+    {"route": "FILE"}
   ],
   "outputRoutes": [
-    "FILE"
+    {"route": "FILE"}
   ],
   "imageName": "informaticsmatters/rdkit",
   "command": "cp -r /pipelines /tmp/pipelines && pip install -e /tmp/pipelines && python -m pipelines.rdkit.o3dAlign queryMol.data.gz -i input.data.gz -o output -of json${binding.variables.containsKey('qmolidx') ? ' --qmolidx ' + binding.variables.get('qmolidx') : ''}${binding.variables.containsKey('num') ? ' --num ' + binding.variables.get('num') : ''}${binding.variables.containsKey('threshold') ? ' --threshold ' + binding.variables.get('threshold') : ''} --meta",

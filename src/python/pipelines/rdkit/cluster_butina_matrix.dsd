@@ -140,8 +140,8 @@
   "executorClassName": "org.squonk.execution.steps.impl.DefaultDockerExecutorStep"
   },
 
-  "inputRoutes": [ "FILE" ],
-  "outputRoutes": [ "FILE" ],
+  "inputRoutes": [ {"route": "FILE"} ],
+  "outputRoutes": [ {"route": "FILE"} ],
   "imageName": "informaticsmatters/rdkit",
   "command": "cp -r /pipelines /tmp/pipelines && pip install -e /tmp/pipelines && python -m pipelines.rdkit.cluster_butina_matrix -i input.data.gz -if json -o output -of json -t ${threshold} -mt ${matrixThreshold} -d ${descriptor} -m ${metric} --meta",
   "volumes": {

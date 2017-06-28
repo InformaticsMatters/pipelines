@@ -135,8 +135,8 @@
   "executorClassName": "org.squonk.execution.steps.impl.ThinDatasetDockerExecutorStep"
   },
   "thinDescriptors": [{"input": "input", "output":"output","filtering":true}],
-  "inputRoutes": [ "FILE" ],
-  "outputRoutes": [ "FILE" ],
+  "inputRoutes": [ {"route": "FILE"} ],
+  "outputRoutes": [ {"route": "FILE"} ],
   "imageName": "informaticsmatters/rdkit",
   "command": "cp -r /pipelines /tmp/pipelines && pip install -e /tmp/pipelines && python -m pipelines.rdkit.screen -i input.data.gz -if json -o output -of json --qsmiles '${query_source}' --simmin ${sim.minValue} --simmax ${sim.maxValue} -d ${descriptor} -m ${metric} --thin --meta",
   "volumes": {

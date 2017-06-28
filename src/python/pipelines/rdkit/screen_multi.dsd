@@ -125,8 +125,8 @@
     {"input": "query"},
     {"input": "target","output":"output"}
   ],
-  "inputRoutes": [ "FILE", "FILE" ],
-  "outputRoutes": [ "FILE" ],
+  "inputRoutes": [ {"route": "FILE"}, {"route": "FILE"} ],
+  "outputRoutes": [ {"route": "FILE"} ],
   "imageName": "informaticsmatters/rdkit",
   "command": "cp -r /pipelines /tmp/pipelines && pip install -e /tmp/pipelines && python -m pipelines.rdkit.screen_multi -i target.data.gz -if json --qjson query.data.gz -o output -of json --simmin ${sim.minValue} --simmax ${sim.maxValue} -d ${descriptor} -m ${metric} --meta",
   "volumes": {
