@@ -1,0 +1,10 @@
+FROM abradle/pli
+MAINTAINER Tim Dudgeon <tdudgeon@informaticsmatters.com>
+
+COPY python /root/python
+
+# install pipelines python modules
+WORKDIR /root
+RUN source activate my-rdkit-env
+RUN pip install -e python
+

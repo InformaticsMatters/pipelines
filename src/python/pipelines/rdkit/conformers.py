@@ -70,7 +70,7 @@ def process_mol_conformers(mol, i, numConfs, maxAttempts, pruneRmsThresh, cluste
                 else:
                     props[field_RMSToCentroid] = 0.0
     else:
-        utils.log("Molecule", i, "generated", len(conformerIds), "conformers")
+        utils.log("Molecule", i + 1, "generated", len(conformerIds), "conformers")
                 
     return conformerPropsDict, minEnergy
 
@@ -78,8 +78,12 @@ def write_conformers(mol, i, conformerPropsDict, minEnergy, writer):
     
     for id in range(mol.GetNumConformers()):
         #utils.log("Writing",i,id)
+        parentUuid = mol.GetProp("uuid")
+
         for name in mol.GetPropNames():
             mol.ClearProp(name)
+        if parentUuid:
+            mol.SetProp("SourceMolUUID", parentUuid)
         mol.SetIntProp(field_StructureNum, i+1)
         mol.SetIntProp(field_ConformerNum, id+1)
         props = conformerPropsDict[id]

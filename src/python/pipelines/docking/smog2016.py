@@ -19,6 +19,7 @@ import os,shutil
 import subprocess
 import tempfile
 import threading
+import multiprocessing
 from multiprocessing.dummy import Pool as ThreadPool
 
 from rdkit import Chem
@@ -80,6 +81,7 @@ def main():
     parser.add_argument('--no-gzip', action='store_true', help='Do not compress the output (STDOUT is never compressed')
     parser.add_argument('-pdb', '--pdb_file', help="PDB file for scoring")
     parser.add_argument('-t', '--threshold', help="The maximum score to allow", default=None)
+    parser.add_argument('--threads', type=int, help="Number of threads to used. Default is the number of cores", default=None)
     parser.add_argument('--thin', action='store_true', help='Thin output mode')
 
     args = parser.parse_args()
@@ -107,8 +109,12 @@ def main():
     os.chdir(smog_path)
 
     # Iterate over the molecules
-    # TODO - restore parallel processing, but need to ensure the order of molecules is preserved
-    pool = ThreadPool(1)
+    # WARNING - if using parallel processing the order of molecules is not preserved. Set args.threads to 1 to ensure this.
+    if args.threads is None:
+        threads = multiprocessing.cpu_count()
+    else:
+        threads = args.threads
+    pool = ThreadPool(threads)
     pool.map(run_dock, suppl)
     # Close the file
     WRITER.close()

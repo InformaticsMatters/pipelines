@@ -37,12 +37,14 @@ THRESHOLD = None
 def run_and_get_ans(mol, pdb_path):
     global PDB_PATH
     smogmol = tempfile.NamedTemporaryFile("w",suffix=".sdf",delete=False).name
+    utils.log("PDB: " + PDB_PATH + " ligand: " + smogmol)
     out_f = open(smogmol, "w")
     out_f.write(Chem.MolToMolBlock(mol))
     out_f.close()
     # Run command
     pli_path = "/usr/local/pli/bin/pli"
     cmd = [pli_path,"-protein",pdb_path,"-ligand",smogmol,"-mode","score","-output","system,scores","-exact_voronoi_areas","0","-selection","ligand","-oformat","json","-minimise","1","-warnings","0","-min_max_iter", "10"]
+    utils.log("PLI CMD: " + " ".join(cmd))
     proc = subprocess.Popen(cmd,stdout=subprocess.PIPE)
     # Parse the output
     me = proc.stdout.read()
@@ -76,10 +78,12 @@ def main():
     utils.add_default_io_args(parser)
     parser.add_argument('--no-gzip', action='store_true', help='Do not compress the output (STDOUT is never compressed')
     parser.add_argument('-pdb', '--pdb_file', help="PDB file for scoring")
-    parser.add_argument('-t', '--threshold', help="The maximum score to allow", default=None)
+    parser.add_argument('-t', '--threshold', type=float, help="The maximum score to allow", default=None)
+    parser.add_argument('--threads', type=int, help="Number of threads to used. Default is the number of cores", default=None)
     parser.add_argument('--thin', action='store_true', help='Thin output mode')
 
     args = parser.parse_args()
+    utils.log("PLI Args: ", args)
 
     # Open up the input file
     input, suppl = utils.default_open_input(args.input, args.informat)
@@ -88,12 +92,11 @@ def main():
 
     PDB_PATH = args.pdb_file
     if args.threshold:
-        THRESHOLD = float(args.threshold)
+        THRESHOLD = args.threshold
 
     # Iterate over the molecules
-    # TODO - restore parallel processing, but need to ensure the order of molecules is preserved
-    #pool = ThreadPool(multiprocessing.cpu_count())
-    pool = ThreadPool(1)
+    # WARNING - if using parallel processing the order of molecules is not preserved. Set args.threads to 1 to ensure this.
+    pool = ThreadPool(args.threads if args.threads is not None else multiprocessing.cpu_count())
     pool.map(run_dock, suppl)
     pool.close()
     pool.join()

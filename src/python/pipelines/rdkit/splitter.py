@@ -36,7 +36,7 @@ def main():
 
 
 def split(input, informat, fieldName, outputBase):
-    """Splits the input into separate files. The name of each files and the file the records is written to
+    """Splits the input into separate files. The name of each file and the file the each record is written to
     is determined by the fieldName parameter
     """
 

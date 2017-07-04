@@ -105,7 +105,8 @@ def main():
     parser.add_argument('--mwmin', type=float, help='Min mol weight')
     parser.add_argument('--mwmax', type=float, help='Max mol weight')
     parser.add_argument('-l', '--limit', type=int, help='Limit output to this many records')
-    parser.add_argument('-c', '--chunksize', type=int, help='Split output into chunks of size c. Output will always be files. Names like filter01.sdf.gz, filter02.sdf.gz ...')
+    parser.add_argument('-c', '--chunksize', type=int, help='Split output into chunks of size c. Output will always be files. Names like filter1.sdf.gz, filter2.sdf.gz ...')
+    parser.add_argument('-d', '--digits', type=int, default=0, help='When splitting zero pad the file name to this many digits so that they are in sorted order. Names like filter001.sdf.gz, filter002.sdf.gz ...')
     # WARNING: thin output is not appropriate when using --fragment
     parser.add_argument('--thin', action='store_true', help='Thin output mode')
     parser.add_argument('-q', '--quiet', action='store_true', help='Quiet mode - suppress reporting reason for filtering')
@@ -114,31 +115,25 @@ def main():
     utils.log("Filter Args: ", args)
         
     input,suppl = utils.default_open_input(args.input, args.informat)
-    if args.output:
-        output_base = args.output
-    else:
-        output_base = 'filter'
 
-    # OK, all looks good so we can hope that things will run OK.
-    # But before we start lets write the metadata so that the results can be handled.
-    #t = open(output_base + '_types.txt', 'w')
-    #t.write(field_Similarity + '=integer\n')
-    #t.flush()
-    #t.close()
     
     if args.chunksize:
         chunkNum = 1
-        output = gzip.open(output_base + str(chunkNum) + '.sdf.gz','w+')
-    elif args.output:
-        output = gzip.open(output_base + '.sdf.gz','w+')
+        if args.output:
+            output_base = args.output
+        else:
+            output_base = 'filter'
+        output_base_chunk = output_base + str(chunkNum).zfill(args.digits)
+        output,writer,output_base_chunk = utils.default_open_output(output_base_chunk, output_base_chunk, args.outformat, compress=True)
     else:
-        output = sys.stdout
-        
-    writer = Chem.SDWriter(output)
+        output,writer,output_base_chunk = utils.default_open_output(args.output, "filter", args.outformat, compress=True)
+        output_base = output_base_chunk
+
+    utils.log("Writing to " + output_base_chunk)
 
     i=0
     count = 0
-    chunkCount = 1
+    chunkNum = 1
     for mol in suppl:
         if args.limit and count >= args.limit:
             break
@@ -152,16 +147,19 @@ def main():
             if count > 0 and count % args.chunksize == 0:
                 writer.close()
                 output.close()
-                chunkCount += 1
-                output = gzip.open(output_base + str(chunkCount) + '.sdf.gz','w+')
-                writer = Chem.SDWriter(output)
+                chunkNum += 1
+                output_chunk_base = output_base + str(chunkNum).zfill(args.digits)
+                utils.log("Writing to " + output_chunk_base)
+                output,writer,output_chunk_base = utils.default_open_output(output_chunk_base, output_chunk_base, args.outformat, compress=True)
 
         count += 1
         writer.write(mol)
 
     utils.log("Filtered", i, "down to", count, "molecules")
     if args.chunksize:
-        utils.log("Wrote", chunkCount, "chunks")
+        utils.log("Wrote", chunkNum, "chunks")
+        if (args.digits > 0 and len(str(chunkNum)) > args.digits):
+            utils.log("WARNING: not enough digits specified for the number of chunks")
 
     writer.flush()
     writer.close()
