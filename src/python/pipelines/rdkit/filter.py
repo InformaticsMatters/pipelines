@@ -109,6 +109,7 @@ def main():
     parser.add_argument('-d', '--digits', type=int, default=0, help='When splitting zero pad the file name to this many digits so that they are in sorted order. Names like filter001.sdf.gz, filter002.sdf.gz ...')
     parser.add_argument('-r', '--rename', action='append', help='Rename field (fromname:toname)')
     parser.add_argument('--delete', action='append', help='Delete field')
+    parser.add_argument('--no-gzip', action='store_true', help='Do not compress the output (STDOUT is never compressed')
     # WARNING: thin output is not appropriate when using --fragment
     parser.add_argument('--thin', action='store_true', help='Thin output mode')
     parser.add_argument('-q', '--quiet', action='store_true', help='Quiet mode - suppress reporting reason for filtering')
@@ -136,9 +137,9 @@ def main():
         else:
             output_base = 'filter'
         output_base_chunk = output_base + str(chunkNum).zfill(args.digits)
-        output,writer,output_base_chunk = utils.default_open_output(output_base_chunk, output_base_chunk, args.outformat, compress=True)
+        output,writer,output_base_chunk = utils.default_open_output(output_base_chunk, output_base_chunk, args.outformat, compress=not args.no_gzip)
     else:
-        output,writer,output_base_chunk = utils.default_open_output(args.output, "filter", args.outformat, compress=True)
+        output,writer,output_base_chunk = utils.default_open_output(args.output, "filter", args.outformat, compress=not args.no_gzip)
         output_base = output_base_chunk
 
     utils.log("Writing to " + output_base_chunk)
@@ -163,7 +164,7 @@ def main():
                 chunkNum += 1
                 output_chunk_base = output_base + str(chunkNum).zfill(args.digits)
                 utils.log("Writing to " + output_chunk_base)
-                output,writer,output_chunk_base = utils.default_open_output(output_chunk_base, output_chunk_base, args.outformat, compress=True)
+                output,writer,output_chunk_base = utils.default_open_output(output_chunk_base, output_chunk_base, args.outformat, compress=not args.no_gzip)
 
         for from_name in field_renames:
             to_name = field_renames[from_name]

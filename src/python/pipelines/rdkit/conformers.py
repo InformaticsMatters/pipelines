@@ -84,6 +84,11 @@ def write_conformers(mol, i, conformerPropsDict, minEnergy, writer):
     for id in range(mol.GetNumConformers()):
         #utils.log("Writing",i,id)
 
+        if mol.HasProp("uuid"):
+            parentUuid = mol.GetProp("uuid")
+        else:
+            parentUuid = None
+            
         for name in mol.GetPropNames():
             mol.ClearProp(name)
         if parentUuid:
