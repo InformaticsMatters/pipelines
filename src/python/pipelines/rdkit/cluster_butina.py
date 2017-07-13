@@ -95,9 +95,13 @@ def SelectDiverseSubset(mols, clusters, distances, count, field, maximise, score
     clustersList = []
     for i in range(0, num_clusters):
         pickedList.append([])
-        filteredByValue = [x for x in clusters[i] if mols[x].HasProp(field)]
-        sortedByValue = sorted(filteredByValue, key=lambda idx: FetchScore(idx, mols, field, maximise))
-        clustersList.append(sortedByValue)
+        if field:
+            filteredByValue = [x for x in clusters[i] if mols[x].HasProp(field)]
+            sortedByValue = sorted(filteredByValue, key=lambda idx: FetchScore(idx, mols, field, maximise))
+            clustersList.append(sortedByValue)
+        else:
+            allRecords = [x for x in clusters[i]]
+            clustersList.append(allRecords)
 
     totalIter = 0
     clusterIter = 0
@@ -184,15 +188,10 @@ def main():
     if descriptor is None:
         raise ValueError('Invalid descriptor name ' + args.descriptor)
 
-    if args.num or args.field:
-        if args.num and args.field:
-            if args.min or args.max:
-                foo = 1
-                # OK we have all the params we need
-            else:
-                raise ValueError('--min or --max argument must be specified for diverse subset selection')
-        else:
-            raise ValueError('--num and --field arguments must be specified for diverse subset selection')
+    if args.field and not args.num:
+        raise ValueError('--num argument must be specified for diverse subset selection')
+    if args.field and not (args.min or args.max):
+        raise ValueError('--min or --max argument must be specified for diverse subset selection')
 
     # handle metadata
     source = "cluster_butina.py"

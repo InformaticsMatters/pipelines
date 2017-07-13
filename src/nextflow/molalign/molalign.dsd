@@ -63,11 +63,11 @@
   ],
   "executorClassName": "org.squonk.execution.steps.impl.ThinDatasetDockerExecutorStep"
   },
-  "thinDescriptors": [{"input": "input", "fieldDescriptors":[{"optionName":"arg.field","fieldName":"parent"}]}],
+  "thinDescriptors": [{"input": "input", "fieldDescriptors":[{"optionName":"arg.field"}]}],
   "inputRoutes": [ {"route": "FILE"} ],
   "outputRoutes": [ {"route": "FILE"} ],
   "imageName": "informaticsmatters/rdkit_pipelines_molalign",
-  "command": "nextflow run /nextflow/molalign/molalign.nf --field parent --assemblies $num",
+  "command": "nextflow run /nextflow/molalign/molalign.nf --field $field --assemblies $num",
   "volumes": {
       "nextflow": "/nextflow"
     }
