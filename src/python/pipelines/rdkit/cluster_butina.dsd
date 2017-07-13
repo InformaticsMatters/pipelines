@@ -123,9 +123,6 @@
 
   "inputRoutes": [ {"route": "FILE"} ],
   "outputRoutes": [ {"route": "FILE"} ],
-  "imageName": "informaticsmatters/rdkit",
-  "command": "cp -r /pipelines /tmp/pipelines && pip install -e /tmp/pipelines && python -m pipelines.rdkit.cluster_butina -i input.data.gz -if json -o output -of json -t ${threshold} -d ${descriptor} -m ${metric} --thin --meta",
-  "volumes": {
-      "pipelines": "/pipelines"
-    }
+  "imageName": "informaticsmatters/rdkit_pipelines",
+  "command": "python -m pipelines.rdkit.cluster_butina -i input.data.gz -if json -o output -of json -t ${threshold} -d ${descriptor} -m ${metric} --thin --meta"
 }
