@@ -27,15 +27,16 @@ def main():
     utils.add_default_input_args(parser)
     parser.add_argument('-o', '--output', required=True, help="Directory name for output files (no extension).")
     parser.add_argument('-f', '--field', required=True, help="field to use to split input. Output files will have the name of this field's value")
+    parser.add_argument('--meta', action='store_true', help='Write metadata and metrics files')
 
     args = parser.parse_args()
     utils.log("Splitter Args: ", args)
 
-    filenames = split(args.input, args.informat, args.field, args.output)
+    filenames = split(args.input, args.informat, args.field, args.output, args.meta)
     utils.log("Files generated:", " ".join(filenames))
 
 
-def split(input, informat, fieldName, outputBase):
+def split(input, informat, fieldName, outputBase, writeMetrics):
     """Splits the input into separate files. The name of each file and the file the each record is written to
     is determined by the fieldName parameter
     """
@@ -43,6 +44,7 @@ def split(input, informat, fieldName, outputBase):
     input,suppl = utils.default_open_input(input, informat)
 
     i=0
+    written=0
     writers = {}
     outputs = []
     filenames = []
@@ -64,6 +66,7 @@ def split(input, informat, fieldName, outputBase):
                 outputs.append(output)
                 writers[s] = writer
             writer.write(mol)
+            written += 1
 
 
     utils.log("Generated", len(writers), "outputs from", i, "records")
@@ -71,6 +74,9 @@ def split(input, informat, fieldName, outputBase):
     input.close()
     for k in writers: writers[k].close()
     for o in outputs: o.close()
+
+    if writeMetrics:
+        utils.write_metrics(outputBase, {'__InputCount__':i, '__OutputCount__':written, 'Splitter':i})
 
     return filenames
 

@@ -24,10 +24,11 @@ process split {
 
     output:
     file 'molecule_*.sdf' into conformer_parts
+    file 'molecule__metrics.txt' into input_metrics
 
 
     """
-    python -m pipelines.rdkit.splitter -i $conformers -f $params.field -o molecule_
+    python -m pipelines.rdkit.splitter -i $conformers -f $params.field -o molecule_ --meta
     """
 }
 
@@ -52,13 +53,20 @@ process results {
 
 	input:
     file assemblies
+    file 'input_metrics.txt' from input_metrics
 
     output:
     file 'output.data.gz'
     file 'output.metadata'
+    file 'output_metrics.txt'
 
     """
-    python -m pipelines.rdkit.filter -i $assemblies -if sdf -o output -of json --rename uuid:ConformerUUID --meta
+    python -m pipelines.rdkit.filter -i $assemblies -if sdf -o output -of json --rename uuid:ConformerUUID
+    echo '{"type": "org.squonk.types.MoleculeObject"}' > output.metadata
+    grep '__InputCount__' input_metrics.txt > output_metrics.txt
+    count=`fgrep -c '\$\$\$\$' $assemblies`
+    echo "__OutputCount__=\$count" >> output_metrics.txt
+    echo "MolAlignAssemblies=\$count" >> output_metrics.txt
     """
 }
 
