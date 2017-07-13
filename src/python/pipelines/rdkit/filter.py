@@ -107,16 +107,28 @@ def main():
     parser.add_argument('-l', '--limit', type=int, help='Limit output to this many records')
     parser.add_argument('-c', '--chunksize', type=int, help='Split output into chunks of size c. Output will always be files. Names like filter1.sdf.gz, filter2.sdf.gz ...')
     parser.add_argument('-d', '--digits', type=int, default=0, help='When splitting zero pad the file name to this many digits so that they are in sorted order. Names like filter001.sdf.gz, filter002.sdf.gz ...')
+    parser.add_argument('-r', '--rename', action='append', help='Rename field (fromname:toname)')
+    parser.add_argument('--delete', action='append', help='Delete field')
     # WARNING: thin output is not appropriate when using --fragment
     parser.add_argument('--thin', action='store_true', help='Thin output mode')
     parser.add_argument('-q', '--quiet', action='store_true', help='Quiet mode - suppress reporting reason for filtering')
     utils.add_default_io_args(parser)
     args = parser.parse_args()
     utils.log("Filter Args: ", args)
+
+    field_renames = {}
+    if args.rename:
+        for t in args.rename:
+            parts = t.split(':')
+            if len(parts) != 2:
+                raise ValueError('Invalid field rename argument:',t)
+            field_renames[parts[0]] = parts[1]
+    if args.delete:
+        for f in args.delete:
+            field_renames[f] = None
         
     input,suppl = utils.default_open_input(args.input, args.informat)
 
-    
     if args.chunksize:
         chunkNum = 1
         if args.output:
@@ -145,12 +157,21 @@ def main():
             continue
         if args.chunksize:
             if count > 0 and count % args.chunksize == 0:
+                # new chunk, so create new writer
                 writer.close()
                 output.close()
                 chunkNum += 1
                 output_chunk_base = output_base + str(chunkNum).zfill(args.digits)
                 utils.log("Writing to " + output_chunk_base)
                 output,writer,output_chunk_base = utils.default_open_output(output_chunk_base, output_chunk_base, args.outformat, compress=True)
+
+        for from_name in field_renames:
+            to_name = field_renames[from_name]
+            if mol.HasProp(from_name):
+                val = mol.GetProp(from_name)
+                mol.ClearProp(from_name)
+                if to_name:
+                    mol.SetProp(to_name, val)
 
         count += 1
         writer.write(mol)

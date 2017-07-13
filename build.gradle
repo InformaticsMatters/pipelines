@@ -37,7 +37,7 @@ task cleanDist(type: Delete) {
 }
 
 
-task copyDist(type: Copy) {
+task dist(type: Copy) {
     group = 'Distribution'
     dependsOn cleanDist
 
@@ -47,19 +47,13 @@ task copyDist(type: Copy) {
         includes = ['**/*.py','**/*.nf','**/*.dsd','README.rst']
         into 'pipelines'
     }
-}
 
-task dist(type: Zip) {
-    group = 'Distribution'
-    dependsOn copyDist
-
-    destinationDir = file('build/dist')
-    baseName = 'pipelines'
-
-    from('build/dist/pipelines') {
-        into 'pipelines'
+    from('src/nextflow') {
+        includes = ['**/*.py','**/*.nf','**/*.dsd','README.rst']
+        into 'nextflow'
     }
 }
+
 
 task wrapper(type: Wrapper) {
     gradleVersion = '3.3'
@@ -75,13 +69,14 @@ docker {
     certPath = null
 }
 
-task buildDockerFile(type: Dockerfile, dependsOn: copyDist) {
+task buildDockerFile(type: Dockerfile, dependsOn: dist) {
 
     destFile = project.file('build/Dockerfile')
-    from "informaticsmatters/rdkit_java:Release_2016_09_2"
+    from "informaticsmatters/rdkit_java:Release_2017_03_1"
     maintainer 'Tim Dudgeon <tdudgeon@informaticsmatters.com>'
 
     addFile('dist/pipelines', "/pipelines")
+    addFile('dist/nextflow', "/nextflow")
 }
 
 task buildDockerImage(type: DockerBuildImage, dependsOn: buildDockerFile) {

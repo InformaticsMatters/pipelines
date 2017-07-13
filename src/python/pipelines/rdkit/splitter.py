@@ -49,6 +49,9 @@ def split(input, informat, fieldName, outputBase):
     for mol in suppl:
         i +=1
         if mol is None: continue
+        if not mol.HasProp(fieldName):
+            utils.log("Skipping molecule", i, "- did not contain field",fieldName)
+            continue
         value = mol.GetProp(fieldName)
         if value:
             s = str(value)

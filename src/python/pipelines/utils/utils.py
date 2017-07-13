@@ -338,7 +338,10 @@ def create_mol_from_props(molobj):
             values = molobj["values"]
             for key in values:
                 mol.SetProp(str(key), str(values[key]))
-        mol.SetProp("uuid", str(molobj["uuid"]))
+        uuid = str(molobj["uuid"])
+        if uuid:
+            mol.SetProp("uuid", uuid)
+            mol.SetProp("_Name", uuid)
     return mol
 
 def clear_mol_props(mol, exceptFor):
