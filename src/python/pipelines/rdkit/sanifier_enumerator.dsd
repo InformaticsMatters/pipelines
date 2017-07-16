@@ -79,6 +79,29 @@
       "description": "Enumerate stereoisomers",
       "defaultValue": true,
       "visible": true
+    },
+    {
+      "modes": [
+        "User"
+      ],
+      "editable": true,
+      "@class": "org.squonk.options.OptionDescriptor",
+      "typeDescriptor": {
+        "type": "java.lang.String",
+        "@class": "org.squonk.options.SimpleTypeDescriptor"
+      },
+      "key": "arg.molFormat",
+      "label": "Molecule format",
+      "description": "Output format for molecules",
+      "values": [
+        "smiles",
+        "mol_2d",
+        "mol_3d"
+      ],
+      "defaultValue": "smiles",
+      "minValues": 1,
+      "maxValues": 1,
+      "visible": true
     }
   ],
   "executorClassName": "org.squonk.execution.steps.impl.ThinDatasetDockerExecutorStep"
@@ -87,7 +110,7 @@
   "inputRoutes": [ {"route": "FILE"} ],
   "outputRoutes": [ {"route": "FILE"} ],
   "imageName": "abradle/standardiser",
-  "command": "cp -r /pipelines /tmp/pipelines && pip install -e /tmp/pipelines && python -m pipelines.rdkit.sanifier -i input.data.gz -if json -o output -of json${tautomers ? ' -et' : ''}${stereoisomers ? ' -es' : ''} --meta",
+  "command": "cp -r /pipelines /tmp/pipelines && pip install -e /tmp/pipelines && python -m pipelines.rdkit.sanifier -i input.data.gz -if json -o output -of json -mf $molFormat ${tautomers ? ' -et' : ''}${stereoisomers ? ' -es' : ''} --meta",
   "volumes": {
       "pipelines": "/pipelines"
     }

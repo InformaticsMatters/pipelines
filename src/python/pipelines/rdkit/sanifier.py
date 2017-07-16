@@ -19,14 +19,28 @@
 from pipelines.utils import utils
 import sys, argparse
 from rdkit import Chem
+from rdkit.Chem import AllChem
 from sanify_utils import enumerateStereoIsomers,enumerateTautomers,STANDARD_MOL_METHODS
 
 
-def write_out(mols,count,writer):
+def write_out(mols,count,writer,mol_format,file_format):
     for mol in mols:
         count += 1
         if mol is None: continue
-        writer.write(mol, format='smiles')
+        if mol_format == 'mol_3d':
+            AllChem.EmbedMolecule(mol,AllChem.ETKDG())
+            fmt = 'mol'
+        elif mol_format == 'mol_2d':
+            AllChem.Compute2DCoords(mol)
+            fmt = 'mol'
+        else:
+            fmt = 'smiles'
+
+        if file_format == 'sdf':
+            writer.write(mol)
+        elif file_format == 'json':
+            writer.write(mol, format=fmt)
+
     return count
 
 def main():
@@ -38,15 +52,21 @@ def main():
     parser.add_argument('-et', '--enumerate_tauts', action='store_true', help='Enumerate all tautomers')
     parser.add_argument('-es', '--enumerate_stereo', action='store_true', help='Enumerate all stereoisomers')
     parser.add_argument('-st', '--standardize', action='store_true', help='Standardize molecules. Cannot  be true if enumerate is on.')
-    parser.add_argument('-stm','--standardize_method', default="molvs",choices=STANDARD_MOL_METHODS.keys(),help="Chose the method to standardize.")
+    parser.add_argument('-stm','--standardize_method', default="molvs",choices=STANDARD_MOL_METHODS.keys(),help="Choose the method to standardize.")
+    parser.add_argument('-mf','--mol_format' ,choices=['smiles', 'mol_2d', 'mol_3d'],help="Format for molecules.")
 
     args = parser.parse_args()
+
+    utils.log("Sanifier Args: ", args)
 
     if args.standardize and args.enumerate_tauts:
         raise ValueError("Cannot Enumerate Tautomers and Standardise")
 
     if args.standardize and args.enumerate_stereo:
         raise ValueError("Cannot Enumerate Stereo and Standardise")
+
+    if args.outformat == 'sdf' and args.mol_format == 'smiles':
+        raise ValueError("Smiles cannot be used when outputting as SDF")
 
     if args.standardize:
         getStandardMolecule = STANDARD_MOL_METHODS[args.standardize_method]
@@ -79,10 +99,13 @@ def main():
                 std = mol
                 std.SetProp("Standardised", "Error")
 
-            count = write_out([std],count,writer)
+            count = write_out([std],count,writer,args.mol_format,args.outformat)
         else:
             # we want a new UUID generating as we are generating new molecules
-            parentUuid = mol.GetProp("uuid")
+            if mol.HasProp('uuid'):
+                parentUuid = mol.GetProp("uuid")
+            else:
+                parentUuid = None
 
             results = []
             results.append(mol)
@@ -105,7 +128,7 @@ def main():
                 if parentUuid:
                     m.SetProp("SourceMolUUID", parentUuid)
 
-            count = write_out(results,count,writer)
+            count = write_out(results,count,writer,args.mol_format,args.outformat)
 
     utils.log("Handled "+str(i)+" molecules, resulting in "+str(count)+" outputs")
 
