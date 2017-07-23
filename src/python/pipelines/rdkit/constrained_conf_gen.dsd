@@ -35,30 +35,6 @@
     ],
     "optionDescriptors": [
       {
-        "modes": [
-          "User"
-        ],
-        "editable": true,
-        "@class": "org.squonk.options.OptionDescriptor",
-        "typeDescriptor": {
-          "type": "java.lang.String",
-          "@class": "org.squonk.options.SimpleTypeDescriptor"
-        },
-        "key": "dockerImageVersion",
-        "label": "RDKit version",
-        "description": "Version of the RDKit Docker image to execute",
-        "values": [
-          "latest",
-          "Release_2017_03_1",
-          "Release_2016_09_2",
-          "Release_2016_03_1",
-          "Release_2015_09_2",
-          "Release_2015_09_1"
-        ],
-        "defaultValue": "latest",
-        "visible": true
-      },
-      {
         "@class": "org.squonk.options.OptionDescriptor",
         "modes": [
           "User"
@@ -120,11 +96,17 @@
     }
   ],
   "inputRoutes": [
-    {"route": "FILE"},
-    {"route": "FILE"}
+    {
+      "route": "FILE"
+    },
+    {
+      "route": "FILE"
+    }
   ],
   "outputRoutes": [
-    {"route": "FILE"}
+    {
+      "route": "FILE"
+    }
   ],
   "imageName": "informaticsmatters/rdkit_pipelines",
   "command": "cp -r /pipelines /tmp/pipelines && pip install -e /tmp/pipelines && python -m pipelines.rdkit.constrained_conf_gen -i input.data.gz -o output -of json -n $num -r refMol.data.gz --refmolidx $refmolidx${binding.variables.containsKey('coresmiles') ? ' -c \"' + binding.variables.get('coresmiles') + '\"': ''} --meta"

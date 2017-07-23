@@ -23,32 +23,7 @@
     }
   ],
 
-  "optionDescriptors": [
-    {
-      "modes": [
-        "User"
-      ],
-      "editable": true,
-      "@class": "org.squonk.options.OptionDescriptor",
-      "typeDescriptor": {
-        "type": "java.lang.String",
-        "@class": "org.squonk.options.SimpleTypeDescriptor"
-      },
-      "key": "dockerImageVersion",
-      "label": "RDKit version",
-      "description": "Version of the RDKit Docker image to execute",
-      "values": [
-        "latest",
-        "Release_2017_03_1",
-        "Release_2016_09_2",
-        "Release_2016_03_1",
-        "Release_2015_09_2",
-        "Release_2015_09_1"
-      ],
-      "defaultValue": "latest",
-      "visible": true
-    }
-  ],
+  "optionDescriptors": [],
   "executorClassName": "org.squonk.execution.steps.impl.ThinDatasetDockerExecutorStep"
   },
 

@@ -1,145 +1,144 @@
-{ "serviceConfig": {
-  "id": "pipelines.rdkit.screen.basic",
-  "name": "RDKitSimilarityScreening",
-  "description": "RDKit Similarity Screening",
-  "tags": [ "rdkit", "screening", "similarity", "docker" ],
-  "resourceUrl": null,
-  "icon": "icons/filter_molecules.png",
-
-  "inputDescriptors": [
-    {
-      "primaryType": "org.squonk.dataset.Dataset",
-      "secondaryType": "org.squonk.types.MoleculeObject",
-      "mediaType": "application/x-squonk-dataset-molecule+json",
-      "name": "input"
-    }
-  ],
-  "outputDescriptors": [
-    {
-      "primaryType": "org.squonk.dataset.Dataset",
-      "secondaryType": "org.squonk.types.MoleculeObject",
-      "mediaType": "application/x-squonk-dataset-molecule+json",
-      "name": "output"
-    }
-  ],
-
-  "optionDescriptors": [
-    {
-      "modes": [
-        "User"
-      ],
-      "editable": true,
-      "@class": "org.squonk.options.OptionDescriptor",
-      "typeDescriptor": {
-        "type": "java.lang.String",
-        "@class": "org.squonk.options.SimpleTypeDescriptor"
-      },
-      "key": "dockerImageVersion",
-      "label": "RDKit version",
-      "description": "Version of the RDKit Docker image to execute",
-      "values": [
-        "latest",
-        "Release_2017_03_1",
-        "Release_2016_09_2",
-        "Release_2016_03_1",
-        "Release_2015_09_2",
-        "Release_2015_09_1"
-      ],
-      "defaultValue": "latest",
-      "visible": true
-    },
-    {
-      "modes": [
-        "User"
-      ],
-      "editable": true,
-      "visible": true,
-      "description": "Query molecule as smiles",
-      "label": "Query molecule",
-      "key": "arg.query",
-      "typeDescriptor": {
-        "type": "org.squonk.options.types.Structure",
-        "formats": [
-          "smiles"
+{
+  "serviceConfig": {
+    "id": "pipelines.rdkit.screen.basic",
+    "name": "RDKitSimilarityScreening",
+    "description": "RDKit Similarity Screening",
+    "tags": [
+      "rdkit",
+      "screening",
+      "similarity",
+      "docker"
+    ],
+    "resourceUrl": null,
+    "icon": "icons/filter_molecules.png",
+    "inputDescriptors": [
+      {
+        "primaryType": "org.squonk.dataset.Dataset",
+        "secondaryType": "org.squonk.types.MoleculeObject",
+        "mediaType": "application/x-squonk-dataset-molecule+json",
+        "name": "input"
+      }
+    ],
+    "outputDescriptors": [
+      {
+        "primaryType": "org.squonk.dataset.Dataset",
+        "secondaryType": "org.squonk.types.MoleculeObject",
+        "mediaType": "application/x-squonk-dataset-molecule+json",
+        "name": "output"
+      }
+    ],
+    "optionDescriptors": [
+      {
+        "modes": [
+          "User"
         ],
-        "molType": "DISCRETE",
-        "@class": "org.squonk.options.MoleculeTypeDescriptor"
+        "editable": true,
+        "visible": true,
+        "description": "Query molecule as smiles",
+        "label": "Query molecule",
+        "key": "arg.query",
+        "typeDescriptor": {
+          "type": "org.squonk.options.types.Structure",
+          "formats": [
+            "smiles"
+          ],
+          "molType": "DISCRETE",
+          "@class": "org.squonk.options.MoleculeTypeDescriptor"
+        },
+        "@class": "org.squonk.options.OptionDescriptor"
       },
-      "@class": "org.squonk.options.OptionDescriptor"
-    },
-    {
-         "@class":"org.squonk.options.OptionDescriptor",
-         "modes":["User"],
-         "typeDescriptor":{"@class":"org.squonk.options.SimpleTypeDescriptor", "type":"org.squonk.types.NumberRange$Float"},
-         "key":"arg.sim",
-         "label":"Similarity",
-         "description":"Similarity threshold (1.0 is identical)",
-         "minValues": 1,
-         "maxValues": 1,
-         "defaultValue":{"@class":"org.squonk.types.NumberRange$Float", "minValue":0.7,"maxValue":1.0},
-         "visible":true,
-         "editable":true
-    },
-
-    {
-      "modes": [
-        "User"
-      ],
-      "editable": true,
-      "@class": "org.squonk.options.OptionDescriptor",
-      "typeDescriptor": {
-        "type": "java.lang.String",
-        "@class": "org.squonk.options.SimpleTypeDescriptor"
+      {
+        "@class": "org.squonk.options.OptionDescriptor",
+        "modes": [
+          "User"
+        ],
+        "typeDescriptor": {
+          "@class": "org.squonk.options.SimpleTypeDescriptor",
+          "type": "org.squonk.types.NumberRange$Float"
+        },
+        "key": "arg.sim",
+        "label": "Similarity",
+        "description": "Similarity threshold (1.0 is identical)",
+        "minValues": 1,
+        "maxValues": 1,
+        "defaultValue": {
+          "@class": "org.squonk.types.NumberRange$Float",
+          "minValue": 0.7,
+          "maxValue": 1.0
+        },
+        "visible": true,
+        "editable": true
       },
-      "key": "arg.descriptor",
-      "label": "Descriptor",
-      "description": "Descriptor/fingerprint to use",
-      "values": [
-        "maccs",
-        "morgan2",
-        "morgan3",
-        "rdkit"
-      ],
-      "defaultValue": "rdkit",
-      "visible": true
-    },
-    {
-      "modes": [
-        "User"
-      ],
-      "editable": true,
-      "@class": "org.squonk.options.OptionDescriptor",
-      "typeDescriptor": {
-        "type": "java.lang.String",
-        "@class": "org.squonk.options.SimpleTypeDescriptor"
+      {
+        "modes": [
+          "User"
+        ],
+        "editable": true,
+        "@class": "org.squonk.options.OptionDescriptor",
+        "typeDescriptor": {
+          "type": "java.lang.String",
+          "@class": "org.squonk.options.SimpleTypeDescriptor"
+        },
+        "key": "arg.descriptor",
+        "label": "Descriptor",
+        "description": "Descriptor/fingerprint to use",
+        "values": [
+          "maccs",
+          "morgan2",
+          "morgan3",
+          "rdkit"
+        ],
+        "defaultValue": "rdkit",
+        "visible": true
       },
-      "key": "arg.metric",
-      "label": "Metric",
-      "description": "Similarity metric to use",
-      "values": [
-        "asymmetric",
-        "braunblanquet",
-        "cosine",
-        "dice",
-        "kulczynski",
-        "mcconnaughey",
-        "rogotgoldberg",
-        "russel",
-        "sokal",
-        "tanimoto"
-      ],
-      "defaultValue": "tanimoto",
-      "visible": true
+      {
+        "modes": [
+          "User"
+        ],
+        "editable": true,
+        "@class": "org.squonk.options.OptionDescriptor",
+        "typeDescriptor": {
+          "type": "java.lang.String",
+          "@class": "org.squonk.options.SimpleTypeDescriptor"
+        },
+        "key": "arg.metric",
+        "label": "Metric",
+        "description": "Similarity metric to use",
+        "values": [
+          "asymmetric",
+          "braunblanquet",
+          "cosine",
+          "dice",
+          "kulczynski",
+          "mcconnaughey",
+          "rogotgoldberg",
+          "russel",
+          "sokal",
+          "tanimoto"
+        ],
+        "defaultValue": "tanimoto",
+        "visible": true
+      }
+    ],
+    "executorClassName": "org.squonk.execution.steps.impl.ThinDatasetDockerExecutorStep"
+  },
+  "thinDescriptors": [
+    {
+      "input": "input",
+      "output": "output",
+      "filtering": true
     }
   ],
-  "executorClassName": "org.squonk.execution.steps.impl.ThinDatasetDockerExecutorStep"
-  },
-  "thinDescriptors": [{"input": "input", "output":"output","filtering":true}],
-  "inputRoutes": [ {"route": "FILE"} ],
-  "outputRoutes": [ {"route": "FILE"} ],
-  "imageName": "informaticsmatters/rdkit",
-  "command": "cp -r /pipelines /tmp/pipelines && pip install -e /tmp/pipelines && python -m pipelines.rdkit.screen -i input.data.gz -if json -o output -of json --qsmiles '${query_source}' --simmin ${sim.minValue} --simmax ${sim.maxValue} -d ${descriptor} -m ${metric} --thin --meta",
-  "volumes": {
-      "pipelines": "/pipelines"
+  "inputRoutes": [
+    {
+      "route": "FILE"
     }
+  ],
+  "outputRoutes": [
+    {
+      "route": "FILE"
+    }
+  ],
+  "imageName": "informaticsmatters/rdkit_src/python/pipelines/rdkit/constrained_conf_gen.dsd",
+  "command": "python -m pipelines.rdkit.screen -i input.data.gz -if json -o output -of json --qsmiles '${query_source}' --simmin ${sim.minValue} --simmax ${sim.maxValue} -d ${descriptor} -m ${metric} --thin --meta"
 }

@@ -1,105 +1,98 @@
-{ "serviceConfig": {
-  "id": "pipelines.xchem.reaction.maker.v1",
-  "name": "XChemReactionMaker",
-  "description": "XChem react molecules and reactants",
-  "tags": [ "rdkit", "xchem", "enumeration", "reaction", "docker" ],
-  "resourceUrl": null,
-  "icon": "icons/chemreaction.png",
-
-  "inputDescriptors": [
-    {
-      "primaryType": "org.squonk.dataset.Dataset",
-      "secondaryType": "org.squonk.types.MoleculeObject",
-      "mediaType": "application/x-squonk-dataset-molecule+json",
-      "name": "input"
-    },{
-       "primaryType": "org.squonk.dataset.Dataset",
-       "secondaryType": "org.squonk.types.MoleculeObject",
-       "mediaType": "application/x-squonk-dataset-molecule+json",
-       "name": "reactants"
-    }
-  ],
-  "outputDescriptors": [
-    {
-      "primaryType": "org.squonk.dataset.Dataset",
-      "secondaryType": "org.squonk.types.MoleculeObject",
-      "mediaType": "application/x-squonk-dataset-molecule+json",
-      "name": "output"
-    }
-  ],
-
-  "optionDescriptors": [
-    {
-      "modes": [
-        "User"
-      ],
-      "editable": true,
-      "@class": "org.squonk.options.OptionDescriptor",
-      "typeDescriptor": {
-        "type": "java.lang.String",
-        "@class": "org.squonk.options.SimpleTypeDescriptor"
+{
+  "serviceConfig": {
+    "id": "pipelines.xchem.reaction.maker.v1",
+    "name": "XChemReactionMaker",
+    "description": "XChem react molecules and reactants",
+    "tags": [
+      "rdkit",
+      "xchem",
+      "enumeration",
+      "reaction",
+      "docker"
+    ],
+    "resourceUrl": null,
+    "icon": "icons/chemreaction.png",
+    "inputDescriptors": [
+      {
+        "primaryType": "org.squonk.dataset.Dataset",
+        "secondaryType": "org.squonk.types.MoleculeObject",
+        "mediaType": "application/x-squonk-dataset-molecule+json",
+        "name": "input"
       },
-      "key": "dockerImageVersion",
-      "label": "RDKit version",
-      "description": "Version of the RDKit Docker image to execute",
-      "values": [
-        "latest",
-        "Release_2017_03_1",
-        "Release_2016_09_2",
-        "Release_2016_03_1",
-        "Release_2015_09_2",
-        "Release_2015_09_1"
-      ],
-      "defaultValue": "latest",
-      "visible": true,
-      "minValues":1,
-      "maxValues":1
-    },
-    {
-      "modes": [
-        "User"
-      ],
-      "editable": true,
-      "@class": "org.squonk.options.OptionDescriptor",
-      "typeDescriptor": {
-        "type": "java.lang.String",
-        "@class": "org.squonk.options.SimpleTypeDescriptor"
-      },
-      "key": "arg.reaction",
-      "label": "Reaction",
-      "description": "Reaction to use",
-      "values": [
-        "Amides",
-        "Benzimidazole",
-        "Benzoxazole",
-        "Ester_Coupling",
-        "Ether_Coupling",
-        "Indole",
-        "N-Alkylation",
-        "Oxadiazole",
-        "Reductive_Amination",
-        "SNAr",
-        "Sonogashira",
-        "Sulfonamide",
-        "Suzuki_Coupling",
-        "Triazole",
-        "Urea"
-      ],
-      "visible": true,
-      "minValues":1,
-      "maxValues":1
-    }
-  ],
-  "executorClassName": "org.squonk.execution.steps.impl.ThinDatasetDockerExecutorStep"
+      {
+        "primaryType": "org.squonk.dataset.Dataset",
+        "secondaryType": "org.squonk.types.MoleculeObject",
+        "mediaType": "application/x-squonk-dataset-molecule+json",
+        "name": "reactants"
+      }
+    ],
+    "outputDescriptors": [
+      {
+        "primaryType": "org.squonk.dataset.Dataset",
+        "secondaryType": "org.squonk.types.MoleculeObject",
+        "mediaType": "application/x-squonk-dataset-molecule+json",
+        "name": "output"
+      }
+    ],
+    "optionDescriptors": [
+      {
+        "modes": [
+          "User"
+        ],
+        "editable": true,
+        "@class": "org.squonk.options.OptionDescriptor",
+        "typeDescriptor": {
+          "type": "java.lang.String",
+          "@class": "org.squonk.options.SimpleTypeDescriptor"
+        },
+        "key": "arg.reaction",
+        "label": "Reaction",
+        "description": "Reaction to use",
+        "values": [
+          "Amides",
+          "Benzimidazole",
+          "Benzoxazole",
+          "Ester_Coupling",
+          "Ether_Coupling",
+          "Indole",
+          "N-Alkylation",
+          "Oxadiazole",
+          "Reductive_Amination",
+          "SNAr",
+          "Sonogashira",
+          "Sulfonamide",
+          "Suzuki_Coupling",
+          "Triazole",
+          "Urea"
+        ],
+        "visible": true,
+        "minValues": 1,
+        "maxValues": 1
+      }
+    ],
+    "executorClassName": "org.squonk.execution.steps.impl.ThinDatasetDockerExecutorStep"
   },
   "thinDescriptors": [
-    {"input": "input"},
-    {"input": "reactants"}
+    {
+      "input": "input"
+    },
+    {
+      "input": "reactants"
+    }
   ],
   "inputRoutes": [
-    {"route": "FILE"},
-    {"route": "FILE"} ],
-  "outputRoutes": [ {"route": "FILE"} ],
+    {
+      "route": "FILE"
+    },
+    {
+      "route": "FILE"
+    }
+  ],
+  "outputRoutes": [
+    {
+      "route": "FILE"
+    }
+  ],
   "imageName": "informaticsmatters/rdkit_pipelines",
   "command": "python -m pipelines.rdkit.rxn_maker -i input.data.gz --reagent_lib reactants.data.gz -o output --reaction ${reaction} -of json --meta"
 }

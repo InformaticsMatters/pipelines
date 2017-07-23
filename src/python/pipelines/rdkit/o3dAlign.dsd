@@ -41,30 +41,6 @@
           "User"
         ],
         "editable": true,
-        "@class": "org.squonk.options.OptionDescriptor",
-        "typeDescriptor": {
-          "type": "java.lang.String",
-          "@class": "org.squonk.options.SimpleTypeDescriptor"
-        },
-        "key": "dockerImageVersion",
-        "label": "RDKit version",
-        "description": "Version of the RDKit Docker image to execute",
-        "values": [
-          "latest",
-          "Release_2017_03_1",
-          "Release_2016_09_2",
-          "Release_2016_03_1",
-          "Release_2015_09_2",
-          "Release_2015_09_1"
-        ],
-        "defaultValue": "latest",
-        "visible": true
-      },
-      {
-        "modes": [
-          "User"
-        ],
-        "editable": true,
         "visible": true,
         "description": "Query molecule index",
         "label": "Query mol index",
@@ -120,11 +96,17 @@
     }
   ],
   "inputRoutes": [
-    {"route": "FILE"},
-    {"route": "FILE"}
+    {
+      "route": "FILE"
+    },
+    {
+      "route": "FILE"
+    }
   ],
   "outputRoutes": [
-    {"route": "FILE"}
+    {
+      "route": "FILE"
+    }
   ],
   "imageName": "informaticsmatters/rdkit_pipelines",
   "command": "python -m pipelines.rdkit.o3dAlign queryMol.data.gz -i input.data.gz -o output -of json${binding.variables.containsKey('qmolidx') ? ' --qmolidx ' + binding.variables.get('qmolidx') : ''}${binding.variables.containsKey('num') ? ' --num ' + binding.variables.get('num') : ''}${binding.variables.containsKey('threshold') ? ' --threshold ' + binding.variables.get('threshold') : ''} --meta"
