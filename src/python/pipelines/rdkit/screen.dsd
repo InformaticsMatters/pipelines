@@ -139,6 +139,6 @@
       "route": "FILE"
     }
   ],
-  "imageName": "informaticsmatters/rdkit_src/python/pipelines/rdkit/constrained_conf_gen.dsd",
+  "imageName": "informaticsmatters/rdkit_pipelines",
   "command": "python -m pipelines.rdkit.screen -i input.data.gz -if json -o output -of json --qsmiles '${query_source}' --simmin ${sim.minValue} --simmax ${sim.maxValue} -d ${descriptor} -m ${metric} --thin --meta"
 }
