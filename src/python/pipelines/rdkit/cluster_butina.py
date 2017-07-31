@@ -246,10 +246,7 @@ def main():
     output.close()
 
     if args.meta:
-        if args.num:
-            status_str = 'Picked ' + str(result_count) + ' from ' + str(len(finalClusters)) + ' clusters'
-        else:
-            status_str = 'Generated ' + str(len(finalClusters)) + ' clusters'
+        status_str = str(result_count) + ' results from ' + str(len(finalClusters)) + ' clusters'
         utils.write_metrics(output_base, {'__StatusMessage__':status_str, '__InputCount__':i, '__OutputCount__':result_count, 'RDKitCluster':i})
 
 if __name__ == "__main__":
