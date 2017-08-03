@@ -128,8 +128,8 @@ as a "poor man's" approach to correlating the outputs to the inputs.
 
 When a service that filters molecules special attention is needed to ensure 
 that the molecules are output in the same order as the input (obviously skipping
-structures that are filtered out). Also the .dsd file needs special care. For
-instance take a look at the "thinDescriptors" section of src/pipelines/rdkit/screen.dsd
+structures that are filtered out). Also the service descriptor (.dsd.json) file needs special care. For
+instance take a look at the "thinDescriptors" section of src/pipelines/rdkit/screen.dsd.json
 
 When using multi-threaded execution this is especially important as results 
 will usually not come back in exactly the same order as the input.
