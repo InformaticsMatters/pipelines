@@ -44,12 +44,12 @@ task dist(type: Copy) {
     destinationDir = file('build/dist')
 
     from('src/python') {
-        includes = ['**/*.py','**/*.nf','**/*.json','**/*.yml','README.rst']
+        includes = ['**/*.py','**/*.nf','**/*.json','**/*.yml','**/*.nsd.nf','**/*.nsd.config','README.rst']
         into 'pipelines'
     }
 
     from('src/nextflow') {
-        includes = ['**/*.py','**/*.nf','**/*.json','**/*.yml','README.rst']
+        includes = ['**/*.py','**/*.nf','**/*.json','**/*.yml','**/*.nsd.nf','**/*.nsd.config','README.rst']
         into 'nextflow'
     }
 }

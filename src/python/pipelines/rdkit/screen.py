@@ -120,7 +120,7 @@ def main():
     output.close()
 
     if args.meta:
-        utils.write_metrics(output_base, {'__InputCount__':i, '__OutputCount__':count, 'RDKitScreen':count})
+        utils.write_metrics(output_base, {'__InputCount__':i, '__OutputCount__':count, 'RDKitScreen':i})
 
     return count
     
