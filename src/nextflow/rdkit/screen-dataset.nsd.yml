@@ -1,0 +1,97 @@
+---
+serviceConfig:
+  id: "pipelines.rdkit.screen.basic"
+  name: "RDKitSimilarityScreening"
+  description: "RDKit Similarity Screening"
+  tags:
+  - "rdkit"
+  - "screening"
+  - "similarity"
+  - "docker"
+  - "nextflow"
+  resourceUrl: null
+  icon: "icons/filter_molecules.png"
+  inputDescriptors:
+  - name: "input"
+    mediaType: "application/x-squonk-dataset-molecule+json"
+    primaryType: "org.squonk.dataset.Dataset"
+    secondaryType: "org.squonk.types.MoleculeObject"
+  outputDescriptors:
+  - name: "output"
+    mediaType: "application/x-squonk-dataset-molecule+json"
+    primaryType: "org.squonk.dataset.Dataset"
+    secondaryType: "org.squonk.types.MoleculeObject"
+  optionDescriptors:
+  - !<org.squonk.options.OptionDescriptor>
+    typeDescriptor: !<org.squonk.options.MoleculeTypeDescriptor>
+      type: "org.squonk.options.types.Structure"
+      formats: ["smiles"]
+      molType: "DISCRETE"
+    key: "arg.query"
+    label: "Query molecule"
+    description: "Query molecule as smiles"
+    visible: true
+    editable: true
+    modes:
+    - "User"
+  - !<org.squonk.options.OptionDescriptor>
+    typeDescriptor: !<org.squonk.options.SimpleTypeDescriptor>
+      type: "org.squonk.types.NumberRange$Float"
+    key: "arg.sim"
+    label: "Similarity"
+    description: "Similarity threshold (1.0 is identical)"
+    defaultValue: !<org.squonk.types.NumberRange$Float>
+      minValue: 0.7
+      maxValue: 1.0
+    visible: true
+    editable: true
+    modes:
+    - "User"
+  - !<org.squonk.options.OptionDescriptor>
+    typeDescriptor: !<org.squonk.options.SimpleTypeDescriptor>
+      type: "java.lang.String"
+    key: "arg.descriptor"
+    label: "Descriptor"
+    description: "Descriptor/fingerprint to use"
+    values:
+    - "maccs"
+    - "morgan2"
+    - "morgan3"
+    - "rdkit"
+    defaultValue: "rdkit"
+    visible: true
+    editable: true
+    modes:
+    - "User"
+  - !<org.squonk.options.OptionDescriptor>
+    typeDescriptor: !<org.squonk.options.SimpleTypeDescriptor>
+      type: "java.lang.String"
+    key: "arg.metric"
+    label: "Metric"
+    description: "Similarity metric to use"
+    values:
+    - "asymmetric"
+    - "braunblanquet"
+    - "cosine"
+    - "dice"
+    - "kulczynski"
+    - "mcconnaughey"
+    - "rogotgoldberg"
+    - "russel"
+    - "sokal"
+    - "tanimoto"
+    defaultValue: "tanimoto"
+    visible: true
+    editable: true
+    modes:
+    - "User"
+  executorClassName: "org.squonk.execution.steps.impl.ThinDatasetNextflowInDockerExecutorStep"
+thinDescriptors:
+  - input: "input"
+    output: "output"
+    filtering: true
+inputRoutes:
+- route: "FILE"
+outputRoutes:
+- route: "FILE"
+nextflowParams: "--qsmiles $query_source --simmin: $sim.minValue --simmax $sim.maxValue --descriptor $descriptor --metric $metric"

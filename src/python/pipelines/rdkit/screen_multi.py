@@ -62,7 +62,7 @@ def main():
     group = parser.add_mutually_exclusive_group()
     group.add_argument('--qsmiles', help='filename of query structures as smiles (incompatible with --sdf and --qjson args)')
     group.add_argument('--qsdf', help='filename of query structures as sdfile (incompatible with --smiles and --qjson args)')
-    group.add_argument('--qjson', help='filename of query structures as MoleculeObject JSON (incompatible with --smiles and --sdf args)')
+    group.add_argument('--qjson', help='filename of query structures as MoleculeObject JSON (incompatible with --qsmiles and --qsdf args)')
     parser.add_argument('--qsmilesTitleLine', action='store_true', help='the smiles file has a title line')
     parser.add_argument('--qsmilesDelimiter', default='\t', help='delimiter for smiles file (default is tab)')
     parser.add_argument('--qsmilesColumn', type=int, default=0, help='column in smiles file with the smiles (default is first column)')

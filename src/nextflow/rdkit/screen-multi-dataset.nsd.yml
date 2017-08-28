@@ -1,8 +1,8 @@
 ---
 serviceConfig:
-  id: "pipelines.rdkit.screen.parallel"
-  name: "ScreenParallel"
-  description: "Parallelised RDKit screen"
+  id: "pipelines.rdkit.screen.multi"
+  name: "RDKitMultiSimilarityScreening"
+  description: "RDKit Similarity Screening against multiple query structures"
   tags:
   - "rdkit"
   - "screening"
@@ -12,7 +12,11 @@ serviceConfig:
   resourceUrl: null
   icon: "icons/filter_molecules.png"
   inputDescriptors:
-  - name: "input"
+  - name: "target"
+    mediaType: "application/x-squonk-dataset-molecule+json"
+    primaryType: "org.squonk.dataset.Dataset"
+    secondaryType: "org.squonk.types.MoleculeObject"
+  - name: "query"
     mediaType: "application/x-squonk-dataset-molecule+json"
     primaryType: "org.squonk.dataset.Dataset"
     secondaryType: "org.squonk.types.MoleculeObject"
@@ -22,18 +26,6 @@ serviceConfig:
     primaryType: "org.squonk.dataset.Dataset"
     secondaryType: "org.squonk.types.MoleculeObject"
   optionDescriptors:
-  - !<org.squonk.options.OptionDescriptor>
-    typeDescriptor: !<org.squonk.options.MoleculeTypeDescriptor>
-      type: "org.squonk.options.types.Structure"
-      formats: ["smiles"]
-      molType: "DISCRETE"
-    key: "arg.query"
-    label: "Query molecule"
-    description: "Query molecule as smiles"
-    visible: true
-    editable: true
-    modes:
-    - "User"
   - !<org.squonk.options.OptionDescriptor>
     typeDescriptor: !<org.squonk.options.SimpleTypeDescriptor>
       type: "org.squonk.types.NumberRange$Float"
@@ -85,18 +77,16 @@ serviceConfig:
     editable: true
     modes:
     - "User"
-  executorClassName: "org.squonk.execution.steps.impl.ThinDatasetNextflowExecutorStep"
+  executorClassName: "org.squonk.execution.steps.impl.ThinDatasetNextflowInDockerExecutorStep"
 thinDescriptors:
-  - input: "input"
-  - output: "output"
-  - filtering: true
+  - input: "target"
+    output: "output"
+    filtering: true
+  - input: "query"
 inputRoutes:
+- route: "FILE"
 - route: "FILE"
 outputRoutes:
 - route: "FILE"
-nextflowParams:
-      qsmiles: "$query_source"
-      simmin: "$sim.minValue"
-      simmax: "$sim.maxValue"
-      descriptor: "$descriptor"
-      metric: "$metric"
+nextflowParams: "--simmin $sim.minValue --simmax $sim.maxValue --descriptor $descriptor --metric $metric"
+

@@ -1,0 +1,75 @@
+---
+serviceConfig:
+  id: "pipelines.docking.rdock.basic.v2"
+  "name": "rDock docking"
+  "description": "Dock ligands with rDock"
+  tags:
+  - "rdock"
+  - "docking"
+  - "scoring"
+  - "3d"
+  - "docker"
+  - "nextflow"
+  resourceUrl: null
+  icon: "icons/filter_molecules.png"
+  inputDescriptors:
+  - name: "ligands"
+    mediaType: "application/x-squonk-dataset-molecule+json"
+    primaryType: "org.squonk.dataset.Dataset"
+    secondaryType: "org.squonk.types.MoleculeObject"
+  - name: "config"
+    mediaType: "application/zip"
+    primaryType: "org.squonk.types.ZipFile"
+  outputDescriptors:
+  - name: "output"
+    mediaType: "application/x-squonk-dataset-molecule+json"
+    primaryType: "org.squonk.dataset.Dataset"
+    secondaryType: "org.squonk.types.MoleculeObject"
+  optionDescriptors:
+  - !<org.squonk.options.OptionDescriptor>
+    typeDescriptor: !<org.squonk.options.SimpleTypeDescriptor>
+      type: "java.lang.Integer"
+    key: "arg.num"
+    label: "Number of dockings"
+    description: "Execute this many docking runs"
+    defaultValue: 10
+    minValues: 1
+    maxValues: 1
+    visible: true
+    editable: true
+    modes:
+    - "User"
+  - !<org.squonk.options.OptionDescriptor>
+    typeDescriptor: !<org.squonk.options.SimpleTypeDescriptor>
+      type: "java.lang.Integer"
+    key: "arg.top"
+    label: "Top scoring poses"
+    description: "Keep this many top scoring poses"
+    defaultValue: 1
+    minValues: 1
+    maxValues: 1
+    visible: true
+    editable: true
+    modes:
+    - "User"
+  - !<org.squonk.options.OptionDescriptor>
+    typeDescriptor: !<org.squonk.options.SimpleTypeDescriptor>
+      type: "java.lang.Float"
+    key: "arg.score"
+    label: "Score filter"
+    description: "Filter out scores above this value"
+    minValues: 0
+    maxValues: 1
+    visible: true
+    editable: true
+    modes:
+    - "User"
+  executorClassName: "org.squonk.execution.steps.impl.ThinDatasetNextflowInDockerExecutorStep"
+thinDescriptors:
+  - input: "ligands"
+inputRoutes:
+- route: "FILE"
+- route: "FILE"
+outputRoutes:
+- route: "FILE"
+nextflowParams: "--ligands ligands.data.gz --receptor config.zip --num_dockings $num --top $top ${binding.variables.containsKey('score') ? ' --score ' + score: ''}"

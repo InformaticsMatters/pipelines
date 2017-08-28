@@ -1,18 +1,20 @@
 #!/usr/bin/env nextflow
 
-params.input = file("$baseDir/input.data.gz")
+params.input = "$baseDir/input.data.gz"
 params.qsmiles
 params.simmin = 0.7
 params.simmax = 1.0
 params.descriptor = 'rdkit'
 params.metric = 'tanimoto'
-params.chunk = 1000
+params.chunk = 2500
 params.limit = 0
 params.digits = 4
 
 target = file(params.input)
 
 process splitter {
+
+    container 'informaticsmatters/rdkit_pipelines'
 
     input:
     file target
@@ -28,6 +30,8 @@ process splitter {
 
 process rdkitScreen {
 
+    container 'informaticsmatters/rdkit_pipelines'
+
 	input:
     file part from target_parts
 
@@ -40,6 +44,8 @@ process rdkitScreen {
 }
 
 process joiner {
+
+    container 'informaticsmatters/rdkit_pipelines'
 
     publishDir baseDir, pattern: "{output.data.gz,output.metadata}"
 
@@ -57,6 +63,8 @@ process joiner {
 }
 
 process metrics {
+
+    container 'informaticsmatters/rdkit_pipelines'
 
     publishDir baseDir
 
