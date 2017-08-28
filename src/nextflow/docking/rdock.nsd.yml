@@ -64,6 +64,19 @@ serviceConfig:
     editable: true
     modes:
     - "User"
+  - !<org.squonk.options.OptionDescriptor>
+    typeDescriptor: !<org.squonk.options.SimpleTypeDescriptor>
+      type: "java.lang.Float"
+    key: "arg.nscore"
+    label: "Normalised score filter"
+    description: "Filter out scores normalised by heavy atom count above this value"
+    minValues: 0
+    maxValues: 1
+    visible: true
+    editable: true
+    modes:
+    - "User"
+
   executorClassName: "org.squonk.execution.steps.impl.ThinDatasetNextflowInDockerExecutorStep"
 thinDescriptors:
   - input: "ligands"
@@ -72,4 +85,4 @@ inputRoutes:
 - route: "FILE"
 outputRoutes:
 - route: "FILE"
-nextflowParams: "--ligands ligands.data.gz --receptor config.zip --num_dockings $num --top $top ${binding.variables.containsKey('score') ? ' --score ' + score: ''}"
+nextflowParams: "--ligands ligands.data.gz --receptor config.zip --num_dockings $num --top $top${binding.variables.containsKey('score') ? ' --score ' + score: ''}${binding.variables.containsKey('nscore') ? ' --nscore ' + nscore: ''}"

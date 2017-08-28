@@ -16,6 +16,7 @@ params.chunk = 25
 params.num_dockings = 100
 params.top = 1
 params.score = null
+params.nscore = null
 params.limit = 0
 params.digits = 4
 
@@ -75,7 +76,7 @@ process rdock {
     file 'docked_part*.sd' into docked_parts
 
     """
-	rbdock -r $prmfile -p dock.prm -n $params.num_dockings -i $part -o ${part.name.replace('ligands', 'docked')[0..-4]} > docked_out.log
+	rbdock -r $prmfile -p dock.prm -n $params.num_dockings -i $part -o ${part.name.replace('ligands', 'docked')[0..-5]} > docked_out.log
     """
 }
 
@@ -93,7 +94,7 @@ process results {
 	file 'results.sdf' into results
 
 	"""
-	sdsort -n -s -fSCORE docked_part*.sd | ${params.score == null ? '' : "sdfilter -f'\$SCORE < $params.score' |"} sdfilter -f'\$_COUNT <= ${params.top}' > results.sdf
+	sdsort -n -s -fSCORE docked_part*.sd |${params.score == null ? '' : " sdfilter -f'\$SCORE <= $params.score' |"}${params.nscore == null ? '' : " sdfilter -f'\$SCORE.norm <= $params.nscore' |"} sdfilter -f'\$_COUNT <= ${params.top}' > results.sdf
 	"""
 }
 
