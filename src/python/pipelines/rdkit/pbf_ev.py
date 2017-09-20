@@ -16,23 +16,14 @@ import numpy as np
 from numpy import linalg
 
 
-def write_out(mols,count,writer,mol_format,file_format):
+def write_out(mols,count,writer,file_format):
     for mol in mols:
         count += 1
         if mol is None: continue
-        if mol_format == 'mol_3d':
-            AllChem.EmbedMolecule(mol,AllChem.ETKDG())
-            fmt = 'mol'
-        elif mol_format == 'mol_2d':
-            AllChem.Compute2DCoords(mol)
-            fmt = 'mol'
-        else:
-            fmt = 'smiles'
-
         if file_format == 'sdf':
             writer.write(mol)
         elif file_format == 'json':
-            writer.write(mol, format=fmt)
+            writer.write(mol, format=mol)
     return count
 
 def GetBestFitPlane(pts, weights=None):
@@ -124,7 +115,6 @@ def main():
     ### command line args defintions #########################################
     parser = argparse.ArgumentParser(description='Calculate plane of best fit for molecules')
     utils.add_default_io_args(parser)
-    parser.add_argument('-mf','--mol_format' ,choices=['smiles', 'mol_2d', 'mol_3d'],help="Format for molecules.")
     args = parser.parse_args()
     utils.log("PBFEV args: ", args)
     input ,output ,suppl ,writer ,output_base = utils.default_open_input_output(args.input, args.informat, args.output, 'PBFEV', args.outformat)
@@ -141,7 +131,7 @@ def main():
         for j,angle in enumerate(out_vector):
             mol.SetDoubleProp("angle"+"_"+str(j), angle)
         out_results.append(mol)
-    count = write_out(out_results,count,writer,args.mol_format,args.outformat)
+    count = write_out(out_results,count,writer,args.outformat)
     utils.log("Handled "+str(i)+" molecules, resulting in "+str(count)+" outputs")
     writer.flush()
     writer.close()
