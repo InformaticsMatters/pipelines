@@ -1,5 +1,5 @@
 { "serviceConfig": {
-  "id": "pipelines.xchem.pdf_ev.v1",
+  "id": "pipelines.xchem.pbf_ev.v1",
   "name": "PBF EV analyisis",
   "description": "PBF EV analysis ",
   "tags": [ "rdkit", "xchem", "docker", "pbfev", "ICR", "JoshuaMeyers"],
