@@ -23,7 +23,7 @@ def write_out(mols,count,writer,file_format):
         if file_format == 'sdf':
             writer.write(mol)
         elif file_format == 'json':
-            writer.write(mol, format=mol)
+            writer.write(mol, format='mol')
     return count
 
 def GetBestFitPlane(pts, weights=None):
