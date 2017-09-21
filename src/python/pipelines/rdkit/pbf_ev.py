@@ -138,6 +138,8 @@ def main():
         if mol is None: continue
         out_vector = PBFev(mol)
         if out_vector is None: continue
+        rd = PBFRD(mol)
+        mol.SetDoubleProp("distance",rd)
         for j,angle in enumerate(out_vector):
             mol.SetDoubleProp("angle"+"_"+str(j), angle)
         out_results.append(mol)
