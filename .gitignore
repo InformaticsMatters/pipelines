@@ -1,6 +1,9 @@
 *~
 .gradle
 .idea
+pipelines.iml
+pipelines.ipr
+pipelines.iws
 build
 dist
 *.pyc

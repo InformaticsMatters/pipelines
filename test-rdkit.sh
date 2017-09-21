@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-rm -rf ../../../tmp
-mkdir ../../../tmp
+rm -rf tmp
+mkdir tmp
 msg_fail="\n========================== TEST FAILED ==========================\n"
 msg_file_notCreated="\n========================== FILE NOT CREATED =====================\n"
 
@@ -112,6 +112,9 @@ python src/python/pipelines/rdkit/rxn_smarts_filter.py -i data/Kinase_inhibs.sdf
 
 echo "Testing rxn_maker.py reading from files"
 python src/python/pipelines/rdkit/rxn_maker.py -i data/sulfonyl_chloride.sdf -r Sulfonamide -rl data/sdf-aliphatic-primary-amines-175.sdf.gz  -o tmp/rxnoutput || echo -e $msg_fail
+
+echo "Testing pbf_ev.py reading from files"
+python src/python/pipelines/rdkit/pbf_ev.py -i data/dhfr_3d.sdf -o tmp/pbf_ev_output || echo -e $msg_fail
 
 echo "cleaning up ..."
 rm -f *.metadata
