@@ -1,6 +1,12 @@
 #!/bin/sh
 
 ./gradlew dist
+
+if [ ! -d ../squonk/data/testfiles/docker-services ]; then
+        echo "creating docker-services dir"
+        mkdir ../squonk/data/testfiles/docker-services || exit 1
+fi
+
 rm -rf ../squonk/data/testfiles/docker-services/pipelines ../squonk/data/testfiles/docker-services/nextflow
 cp -r build/dist/pipelines ../squonk/data/testfiles/docker-services/ 
 cp -r build/dist/nextflow ../squonk/data/testfiles/docker-services/
