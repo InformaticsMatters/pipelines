@@ -21,6 +21,7 @@ from rdkit.Chem import AllChem
 from rdkit.Chem.MCS import FindMCS
 
 from pipelines.utils import utils
+import sys, logging
 
 
 def guess_substruct(mol_one, mol_two):
@@ -39,19 +40,24 @@ def generate_conformers(molIdx, my_mol, NumOfConf, ref_mol, outputfile, coreSubs
 
     # Generate conformers with constrained embed
     conf_lst = []
-    count = 0;
+    count = 0
+    errors = 0
     for i in (xrange(NumOfConf)):
-        conf_lst.append(Chem.AddHs(my_mol))
-        AllChem.ConstrainedEmbed(conf_lst[i], core1, randomseed=i)
-        cleaned = Chem.RemoveHs(conf_lst[i])
-        cleaned.ClearProp("uuid")
-        if my_mol.HasProp("uuid"):
-            cleaned.SetProp("SourceMolUUID", my_mol.GetProp("uuid"))
-        cleaned.SetIntProp("SourceMolNum", molIdx)
-        cleaned.SetIntProp("ConformerNum", count + 1)
-        outputfile.write(cleaned)
-        count+=1
-    return count
+        try:
+            conf_lst.append(Chem.AddHs(my_mol))
+            AllChem.ConstrainedEmbed(conf_lst[i], core1, randomseed=i)
+            cleaned = Chem.RemoveHs(conf_lst[i])
+            cleaned.ClearProp("uuid")
+            if my_mol.HasProp("uuid"):
+                cleaned.SetProp("SourceMolUUID", my_mol.GetProp("uuid"))
+            cleaned.SetIntProp("SourceMolNum", molIdx)
+            cleaned.SetIntProp("ConformerNum", count + 1)
+            outputfile.write(cleaned)
+            count+=1
+        except ValueError:
+            errors+=1
+            logging.exception('')
+    return count, errors
 
 
 if __name__ == '__main__':
@@ -91,15 +97,24 @@ if __name__ == '__main__':
                                                             valueClassMappings=clsMappings, datasetMetaProps=datasetMetaProps, fieldMetaProps=fieldMetaProps)
 
     inputs = 0
-    total = 0
+    totalCount = 0
+    totalErrors = 0
     for mol in suppl:
         inputs += 1
         if mol:
-            total += generate_conformers(inputs, mol, args.num, ref_mol, WRITER, args.core_smi)
+            count, errors = generate_conformers(inputs, mol, args.num, ref_mol, WRITER, args.core_smi)
+            totalCount += count
+            totalErrors += errors
 
     input.close()
     WRITER.close()
 
+    if totalErrors > 0:
+        utils.log("WARNING:", totalErrors, "conformers failed to generate")
+
     # write metrics
     if args.meta:
-        utils.write_metrics(output_base, {'__InputCount__':inputs, '__OutputCount__':total, 'RDKitConstrainedConformer':total})
+        metrics = {'__InputCount__':inputs, '__OutputCount__':totalCount, 'RDKitConstrainedConformer':totalCount}
+        if totalErrors > 0:
+            metrics['__ErrorCount__'] = totalErrors
+        utils.write_metrics(output_base, metrics)

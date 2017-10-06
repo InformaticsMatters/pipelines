@@ -81,6 +81,9 @@ gunzip -c data/dhfr_3d.sdf.gz | python src/python/pipelines/rdkit/screen_multi.p
 echo "Testing conformers.py reading from STDIN and writing to STDOUT"
 gunzip -c data/Kinase_inhibs.sdf.gz | python src/python/pipelines/rdkit/conformers.py -n 2 -if sdf > /dev/null || echo -e $msg_fail
 
+echo "Testing constrained_conf_gen.py reading from STDIN and writing to STDOUT"
+python src/python/pipelines/rdkit/constrained_conf_gen.py -n 2 -i data/XChemReactionMaker1.sdf.gz -r data/ref_mol.sdf.gz -o tmp/constrained_conf_gen.sdf.gz || echo -e $msg_fail
+
 echo "Testing conformers.py with clustering reading from STDIN and writing to STDOUT"
 gunzip -c data/Kinase_inhibs.sdf.gz | python src/python/pipelines/rdkit/conformers.py -n 2 -c RMSD -if sdf > /dev/null || echo -e $msg_fail
 
