@@ -22,6 +22,7 @@ from rdkit.Chem.Fingerprints import FingerprintMols
 from rdkit.ML.Cluster import Butina
 
 from pipelines.utils import utils
+from pipelines.rdkit import mol_utils
 
 descriptors = {
     #'atompairs':   lambda m: Pairs.GetAtomPairFingerprint(m),
@@ -169,16 +170,17 @@ def main():
     parser.add_argument('-t', '--threshold', type=float, default=0.7, help='similarity clustering threshold (1.0 means identical)')
     parser.add_argument('-d', '--descriptor', type=str.lower, choices=list(descriptors.keys()), default='rdkit', help='descriptor or fingerprint type (default rdkit)')
     parser.add_argument('-m', '--metric', type=str.lower, choices=list(metrics.keys()), default='tanimoto', help='similarity metric (default tanimoto)')
-    parser.add_argument('-q', '--quiet', action='store_true', help='Quiet mode')
-
     parser.add_argument('-n', '--num', type=int, help='maximum number to pick for diverse subset selection')
     parser.add_argument('-e', '--exclude', type=float, default=0.9, help='threshold for excluding structures in diverse subset selection (1.0 means identical)')
+    parser.add_argument('--fragment-method', choices=['hac', 'mw'], default='hac', help='Approach to find biggest fragment if more than one (hac = biggest by heavy atom count, mw = biggest by mol weight)')
+    parser.add_argument('--output-fragment', action='store_true', help='Output the biggest fragment rather than the original molecule')
     parser.add_argument('-f', '--field', help='field to use to optimise diverse subset selection')
     group = parser.add_mutually_exclusive_group()
     group.add_argument('--min', action='store_true', help='pick lowest value specified by the --field option')
     group.add_argument('--max', action='store_true', help='pick highest value specified by the --field option')
 
     utils.add_default_io_args(parser)
+    parser.add_argument('-q', '--quiet', action='store_true', help='Quiet mode')
     parser.add_argument('--thin', action='store_true', help='Thin output mode')
 
     args = parser.parse_args()
@@ -203,8 +205,14 @@ def main():
                                                                             thinOutput=args.thin, valueClassMappings=clsMappings, datasetMetaProps=datasetMetaProps, fieldMetaProps=fieldMetaProps)
 
     ### generate fingerprints
-    mols = [x for x in suppl if x is not None]
-    fps = [descriptor(x) for x in mols]
+    #mols = [x for x in suppl if x is not None]
+    #fps = [descriptor(x) for x in mols]
+
+    mols = []
+    fps = []
+    errs = mol_utils.fragmentAndFingerprint(suppl, mols, fps, descriptor, fragmentMethod=args.fragment_method, outputFragment=args.output_fragment, quiet=args.quiet)
+
+
     input.close()
 
     ### do clustering

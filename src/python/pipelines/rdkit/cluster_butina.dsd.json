@@ -58,6 +58,42 @@
           "type": "java.lang.String",
           "@class": "org.squonk.options.SimpleTypeDescriptor"
         },
+        "key": "arg.fragment_method",
+        "label": "Fragment method",
+        "description": "Approach to use for picking biggest molecular fragment",
+        "values": [
+          "hac",
+          "mw"
+        ],
+        "defaultValue": "hac",
+        "visible": true
+      },
+      {
+        "modes": [
+          "User"
+        ],
+        "editable": true,
+        "@class": "org.squonk.options.OptionDescriptor",
+        "typeDescriptor": {
+          "type": "java.lang.Boolean",
+          "@class": "org.squonk.options.SimpleTypeDescriptor"
+        },
+        "key": "arg.output_fragment",
+        "label": "Output fragment",
+        "description": "Output the biggest fragment rather than the whole molecules",
+        "defaultValue": false,
+        "visible": true
+      },
+      {
+        "modes": [
+          "User"
+        ],
+        "editable": true,
+        "@class": "org.squonk.options.OptionDescriptor",
+        "typeDescriptor": {
+          "type": "java.lang.String",
+          "@class": "org.squonk.options.SimpleTypeDescriptor"
+        },
         "key": "arg.descriptor",
         "label": "Descriptor",
         "description": "Descriptor/fingerprint to use",
@@ -112,5 +148,5 @@
     }
   ],
   "imageName": "informaticsmatters/rdkit_pipelines",
-  "command": "python -m pipelines.rdkit.cluster_butina -i input.data.gz -if json -o output -of json -t ${threshold} -d ${descriptor} -m ${metric} --thin --meta"
+  "command": "python -m pipelines.rdkit.cluster_butina -i input.data.gz -if json -o output -of json -t ${threshold} -d ${descriptor} -m ${metric} --fragment-method ${fragment_method}${output_fragment ? ' --output-fragment' : ''} --thin --meta"
 }

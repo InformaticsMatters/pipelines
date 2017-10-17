@@ -15,49 +15,14 @@
 # limitations under the License.
 
 import argparse
-import gzip
-import sys
-
-from rdkit import Chem
 from rdkit.Chem import Descriptors
-
 from pipelines.utils import utils
+from pipelines.rdkit import mol_utils
 
 
 ### start function definitions #########################################
 
-def fragment(mol, mode, quiet=False):
-    frags = Chem.GetMolFrags(mol, asMols=True)
 
-    if len(frags) == 1:
-        return mol
-    else:
-        # TODO - handle ties
-        if mode == 'hac':
-            biggest_count = 0
-            for frag in frags:
-                hac = frag.GetNumHeavyAtoms()
-                if hac > biggest_count:
-                    biggest_count = hac
-                    biggest_mol = frag
-            if not quiet:
-                utils.log("Chose fragment from ", len(frags), "based on HAC")
-        elif mode == 'mw':
-              biggest_mw = 0
-              for frag in frags:
-                  mw = Descriptors.MolWt(frag)
-                  if mw > biggest_mw:
-                      biggest_mw = mw
-                      biggest_mol = frag
-              if not quiet:
-                  utils.log("Chose fragment from ", len(frags), "based on MW")
-        else:
-            raise ValueError('Invalid fragment mode:',mode)
-        
-        # copy the properties across
-        for name in mol.GetPropNames():
-            biggest_mol.SetProp(name, mol.GetProp(name))
-        return biggest_mol
             
 def filter_by_heavy_atom_count(mol, minCount, maxCount, quiet=False):
     hac = mol.GetNumHeavyAtoms()
@@ -99,7 +64,7 @@ def main():
     ### command line args defintions #########################################
 
     parser = argparse.ArgumentParser(description='RDKit filter')
-    parser.add_argument('-f', '--fragment', choices=['hac', 'mw'], help='Find single fragment if more than one (hac = biggest by heavy atom count, mw = biggest by mol weight )')
+    parser.add_argument('-f', '--fragment', choices=['hac', 'mw'], help='Find single fragment if more than one (hac = biggest by heavy atom count, mw = biggest by mol weight)')
     parser.add_argument('--hacmin', type=int, help='Min heavy atom count')
     parser.add_argument('--hacmax', type=int, help='Max heavy atom count')
     parser.add_argument('--mwmin', type=float, help='Min mol weight')
@@ -153,7 +118,7 @@ def main():
         i +=1
         if mol is None: continue
         if args.fragment:
-            mol = fragment(mol, args.fragment, quiet=args.quiet)
+            mol = mol_utils.fragment(mol, args.fragment, quiet=args.quiet)
         if not filter(mol, minHac=args.hacmin, maxHac=args.hacmax, minMw=args.mwmin, maxMw=args.mwmax, quiet=args.quiet):
             continue
         if args.chunksize:
