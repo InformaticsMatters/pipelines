@@ -10,7 +10,7 @@ ENV SD_DST /sd-dst
 
 RUN mkdir -p ${SD_SRC}
 
-# Copy all Potential service Descriptors into the image...
+# Copy all potential Service Descriptors into the image...
 COPY python/ ${SD_SRC}/python/
 COPY nextflow/ ${SD_SRC}/nextflow/
 
