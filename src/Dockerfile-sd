@@ -18,4 +18,4 @@ COPY nextflow/ ${SD_SRC}/nextflow/
 RUN rm -f `find ${SD_SRC} -type f -not -name "*.json" -not -name "*.yml" -not -name "*.yaml"`
 
 # On execution copy files from source to destination...
-CMD ["cp", "-r", "/sd-src/", "/sd-dst"]
+CMD ["cp", "-R", "/sd-src/*", "/sd-dst"]
