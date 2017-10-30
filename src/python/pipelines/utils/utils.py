@@ -326,6 +326,9 @@ def create_mol_from_props(molobj):
     :param molobj: Python dictionary containing the molecule's properties
     """
 
+    if "source" not in molobj or "format" not in molobj:
+        return None
+
     molstr = str(molobj["source"])
     # Get the format and use this as a starting point to work out
     molformat = molobj["format"]
@@ -358,7 +361,8 @@ def generate_mols_from_json(input):
         j+=1
         mol = create_mol_from_props(item)
         if not mol:
-            log("Failed to create molecule - skipping")
+            # TODO - get a count of the errors and report
+            log("Failed to create molecule - skipping. Data was ", item)
             continue
         yield mol
 
