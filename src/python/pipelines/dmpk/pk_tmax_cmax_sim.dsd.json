@@ -1,0 +1,121 @@
+{
+  "serviceConfig": {
+    "id": "pipelines.dmpk.sygnature.tmax_cmax_sim.1",
+    "name": "TmaxCmaxSimulation",
+    "description": "Simulation of Tmax and Cmax",
+    "tags": [
+      "sygnature",
+      "dmpk",
+      "pk",
+      "cmax",
+      "tmax",
+      "simulation",
+      "docker"
+    ],
+    "resourceUrl": null,
+    "icon": "icons/program.png",
+    "outputDescriptors": [
+      {
+        "primaryType": "org.squonk.types.PngImageFile",
+        "mediaType": "image/png",
+        "name": "result"
+      }
+    ],
+    "optionDescriptors": [
+
+      {
+        "modes": [
+          "User"
+        ],
+        "editable": true,
+        "visible": true,
+        "description": "Half life",
+        "label": "Half life",
+        "key": "arg.halfLife",
+        "minValues": 1,
+        "maxValues": 1,
+        "typeDescriptor": {
+          "type": "java.lang.Float",
+          "@class": "org.squonk.options.SimpleTypeDescriptor"
+        },
+        "@class": "org.squonk.options.OptionDescriptor"
+      },
+      {
+        "modes": [
+          "User"
+        ],
+        "editable": true,
+        "visible": true,
+        "description": "Absorption",
+        "label": "Absorption",
+        "key": "arg.absorption",
+        "minValues": 1,
+        "maxValues": 1,
+        "typeDescriptor": {
+          "type": "java.lang.Float",
+          "@class": "org.squonk.options.SimpleTypeDescriptor"
+        },
+        "@class": "org.squonk.options.OptionDescriptor"
+      },
+      {
+        "modes": [
+          "User"
+        ],
+        "editable": true,
+        "visible": true,
+        "description": "Dose",
+        "label": "Dose",
+        "key": "arg.dose",
+        "minValues": 1,
+        "maxValues": 1,
+        "typeDescriptor": {
+          "type": "java.lang.Float",
+          "@class": "org.squonk.options.SimpleTypeDescriptor"
+        },
+        "@class": "org.squonk.options.OptionDescriptor"
+      },
+      {
+        "modes": [
+          "User"
+        ],
+        "editable": true,
+        "visible": true,
+        "description": "AUC",
+        "label": "AUC",
+        "key": "arg.auc",
+        "minValues": 1,
+        "maxValues": 1,
+        "typeDescriptor": {
+          "type": "java.lang.Float",
+          "@class": "org.squonk.options.SimpleTypeDescriptor"
+        },
+        "@class": "org.squonk.options.OptionDescriptor"
+      },
+      {
+        "modes": [
+          "User"
+        ],
+        "editable": true,
+        "visible": true,
+        "description": "Time of simulation",
+        "label": "Time",
+        "key": "arg.time",
+        "minValues": 1,
+        "maxValues": 1,
+        "typeDescriptor": {
+          "type": "java.lang.Float",
+          "@class": "org.squonk.options.SimpleTypeDescriptor"
+        },
+        "@class": "org.squonk.options.OptionDescriptor"
+      }
+    ],
+    "executorClassName": "org.squonk.execution.steps.impl.ThinDatasetDockerExecutorStep"
+  },
+  "outputRoutes": [
+    {
+      "route": "FILE"
+    }
+  ],
+  "imageName": "informaticsmatters/rdkit_pipelines",
+  "command": "python -m pipelines.dmpk.pk_tmax_cmax_sim -o result.png --half-life $halfLife --absorption $absorption --dose $dose --auc $auc --time $time"
+}
