@@ -19,18 +19,22 @@
 # Based on original work by Amit Kumar Garg <a.garg@sygnaturediscovery.com>
 
 
-import argparse
+import argparse, collections
 import math   #math.log is the natural logarithm
+from math import log10, floor
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-
 
 from pipelines.utils import utils
 
 
 
 ### functions #########################################################
+
+# TODO - move this function to utils
+def round_sig(x, sig):
+    return round(x, sig-int(floor(log10(abs(x))))-1)
 
 
 def generatePlot(t_hf, t_hf_a, D, AUC, tn, quiet=False,
@@ -42,6 +46,13 @@ def generatePlot(t_hf, t_hf_a, D, AUC, tn, quiet=False,
     Tmax=(math.log(ka)-math.log(kel))/(ka-kel)
     Cmax=math.exp(-kel*Tmax)*kel*AUC
     V_F=D/kel/AUC
+
+    outputs = collections.OrderedDict()
+    outputs['Tmax'] = round_sig(Tmax,3)
+    outputs['Cmax'] = round_sig(Cmax,3)
+    outputs['kel'] = round_sig(kel,3)
+    outputs['ka'] = round_sig(ka,3)
+    outputs['V_F'] = round_sig(V_F,3)
 
     if not quiet:
         utils.log('------------------------------------------------------------------------------------------')
@@ -56,7 +67,6 @@ def generatePlot(t_hf, t_hf_a, D, AUC, tn, quiet=False,
     c_cp=[]
     d_perc=[]
     for i in range(0,101):
-        a_no=i
         if(i==0):
             b_time.append(0)
         else:
@@ -68,7 +78,7 @@ def generatePlot(t_hf, t_hf_a, D, AUC, tn, quiet=False,
 
     #print(b_time[100],c_cp[100],d_perc[100])
 
-    #Creating the visulisation
+    # Creating the visualisation
     plt.figure(figsize=(plot_width,plot_height))
     plt.subplot(1, 2, 1)
 
@@ -91,11 +101,13 @@ def generatePlot(t_hf, t_hf_a, D, AUC, tn, quiet=False,
 
     plt.savefig(filename)
 
+    return outputs
+
 ### start main execution ##############################################
 
 def main():
 
-    ### command line args defintions ##################################
+    ### command line args definitions ##################################
 
     parser = argparse.ArgumentParser(description='Tmax/Cmax simulation')
     parser.add_argument('--half-life', type=float, required=True, help='half life (hours)')
@@ -108,7 +120,7 @@ def main():
     parser.add_argument('--plot-width', type=int, default=10, help='plot width')
     parser.add_argument('--font-size', type=int, default=12, help='font size')
 
-    parser.add_argument('-o', '--output', type=str, default='cmax.png', help='output file name')
+    parser.add_argument('-o', '--output', type=str, default='output', help='output file base name')
 
     parser.add_argument('-q', '--quiet', action='store_true', help='Quiet mode')
 
@@ -117,9 +129,12 @@ def main():
 
     ### execute #######################################################
 
-    generatePlot(args.half_life, args.absorption, args.dose, args.auc, args.time,
+    outputs = generatePlot(args.half_life, args.absorption, args.dose, args.auc, args.time,
                  plot_width=args.plot_width, plot_height=args.plot_height, font_size=args.font_size,
-                 filename=args.output)
+                 filename=args.output + '.png')
+
+    status_str = ", ".join(map(lambda e: e + ": " + str(outputs[e]), outputs))
+    utils.write_metrics(args.output, {'__StatusMessage__':status_str, 'DMPK.Syg.TmaxCmax':1})
 
 
 if __name__ == "__main__":
