@@ -1,7 +1,7 @@
 #!/usr/bin/env nextflow
 
 /* Nextflow pipline that runs MolAlign from Ling Chan <slchan.bc@gmail.com>
-* This is designed to be run in the informaticsmatters/rdkit_pipelines_molalign container.
+* This is designed to be run in the informaticsmatters/rdkit_pipelines_molalign:latest container.
 */
 
 

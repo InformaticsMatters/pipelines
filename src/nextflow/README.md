@@ -21,7 +21,7 @@ working.
 
 To run with Docker from the project root dir run this:
 
-```sh
+```
 $ nextflow run src/nextflow/rdkit/screen.nf -with-docker informaticsmatters/rdkit_pipelines
 N E X T F L O W  ~  version 0.22.6
 Launching `src/nextflow/rdkit/screen.nf` [jovial_hoover] - revision: 1f3a8d73e2
@@ -34,7 +34,7 @@ Results: /Users/timbo/dev/git/pipelines/work/3f/31a35a855ec2ab2904f0758aa760a5/r
 Those examples use built in defaults for everything. For a more realistic example you would specify the query structure
 and the SD file to be screened.
 
-```sh
+```
 nextflow run src/nextflow/rdkit/screen.nf --qsmiles 'C1N=C(C2=CC=CC=C2)C2=CC=CC=C2C2=C1C=NC(NC1=CC=CC=C1)=N2' --target data/dhfr_3d.sdf.gz --simmin 0.6 -with-docker informaticsmatters/rdkit_pipelines
 ```    
 
@@ -43,7 +43,7 @@ nextflow run src/nextflow/rdkit/screen.nf --qsmiles 'C1N=C(C2=CC=CC=C2)C2=CC=CC=
 This is an example that screens an SD file as in the previous example and then generates conformers of the structures 
 that passed the screening step. As such it's an example of a two step pipeline.
 
-```sh
+```
 $ nextflow run src/nextflow/rdkit/screen+conformers.nf -with-docker informaticsmatters/rdkit_pipelines
 N E X T F L O W  ~  version 0.22.6
 Launching `src/nextflow/rdkit/screen+conformers.nf` [sad_poincare] - revision: 67201accca
@@ -54,6 +54,21 @@ Results: /Users/timbo/dev/git/pipelines/work/88/72fd4de1f7186f244efd8db7f0d6af/r
 ```
 
 Of course the notes in the previous section about running in a Docker container and providing real parameters also apply here.
+
+## MolAlign examples
+
+### Original 3D assembly generation:
+
+```
+$ nextflow run src/nextflow/molalign/molalign.nf -with-docker informaticsmatters/rdkit_pipelines_molalign:latest --conformers data/conformers_to_align.data.gz 
+N E X T F L O W  ~  version 0.27.0
+Launching `src/nextflow/molalign/molalign.nf` [hungry_laplace] - revision: e5eeacf89a
+[warm up] executor > local
+[9e/1ce912] Submitted process > split
+[3a/bd23f9] Submitted process > molalign
+[a5/47afb1] Submitted process > results
+```
+
 
 ## Usage in Squonk
 
