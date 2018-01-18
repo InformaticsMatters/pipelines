@@ -1,5 +1,5 @@
 FROM informaticsmatters/rdkit:Release_2017_09_1
-MAINTAINER Tim Dudgeon <tdudgeon@informaticsmatters.com>
+LABEL maintainer="Tim Dudgeon<tdudgeon@informaticsmatters.com>"
 
 USER root
 
