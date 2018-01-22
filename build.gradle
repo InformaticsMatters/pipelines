@@ -80,7 +80,7 @@ task copySdToSquonk(type: Copy) {
     dependsOn removeSquonkSd
     dependsOn dist
 
-    destinationDir = file("${squonkSdDir}")
+    destinationDir = file("${squonkSdDir}/${pipeline}")
 
     from('build/dist/pipelines') {
         into 'pipelines'
