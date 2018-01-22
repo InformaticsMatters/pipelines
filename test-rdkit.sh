@@ -20,59 +20,59 @@ gunzip -c data/dhfr_3d.sdf.gz | python src/python/pipelines/rdkit/screen.py\
   --simmax 0.8\
   -if sdf > /dev/null || echo -e $msg_fail
 
-echo "Testing screen.py reading and writing files using sdf"
-python src/python/pipelines/rdkit/screen.py\
-  -i data/dhfr_3d.sdf.gz\
-  -o tmp/screen2\
-  -of sdf\
-  --qsmiles 'C1N=C(C2=CC=CC=C2)C2=CC=CC=C2C2=C1C=NC(NC1=CC=CC=C1)=N2'\
-  --simmin 0.45\
-  -if sdf > /dev/null || echo -e $msg_fail
-if [ ! -f  tmp/screen2.sdf.gz ]
-then
-    echo -e $msg_file_notCreated
-fi
+#echo "Testing screen.py reading and writing files using sdf"
+#python src/python/pipelines/rdkit/screen.py\
+#  -i data/dhfr_3d.sdf.gz\
+#  -o tmp/screen2\
+#  -of sdf\
+#  --qsmiles 'C1N=C(C2=CC=CC=C2)C2=CC=CC=C2C2=C1C=NC(NC1=CC=CC=C1)=N2'\
+#  --simmin 0.45\
+#  -if sdf > /dev/null || echo -e $msg_fail
+#if [ ! -f  tmp/screen2.sdf.gz ]
+#then
+#    echo -e $msg_file_notCreated
+#fi
 
-echo "Testing screen.py reading and writing files using json"
-python src/python/pipelines/rdkit/screen.py\
-  -i data/nci100.data.gz\
-  -o tmp/screen3\
-  -of json\
-  --qsmiles 'C1N=C(C2=CC=CC=C2)C2=CC=CC=C2C2=C1C=NC(NC1=CC=CC=C1)=N2'\
-  --simmin 0.45\
-  -if json > /dev/null || echo -e $msg_fail
-if [ ! -f  tmp/screen3.data.gz ]
-then
-    echo -e $msg_file_notCreated
-fi
+#echo "Testing screen.py reading and writing files using json"
+#python src/python/pipelines/rdkit/screen.py\
+#  -i data/nci100.data.gz\
+#  -o tmp/screen3\
+#  -of json\
+#  --qsmiles 'C1N=C(C2=CC=CC=C2)C2=CC=CC=C2C2=C1C=NC(NC1=CC=CC=C1)=N2'\
+#  --simmin 0.45\
+#  -if json > /dev/null || echo -e $msg_fail
+#if [ ! -f  tmp/screen3.data.gz ]
+#then
+#    echo -e $msg_file_notCreated
+#fi
 
-echo "Testing screen.py reading and writing files using thin sdf"
-python src/python/pipelines/rdkit/screen.py\
-  -i data/dhfr_3d.sdf.gz\
-  -o tmp/screen2\
-  -of sdf\
-  --qsmiles 'C1N=C(C2=CC=CC=C2)C2=CC=CC=C2C2=C1C=NC(NC1=CC=CC=C1)=N2'\
-  --simmin 0.45\
-  -if sdf\
-  --thin > /dev/null || echo -e $msg_fail
-if [ ! -f  tmp/screen2.sdf.gz ]
-then
-    echo -e $msg_file_notCreated
-fi
+#echo "Testing screen.py reading and writing files using thin sdf"
+#python src/python/pipelines/rdkit/screen.py\
+#  -i data/dhfr_3d.sdf.gz\
+#  -o tmp/screen2\
+#  -of sdf\
+#  --qsmiles 'C1N=C(C2=CC=CC=C2)C2=CC=CC=C2C2=C1C=NC(NC1=CC=CC=C1)=N2'\
+#  --simmin 0.45\
+#  -if sdf\
+#  --thin > /dev/null || echo -e $msg_fail
+#if [ ! -f  tmp/screen2.sdf.gz ]
+#then
+#    echo -e $msg_file_notCreated
+#fi
 
-echo "Testing screen.py reading and writing files using thin json"
-python src/python/pipelines/rdkit/screen.py\
-  -i data/nci100.data.gz\
-  -o tmp/screen3\
-  -of json\
-  --qsmiles 'C1N=C(C2=CC=CC=C2)C2=CC=CC=C2C2=C1C=NC(NC1=CC=CC=C1)=N2'\
-  --simmin 0.45\
-  -if json\
-  --thin > /dev/null || echo -e $msg_fail
-if [ ! -f  tmp/screen3.data.gz ]
-then
-    echo -e $msg_file_notCreated
-fi
+#echo "Testing screen.py reading and writing files using thin json"
+#python src/python/pipelines/rdkit/screen.py\
+#  -i data/nci100.data.gz\
+#  -o tmp/screen3\
+#  -of json\
+#  --qsmiles 'C1N=C(C2=CC=CC=C2)C2=CC=CC=C2C2=C1C=NC(NC1=CC=CC=C1)=N2'\
+#  --simmin 0.45\
+#  -if json\
+#  --thin > /dev/null || echo -e $msg_fail
+#if [ ! -f  tmp/screen3.data.gz ]
+#then
+#    echo -e $msg_file_notCreated
+#fi
 
 echo "Testing screen_multi.py reading taget form sdf file, query as json file and writing to STDOUT"
 gunzip -c data/dhfr_3d.sdf.gz | python src/python/pipelines/rdkit/screen_multi.py\
