@@ -1,0 +1,37 @@
+// The `pk_tmax_cmax_sim` automated pipeline test specification.
+
+[
+
+    version = 1,
+
+    test_absorption_0_5 = [
+
+        params: [ halfLife: 0.79,
+                  absorption: 0.5,
+                  dose: 0.14,
+                  auc: 0.88,
+                  time: 8 ],
+
+        see: [ 'kel  0.87740149438',
+               'ka   1.38629436112',
+               'Tmax 0.898862760583',
+               'Cmax 0.35088824801',
+               'V_F  0.181320535821' ]
+
+    ],
+
+    test_raw_command = [
+
+        command: '''python -m pipelines.dmpk.pk_tmax_cmax_sim -o output
+                    --half-life 0.79 --absorption 0.5 --dose 0.14
+                    --auc 0.88 --time 8''',
+
+        see: [ 'kel  0.87740149438',
+               'ka   1.38629436112',
+               'Tmax 0.898862760583',
+               'Cmax 0.35088824801',
+               'V_F  0.181320535821' ]
+
+    ],
+
+]
