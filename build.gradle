@@ -59,15 +59,27 @@ def pipeline = 'pipelines'
 def squonkSdDir = '../squonk/docker/deploy/data/docker-services'
 
 task buildDockerImage(type: DockerBuildImage) {
+    description 'Builds the pipelines Docker image'
+
     dockerFile = file('Dockerfile-rdkit')
     inputDir = file('.')
     tag = "informaticsmatters/rdkit_${pipeline}:latest"
 }
 
 task buildSdLoaderDockerImage(type: DockerBuildImage) {
+    description 'Builds the pipelines SD-loader Docker image'
+
     dockerFile = file('Dockerfile-sdloader')
     inputDir = file('.')
     tag = "informaticsmatters/rdkit_${pipeline}-sdloader:latest"
+}
+
+task buildDockerImages() {
+    dependsOn buildDockerImage
+    dependsOn buildSdLoaderDockerImage
+
+    group 'Docker'
+    description 'Builds all the project Docker images'
 }
 
 task removeSquonkSd(type: Delete) {
