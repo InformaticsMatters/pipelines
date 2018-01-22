@@ -4,6 +4,10 @@
 
     version = 1,
 
+    setup_collection = [
+        creates: [ 'output.png' ]
+    ],
+
     test_absorption_0_5 = [
 
         params: [ halfLife: 0.79,
@@ -18,8 +22,6 @@
                'Cmax 0.35088824801',
                'V_F  0.181320535821' ],
 
-        creates: [ 'output.png' ]
-
     ],
 
     test_raw_command = [
@@ -33,8 +35,6 @@
                'Tmax 0.898862760583',
                'Cmax 0.35088824801',
                'V_F  0.181320535821' ],
-
-        creates: [ 'output.png' ]
 
     ],
 
