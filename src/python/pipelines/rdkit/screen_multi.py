@@ -22,7 +22,7 @@ from rdkit.Chem import MACCSkeys
 from rdkit.Chem.Fingerprints import FingerprintMols
 
 import filter
-from pipelines.utils import utils
+from pipelines_utils import utils
 
 ### start field name defintions #########################################
 

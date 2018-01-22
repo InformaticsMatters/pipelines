@@ -16,7 +16,7 @@
 
 ### Use MolVS to do tautomer enumeration, sterochemistry enumeration, charge neutralisation.
 
-from pipelines.utils import utils
+from pipelines_utils import utils
 import sys, argparse
 from rdkit import Chem
 from rdkit.Chem import AllChem

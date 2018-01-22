@@ -1,7 +1,7 @@
 from rdkit import Chem
 from copy import copy
 
-from pipelines.utils import utils
+from pipelines_utils import utils
 
 from molvs import enumerate_tautomers_smiles,canonicalize_tautomer_smiles,Standardizer
 from molvs.charge import Uncharger,Reionizer

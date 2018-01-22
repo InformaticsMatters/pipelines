@@ -3,7 +3,7 @@
 import argparse
 import os
 
-from pipelines.utils import utils
+from pipelines_utils import utils
 
 
 ### start main execution #########################################
