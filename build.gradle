@@ -13,7 +13,6 @@
 * limitations under the License.
 */
 
-
 apply plugin: 'com.bmuschko.docker-remote-api'
 
 buildscript {
@@ -30,6 +29,30 @@ import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
 
 task wrapper(type: Wrapper) {
     gradleVersion = '4.4.1'
+}
+
+task cleanDist(type: Delete) {
+    group = 'Distribution'
+    delete 'build/dist'
+}
+
+task dist(type: Copy) {
+    group = 'Distribution'
+    dependsOn cleanDist
+
+    destinationDir = file('build/dist')
+
+    from('src/python') {
+        includes = ['**/*.py','**/*.nf','**/*.json','**/*.yml',
+                    '**/*.nsd.nf','**/*.nsd.config','README.rst']
+        into 'pipelines'
+    }
+
+    from('src/nextflow') {
+        includes = ['**/*.py','**/*.nf','**/*.json','**/*.yml',
+                    '**/*.nsd.nf','**/*.nsd.config','README.rst']
+        into 'nextflow'
+    }
 }
 
 def pipeline = 'pipelines'
@@ -55,12 +78,15 @@ task removeSquonkSd(type: Delete) {
 task copySdToSquonk(type: Copy) {
 
     dependsOn removeSquonkSd
-    from('src/python') {
-        include '**/*.json', '**/*.yaml', '**/*.yml'
-        exclude 'notebooks'
+    dependsOn dist
+
+    destinationDir = file("${squonkSdDir}")
+
+    from('build/dist/pipelines') {
+        into 'pipelines'
     }
-    from('src') {
-        include 'nextflow/**/*.json', 'nextflow/**/*.yaml', 'nextflow/**/*.yml'
+    from('build/dist/nextflow') {
+        into 'nextflow'
     }
-    into "${squonkSdDir}/${pipeline}"
+
 }
