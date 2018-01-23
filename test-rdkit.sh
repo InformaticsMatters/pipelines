@@ -6,19 +6,19 @@ msg_fail="\n========================== TEST FAILED ==========================\n"
 msg_file_notCreated="\n========================== FILE NOT CREATED =====================\n"
 
 
-echo "Testing screen.py reading from STDIN and writing to STDOUT input as smiles"
-gunzip -c data/dhfr_3d.sdf.gz | python src/python/pipelines/rdkit/screen.py\
-  --qsmiles 'C1N=C(C2=CC=CC=C2)C2=CC=CC=C2C2=C1C=NC(NC1=CC=CC=C1)=N2'\
-  --simmin 0.45\
-  -if sdf > /dev/null || echo -e $msg_fail
+#echo "Testing screen.py reading from STDIN and writing to STDOUT input as smiles"
+#gunzip -c data/dhfr_3d.sdf.gz | python src/python/pipelines/rdkit/screen.py\
+#  --qsmiles 'C1N=C(C2=CC=CC=C2)C2=CC=CC=C2C2=C1C=NC(NC1=CC=CC=C1)=N2'\
+#  --simmin 0.45\
+#  -if sdf > /dev/null || echo -e $msg_fail
 
 
-echo "Testing screen.py reading from STDIN and writing to STDOUT input from molfile"
-gunzip -c data/dhfr_3d.sdf.gz | python src/python/pipelines/rdkit/screen.py\
-  --qmolfile data/pyrimethamine.mol\
-  --simmin 0.7\
-  --simmax 0.8\
-  -if sdf > /dev/null || echo -e $msg_fail
+#echo "Testing screen.py reading from STDIN and writing to STDOUT input from molfile"
+#gunzip -c data/dhfr_3d.sdf.gz | python src/python/pipelines/rdkit/screen.py\
+#  --qmolfile data/pyrimethamine.mol\
+#  --simmin 0.7\
+#  --simmax 0.8\
+#  -if sdf > /dev/null || echo -e $msg_fail
 
 #echo "Testing screen.py reading and writing files using sdf"
 #python src/python/pipelines/rdkit/screen.py\

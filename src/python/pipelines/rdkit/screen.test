@@ -4,6 +4,31 @@
 
     version = 1,
 
+    // Testing screen.py reading from STDIN and writing to STDOUT input as smiles
+    test_dhfr_3d_data_sdf_stdin_min = [
+
+        command: '''gunzip -c ../../data/dhfr_3d.sdf.gz |
+                 python -m pipelines.rdkit.screen
+                 --qsmiles 'C1N=C(C2=CC=CC=C2)C2=CC=CC=C2C2=C1C=NC(NC1=CC=CC=C1)=N2'
+                 --simmin 0.45
+                 -if sdf''',
+
+        see: [ 'Found [1-9]\\d+ similar molecules' ],
+
+    ],
+
+    // Testing screen.py reading from STDIN and writing to STDOUT input as smiles
+    test_dhfr_3d_data_sdf_stdin_min_and_max = [
+
+        command: '''gunzip -c ../../data/dhfr_3d.sdf.gz |
+                 python -m pipelines.rdkit.screen
+                 --qmolfile ../../data/pyrimethamine.mol
+                 --simmin 0.7 --simmax 0.8 -if sdf''',
+
+        see: [ 'Found [1-9]\\d+ similar molecules' ],
+
+    ],
+
     // Testing screen.py reading and writing files using sdf
     test_dhfr_data_sdf = [
 
