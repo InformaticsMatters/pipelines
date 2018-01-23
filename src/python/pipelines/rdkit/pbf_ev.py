@@ -7,7 +7,7 @@
 #  which is included in the file license.txt, found at the root
 #  of the RDKit source tree.
 
-from pipelines.utils import utils
+from pipelines_utils import utils
 import argparse
 from rdkit.Chem.Scaffolds import MurckoScaffold
 from rdkit import Chem

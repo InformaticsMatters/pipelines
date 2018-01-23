@@ -1,0 +1,3 @@
+[submodule "pipelines-utils"]
+	path = pipelines-utils
+	url = https://github.com/InformaticsMatters/pipelines-utils.git

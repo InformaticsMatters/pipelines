@@ -1,0 +1,21 @@
+// Automated pipeline test specification.
+
+[
+
+    version = 1,
+
+    // Testing constrained_conf_gen.py
+    // reading from STDIN and writing to STDOUT
+    test_raw_constrained = [
+
+        command: '''python -m pipelines.rdkit.constrained_conf_gen
+                 -n 2 -i ../../data/XChemReactionMaker1.sdf.gz
+                 -r ../../data/ref_mol.sdf.gz
+                 -o constrained_conf_gen''',
+
+        see: [ 'No output format specified - using sdf' ],
+
+        creates: [ 'constrained_conf_gen.sdf.gz' ],
+    ],
+
+]

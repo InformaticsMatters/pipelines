@@ -25,7 +25,7 @@ process splitter {
     file 'target_part_metrics.txt' into splitter_metrics
 
     """
-    python -m pipelines.rdkit.filter -i $target -c $params.chunk -l $params.limit -d $params.digits -o target_part -of sdf --meta
+    python -m rdkit_utils.filter -i $target -c $params.chunk -l $params.limit -d $params.digits -o target_part -of sdf --meta
     """
 }
 
@@ -60,7 +60,7 @@ process joiner {
 	file 'output.metadata'
 
 	"""
-	zcat $parts | python -m pipelines.rdkit.filter -if sdf -of json -o output --meta
+	zcat $parts | python -m rdkit_utils.filter -if sdf -of json -o output --meta
 	"""
 }
 

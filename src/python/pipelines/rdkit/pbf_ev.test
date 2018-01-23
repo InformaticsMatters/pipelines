@@ -1,0 +1,20 @@
+// Automated pipeline test specification.
+
+[
+
+    version = 1,
+
+    // Testing pbf_ev.py reading from files
+    test_pbf_ev_raw = [
+
+        command: '''python -m pipelines.rdkit.pbf_ev
+                 -i ../../data/dhfr_3d.sdf -o output''',
+
+        see: [ 'No output format specified - using sdf',
+               'Handled [1-9]\\d+ molecules, resulting in' ],
+
+        creates: [ 'output.sdf.gz' ],
+
+    ],
+
+]

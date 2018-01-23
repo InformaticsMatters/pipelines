@@ -13,7 +13,6 @@
 * limitations under the License.
 */
 
-
 apply plugin: 'com.bmuschko.docker-remote-api'
 
 buildscript {
@@ -22,20 +21,20 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.bmuschko:gradle-docker-plugin:3.0.5'
+        classpath 'com.bmuschko:gradle-docker-plugin:3.0.11'
     }
 }
 
-import com.bmuschko.gradle.docker.tasks.image.Dockerfile
 import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
 
-version = 1.0
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.4.1'
+}
 
 task cleanDist(type: Delete) {
     group = 'Distribution'
     delete 'build/dist'
 }
-
 
 task dist(type: Copy) {
     group = 'Distribution'
@@ -44,41 +43,62 @@ task dist(type: Copy) {
     destinationDir = file('build/dist')
 
     from('src/python') {
-        includes = ['**/*.py','**/*.nf','**/*.json','**/*.yml','**/*.nsd.nf','**/*.nsd.config','README.rst']
+        includes = ['**/*.py','**/*.nf','**/*.json','**/*.yml',
+                    '**/*.nsd.nf','**/*.nsd.config','README.rst']
         into 'pipelines'
     }
 
     from('src/nextflow') {
-        includes = ['**/*.py','**/*.nf','**/*.json','**/*.yml','**/*.nsd.nf','**/*.nsd.config','README.rst']
+        includes = ['**/*.py','**/*.nf','**/*.json','**/*.yml',
+                    '**/*.nsd.nf','**/*.nsd.config','README.rst']
         into 'nextflow'
     }
 }
 
+def pipeline = 'pipelines'
+def squonkSdDir = '../squonk/docker/deploy/data/docker-services'
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '3.3'
+task buildDockerImage(type: DockerBuildImage) {
+    description 'Builds the pipelines Docker image'
+
+    dockerFile = file('Dockerfile-rdkit')
+    inputDir = file('.')
+    tag = "informaticsmatters/rdkit_${pipeline}:latest"
 }
 
-/** Build a Docker image
- * run the generated image with something like this:
- *
- * docker run -it --rm informaticsmatters/pipelines bash
- */
-docker {
-    certPath = null
+task buildSdLoaderDockerImage(type: DockerBuildImage) {
+    description 'Builds the pipelines SD-loader Docker image'
+
+    dockerFile = file('Dockerfile-sdloader')
+    inputDir = file('.')
+    tag = "informaticsmatters/rdkit_${pipeline}-sdloader:latest"
 }
 
-task buildDockerFile(type: Dockerfile, dependsOn: dist) {
+task buildDockerImages() {
+    dependsOn buildDockerImage
+    dependsOn buildSdLoaderDockerImage
 
-    destFile = project.file('build/Dockerfile')
-    from "informaticsmatters/rdkit_java:Release_2017_03_1"
-    maintainer 'Tim Dudgeon <tdudgeon@informaticsmatters.com>'
-
-    addFile('dist/pipelines', "/pipelines")
-    addFile('dist/nextflow', "/nextflow")
+    group 'Docker'
+    description 'Builds all the project Docker images'
 }
 
-task buildDockerImage(type: DockerBuildImage, dependsOn: buildDockerFile) {
-    inputDir = buildDockerFile.destFile.parentFile
-    tag = "informaticsmatters/pipelines"
+task removeSquonkSd(type: Delete) {
+    delete "${squonkSdDir}/${pipeline}"
+    followSymlinks = true
+}
+
+task copySdToSquonk(type: Copy) {
+
+    dependsOn removeSquonkSd
+    dependsOn dist
+
+    destinationDir = file("${squonkSdDir}/${pipeline}")
+
+    from('build/dist/pipelines') {
+        into 'pipelines'
+    }
+    from('build/dist/nextflow') {
+        into 'nextflow'
+    }
+
 }

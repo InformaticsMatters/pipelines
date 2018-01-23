@@ -20,7 +20,7 @@ from rdkit import Chem, rdBase
 from rdkit.Chem import rdMolAlign
 
 import conformers
-from pipelines.utils import utils
+from pipelines_utils import utils
 
 ### start field name defintions #########################################
 

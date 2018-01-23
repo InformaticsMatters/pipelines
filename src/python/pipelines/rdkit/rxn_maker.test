@@ -1,0 +1,23 @@
+// Automated pipeline test specification.
+
+[
+
+    version = 1,
+
+    // Testing rxn_maker.py reading from files
+    test_rxn_maker_raw = [
+
+        command: '''python -m pipelines.rdkit.rxn_maker
+                 -i ../../data/sulfonyl_chloride.sdf
+                 -r Sulfonamide
+                 -rl ../../data/sdf-aliphatic-primary-amines-175.sdf.gz
+                 -o output''',
+
+        see: [ 'No output format specified - using sdf',
+               'Created [1-9]\\d+ molecules from a total of' ],
+
+        creates: [ 'output.sdf.gz' ],
+
+    ],
+
+]

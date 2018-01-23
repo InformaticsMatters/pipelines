@@ -20,7 +20,7 @@ from rdkit import Chem, rdBase
 from rdkit.Chem import AllChem
 from rdkit.Chem.MCS import FindMCS
 
-from pipelines.utils import utils
+from pipelines_utils import utils
 import sys, logging
 
 
