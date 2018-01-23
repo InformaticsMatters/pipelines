@@ -24,7 +24,7 @@ from multiprocessing.dummy import Pool as ThreadPool
 
 from rdkit import Chem
 
-from pipelines.utils import utils
+from pipelines_utils import utils
 
 lock = threading.Lock()
 PDB_PATH = ""

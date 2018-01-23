@@ -21,7 +21,7 @@ import uuid
 from rdkit import rdBase
 
 import cluster_butina
-from pipelines.utils import utils
+from pipelines_utils import utils
 
 ### start field name defintions #########################################
 

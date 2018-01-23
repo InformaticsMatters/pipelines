@@ -28,7 +28,7 @@ process sdsplit {
     
     """
     source activate my-rdkit-env
-    python -m pipelines.rdkit.filter -i $ligands -c $params.chunk -d 5 -o ligands_part -of sdf
+    python -m rdkit_utils.filter -i $ligands -c $params.chunk -d 5 -o ligands_part -of sdf
     """
 }
 

@@ -19,8 +19,8 @@ import argparse, logging, time
 from rdkit import DataStructs, rdBase, SimDivFilters
 from rdkit.Chem import AllChem, MACCSkeys
 
-from pipelines.utils import utils
-from pipelines.rdkit import mol_utils
+from pipelines_utils import utils
+from rdkit_utils import mol_utils
 
 descriptors = {
     #'atompairs':   lambda m: Pairs.GetAtomPairFingerprint(m),

@@ -17,7 +17,7 @@
 import argparse
 import sys, subprocess
 
-from pipelines.utils import utils
+from pipelines_utils import utils
 
 
 def execute(input, output, extension, format, ph, noGzip):

@@ -1,0 +1,30 @@
+// Automated pipeline test specification.
+
+[
+
+    version = 1,
+
+    // Testing conformers.py reading from STDIN and writing to STDOUT
+    test_raw_conformers = [
+
+        command: '''gunzip -c ../../data/Kinase_inhibs.sdf.gz |
+                 python -m pipelines.rdkit.conformers -n 2 -if sdf''',
+
+        see: [ 'No output format specified - using sdf',
+               'Molecule 36 generated [1-9]\\d* conformers' ],
+
+    ],
+
+    // Testing conformers.py with clustering
+    // reading from STDIN and writing to STDOUT
+    test_raw_conformers_with_clustering = [
+
+        command: '''gunzip -c ../../data/Kinase_inhibs.sdf.gz |
+                 python -m pipelines.rdkit.conformers -n 2 -c RMSD -if sdf''',
+
+        see: [ 'No output format specified - using sdf',
+               'Molecule 35 generated [1-9]\\d* conformers and [1-9]\\d* clusters' ],
+
+    ],
+
+]
