@@ -1,0 +1,19 @@
+// Automated pipeline test specification.
+
+[
+
+    version = 1,
+
+    // Testing screen_multi.py reading target form sdf file,
+    // query as json file and writing to STDOUT
+    test_multi = [
+
+        command: '''gunzip -c ../../data/dhfr_3d.sdf.gz |
+                 python -m pipelines.rdkit.screen_multi
+                 -if sdf --qjson ../../data/nci100.data.gz --simmin 0.55''',
+
+        see: [ 'Found [1-9]\\d* similar molecules' ],
+
+    ],
+
+]
