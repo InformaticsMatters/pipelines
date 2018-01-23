@@ -1,0 +1,20 @@
+// Automated pipeline test specification.
+
+[
+
+    version = 1,
+
+    // A basic start-up test for the module.
+    // Simply makes sure it starts cleanly.
+    //
+    // For this to work you will need to make sure a number
+    // of other modules are installed in your conda environemnt.
+    // - molvs (pip install molvs)
+    // - standardiser
+    test_help = [
+
+        command: '''python -m pipelines.rdkit.sanifier -h'''
+
+    ],
+
+]
