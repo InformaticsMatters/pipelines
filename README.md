@@ -15,16 +15,17 @@ Currently it has some python scripts using RDKit (http://rdkit.org) to provide
 basic cheminformatics and comp chem functionality, though other tools will 
 be coming soon, including some from the Java ecosystem.
 
-See [here](src/python/pipelines/rdkit/README.md) for more info on the RDKit components.
+* See [here](src/python/pipelines/rdkit/README.md) for more info on the RDKit components.
+* See [here](src/nextflow/rdkit/README.md) for more info on running these in Nextflow.
 
-See [here](src/nextflow/rdkit/README.md) for more info on running these in Nextflow.
-
-
-Note: this is experimental, everything is subject to change, and 
-there are no guarantees that anything works!
-That said, if you are interested let me know, and join the fun.
+Note: this is experimental, subject to change, and there are no guarantees that things work as expected!
+That said, its already proved to be highly useful in the Squonk Computational Notebook, and if you are interested let us know, and join the fun.
 
 The code is licensed under the Apache 2.0 license.
+
+## Pipeline Utils
+
+In Jan 2018 some of the core functionality from this repository was broken out into the [pipeline-utils](https://github.com/InformaticsMatters/pipeline-utils) repository. This included utility Python modules, as well as creation of a test framework that makes it easier to create and test new modules. This change also makes it easier to create additonal pipeline-like projects. See the [Readme](https://github.com/InformaticsMatters/pipelines-utils/blob/master/README.md) in the pipeline-utils repo for more details.
 
 ## General principles
 
@@ -187,3 +188,6 @@ Any questions contact:
 
 Tim Dudgeon
 tdudgeon@informaticsmatters.com
+
+Alan Christie
+achristie@informaticsmatters.com
