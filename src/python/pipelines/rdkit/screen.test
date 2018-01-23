@@ -1,4 +1,4 @@
-// The `screen` automated pipeline test specification.
+// Automated pipeline test specification.
 
 [
 
@@ -19,7 +19,7 @@
 
         metrics: [ 'RDKitScreen': '756',
                    '__InputCount__': '756',
-                   '__OutputCount__': '[1-9]\\d+' ]
+                   '__OutputCount__': '[1-9]\\d+' ],
 
     ],
 
@@ -39,7 +39,7 @@
 
         metrics: [ 'RDKitScreen': '100',
                    '__InputCount__': '100',
-                   '__OutputCount__': '[1-9]\\d+' ]
+                   '__OutputCount__': '[1-9]\\d+' ],
 
     ],
 
@@ -57,7 +57,7 @@
 
         metrics: [ 'RDKitScreen': '756',
                    '__InputCount__': '756',
-                   '__OutputCount__': '[1-9]\\d+' ]
+                   '__OutputCount__': '[1-9]\\d+' ],
 
     ],
 
@@ -77,7 +77,7 @@
 
         metrics: [ 'RDKitScreen': '100',
                    '__InputCount__': '100',
-                   '__OutputCount__': '[1-9]\\d+' ]
+                   '__OutputCount__': '[1-9]\\d+' ],
 
     ],
 

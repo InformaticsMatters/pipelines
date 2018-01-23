@@ -110,14 +110,14 @@ echo "Testing rxn_smarts_filter.py reading from STDIN and writing to files using
 gunzip -c data/nci100.data.gz | python src/python/pipelines/rdkit/rxn_smarts_filter.py -if json -o tmp/rxn_smarts_filter2 -of json --meta --thin || echo -e $msg_fail
 
 
-echo "Testing rxn_smarts_filter.py reading from sd file and writing to multiple files"
-python src/python/pipelines/rdkit/rxn_smarts_filter.py -i data/Kinase_inhibs.sdf.gz -o tmp/rxn_smarts_filter2 --multi || echo -e $msg_fail
+#echo "Testing rxn_smarts_filter.py reading from sd file and writing to multiple files"
+#python src/python/pipelines/rdkit/rxn_smarts_filter.py -i data/Kinase_inhibs.sdf.gz -o tmp/rxn_smarts_filter2 --multi || echo -e $msg_fail
 
-echo "Testing rxn_maker.py reading from files"
-python src/python/pipelines/rdkit/rxn_maker.py -i data/sulfonyl_chloride.sdf -r Sulfonamide -rl data/sdf-aliphatic-primary-amines-175.sdf.gz  -o tmp/rxnoutput || echo -e $msg_fail
+#echo "Testing rxn_maker.py reading from files"
+#python src/python/pipelines/rdkit/rxn_maker.py -i data/sulfonyl_chloride.sdf -r Sulfonamide -rl data/sdf-aliphatic-primary-amines-175.sdf.gz  -o tmp/rxnoutput || echo -e $msg_fail
 
-echo "Testing pbf_ev.py reading from files"
-python src/python/pipelines/rdkit/pbf_ev.py -i data/dhfr_3d.sdf -o tmp/pbf_ev_output || echo -e $msg_fail
+#echo "Testing pbf_ev.py reading from files"
+#python src/python/pipelines/rdkit/pbf_ev.py -i data/dhfr_3d.sdf -o tmp/pbf_ev_output || echo -e $msg_fail
 
 echo "cleaning up ..."
 rm -f *.metadata

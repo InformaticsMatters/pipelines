@@ -1,0 +1,37 @@
+// Automated pipeline test specification.
+
+[
+
+    version = 1,
+
+    // Testing rxn_smarts_filter.py reading from sd file and writing to multiple files
+    rxn_smarts_filter_raw = [
+
+        command: '''python -m pipelines.rdkit.rxn_smarts_filter
+                 -i ../../data/Kinase_inhibs.sdf.gz -o output --multi''',
+
+        see: [ 'Using 15 reaction filters',
+               'No output format specified - using sdf',
+               'Matched [1-9]\\d+ molecules from a total of' ],
+
+        creates: [ 'output.sdf.gz',
+                   'Amides.sdf',
+                   'Ether_Coupling.sdf',
+                   'Reductive_Amination.sdf',
+                   'Suzuki_Coupling.sdf',
+                   'Benzimidazole.sdf',
+                   'Indole.sdf',
+                   'SNAr.sdf',
+                   'Triazole.sdf',
+                   'Benzoxazole.sdf',
+                   'N-Alkylation.sdf',
+                   'Sonogashira.sdf',
+                   'Urea.sdf',
+                   'Ester_Coupling.sdf',
+                   'Oxadiazole.sdf',
+                   'Sulfonamide.sdf',
+                   'output.sdf.gz' ],
+
+    ],
+
+]
