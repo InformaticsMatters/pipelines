@@ -9,8 +9,8 @@
     test_raw_constrained = [
 
         command: '''python -m pipelines.rdkit.constrained_conf_gen
-                 -n 2 -i ../../data/XChemReactionMaker1.sdf.gz
-                 -r ../../data/ref_mol.sdf.gz
+                 -n 2 -i ${PIN}/XChemReactionMaker1.sdf.gz
+                 -r ${PIN}/ref_mol.sdf.gz
                  -o constrained_conf_gen''',
 
         see: [ 'No output format specified - using sdf' ],

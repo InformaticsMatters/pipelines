@@ -8,7 +8,7 @@
     // query as json file and writing to STDOUT
     test_multi = [
 
-        command: '''gunzip -c ../../data/dhfr_3d.sdf.gz |
+        command: '''gunzip -c ${PIN}/dhfr_3d.sdf.gz |
                  python -m pipelines.rdkit.screen_multi
                  -if sdf --qjson ../../data/nci100.data.gz --simmin 0.55''',
 

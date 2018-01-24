@@ -8,7 +8,7 @@
     // reading from STDIN and writing TSV to STDOUT
     test_raw_cluster_butina_matirx_to_tsv = [
 
-        command: '''gunzip -c ../../data/Kinase_inhibs.sdf.gz |
+        command: '''gunzip -c ${PIN}/Kinase_inhibs.sdf.gz |
                  python -m pipelines.rdkit.cluster_butina_matrix
                  -t 0.6 -if sdf -of tsv -o output''',
 
@@ -23,7 +23,7 @@
     // reading from STDIN and writing JSON to STDOUT
     test_raw_cluster_butina_matirx_to_json = [
 
-        command: '''gunzip -c ../../data/Kinase_inhibs.sdf.gz |
+        command: '''gunzip -c ${PIN}/Kinase_inhibs.sdf.gz |
                  python -m pipelines.rdkit.cluster_butina_matrix
                  -t 0.6 -if sdf -of json -o output''',
 
