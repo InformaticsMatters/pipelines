@@ -7,9 +7,9 @@
     // Testing o3dAlign.py reading from STDIN and writing to STDOUT
     test_raw_o3dalign = [
 
-        command: '''gunzip -c ${PIN}/Kinase_inhibs.sdf.gz |
+        command: '''gunzip -c ${PIN}Kinase_inhibs.sdf.gz |
                  python -m pipelines.rdkit.o3dAlign
-                 ${PIN}/pyrimethamine.mol -n 2 -t 10 -if sdf''',
+                 ${PIN}pyrimethamine.mol -n 2 -t 10 -if sdf''',
 
         see: [ 'No output format specified - using sdf',
                'Molecule 36 generated [1-9]\\d* conformers' ],

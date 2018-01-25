@@ -8,7 +8,7 @@
     test_rxn_smarts_filter_raw = [
 
         command: '''python -m pipelines.rdkit.rxn_smarts_filter
-                 -i ${PIN}/Kinase_inhibs.sdf.gz -o output --multi''',
+                 -i ${PIN}Kinase_inhibs.sdf.gz -o output --multi''',
 
         see: [ 'Using 15 reaction filters',
                'No output format specified - using sdf',
@@ -38,7 +38,7 @@
     // and writing to files using SDF
     test_rxn_smarts_filter_raw_stdin_to_sdf = [
 
-        command: '''gunzip -c ${PIN}/Kinase_inhibs.sdf.gz |
+        command: '''gunzip -c ${PIN}Kinase_inhibs.sdf.gz |
                  python -m pipelines.rdkit.rxn_smarts_filter
                  -if sdf -o output''',
 
@@ -54,7 +54,7 @@
     // reading from STDIN and writing to files using JSON
     test_rxn_smarts_filter_raw_stdin_to_json = [
 
-        command: '''gunzip -c ${PIN}/nci100.data.gz |
+        command: '''gunzip -c ${PIN}nci100.data.gz |
                  python -m pipelines.rdkit.rxn_smarts_filter
                  -if json -o output -of json --meta --thin''',
 

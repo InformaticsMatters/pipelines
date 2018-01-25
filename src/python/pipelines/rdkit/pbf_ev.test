@@ -8,7 +8,7 @@
     test_pbf_ev_raw = [
 
         command: '''python -m pipelines.rdkit.pbf_ev
-                 -i ${PIN}/dhfr_3d.sdf -o output''',
+                 -i ${PIN}dhfr_3d.sdf -o output''',
 
         see: [ 'No output format specified - using sdf',
                'Handled [1-9]\\d+ molecules, resulting in' ],

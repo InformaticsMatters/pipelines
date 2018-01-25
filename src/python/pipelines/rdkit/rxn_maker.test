@@ -8,9 +8,9 @@
     test_rxn_maker_raw = [
 
         command: '''python -m pipelines.rdkit.rxn_maker
-                 -i ${PIN}/sulfonyl_chloride.sdf
+                 -i ${PIN}sulfonyl_chloride.sdf
                  -r Sulfonamide
-                 -rl ${PIN}/sdf-aliphatic-primary-amines-175.sdf.gz
+                 -rl ${PIN}sdf-aliphatic-primary-amines-175.sdf.gz
                  -o output''',
 
         see: [ 'No output format specified - using sdf',
