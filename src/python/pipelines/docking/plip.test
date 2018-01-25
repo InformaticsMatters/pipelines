@@ -6,7 +6,7 @@
 
     // A basic start-up test for the module.
     // Simply makes sure it starts cleanly.
-    test_help = [
+    ignore_test_help = [
 
         command: '''python -m pipelines.docking.plip -h'''
 
