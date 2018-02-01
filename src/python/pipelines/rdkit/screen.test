@@ -7,7 +7,7 @@
     // Testing screen.py reading from STDIN and writing to STDOUT input as smiles
     test_dhfr_3d_data_sdf_stdin_min = [
 
-        command: '''gunzip -c ../../data/dhfr_3d.sdf.gz |
+        command: '''gunzip -c ${PIN}dhfr_3d.sdf.gz |
                  python -m pipelines.rdkit.screen
                  --qsmiles 'C1N=C(C2=CC=CC=C2)C2=CC=CC=C2C2=C1C=NC(NC1=CC=CC=C1)=N2'
                  --simmin 0.45
@@ -20,7 +20,7 @@
     // Testing screen.py reading from STDIN and writing to STDOUT input as smiles
     test_dhfr_3d_data_sdf_stdin_min_and_max = [
 
-        command: '''gunzip -c ../../data/dhfr_3d.sdf.gz |
+        command: '''gunzip -c ${PIN}dhfr_3d.sdf.gz |
                  python -m pipelines.rdkit.screen
                  --qmolfile ../../data/pyrimethamine.mol
                  --simmin 0.7 --simmax 0.8 -if sdf''',
@@ -33,7 +33,7 @@
     test_dhfr_data_sdf = [
 
         command: '''python -m pipelines.rdkit.screen
-                 -i ../../data/dhfr_3d.sdf.gz -o output -of sdf
+                 -i ${PIN}dhfr_3d.sdf.gz -o output -of sdf
                  --qsmiles 'C1N=C(C2=CC=CC=C2)C2=CC=CC=C2C2=C1C=NC(NC1=CC=CC=C1)=N2'
                  --simmin 0.45 -if sdf --meta''',
 
@@ -52,7 +52,7 @@
     test_nci100_data_json = [
 
         command: '''python -m pipelines.rdkit.screen
-                 -i ../../data/nci100.data.gz -o output -of json
+                 -i ${PIN}nci100.data.gz -o output -of json
                  --qsmiles 'C1N=C(C2=CC=CC=C2)C2=CC=CC=C2C2=C1C=NC(NC1=CC=CC=C1)=N2'
                  --simmin 0.45 -if json --meta''',
 
@@ -72,7 +72,7 @@
     test_dhfr_data_sdf_thin = [
 
         command: '''python -m pipelines.rdkit.screen
-                 -i ../../data/dhfr_3d.sdf.gz -o output -of sdf
+                 -i ${PIN}dhfr_3d.sdf.gz -o output -of sdf
                  --qsmiles 'C1N=C(C2=CC=CC=C2)C2=CC=CC=C2C2=C1C=NC(NC1=CC=CC=C1)=N2'
                  --simmin 0.45 -if sdf --thin --meta''',
 
@@ -90,7 +90,7 @@
     test_nci100_data_json_thin = [
 
         command: '''python -m pipelines.rdkit.screen
-                 -i ../../data/nci100.data.gz -o output -of json
+                 -i ${PIN}nci100.data.gz -o output -of json
                  --qsmiles 'C1N=C(C2=CC=CC=C2)C2=CC=CC=C2C2=C1C=NC(NC1=CC=CC=C1)=N2'
                  --simmin 0.45 -if json --thin --meta''',
 

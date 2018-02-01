@@ -7,7 +7,7 @@
     // Testing conformers.py reading from STDIN and writing to STDOUT
     test_raw_conformers = [
 
-        command: '''gunzip -c ../../data/Kinase_inhibs.sdf.gz |
+        command: '''gunzip -c ${PIN}Kinase_inhibs.sdf.gz |
                  python -m pipelines.rdkit.conformers -n 2 -if sdf''',
 
         see: [ 'No output format specified - using sdf',
@@ -19,7 +19,7 @@
     // reading from STDIN and writing to STDOUT
     test_raw_conformers_with_clustering = [
 
-        command: '''gunzip -c ../../data/Kinase_inhibs.sdf.gz |
+        command: '''gunzip -c ${PIN}Kinase_inhibs.sdf.gz |
                  python -m pipelines.rdkit.conformers -n 2 -c RMSD -if sdf''',
 
         see: [ 'No output format specified - using sdf',
