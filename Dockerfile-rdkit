@@ -4,7 +4,7 @@ LABEL maintainer="Tim Dudgeon<tdudgeon@informaticsmatters.com>"
 USER root
 
 # install pipelines python modules
-RUN apt-get -y update && apt-get -y install python-matplotlib
+RUN apt-get -y update && apt-get install -y --no-install-recommends python-matplotlib
 
 # Copy the pipeline implementation into the image
 COPY src/python /opt/python
