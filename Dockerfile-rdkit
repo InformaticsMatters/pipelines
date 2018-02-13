@@ -10,6 +10,4 @@ RUN apt-get -y update && apt-get -y install python-matplotlib
 COPY src/python /opt/python
 RUN pip install -e /opt/python
 # And the pipeline-utilities
-COPY pipelines-utils/src/python /opt/pipelines-utils
-RUN pip install -e /opt/pipelines-utils
-
+RUN pip install im-pipelines-utils==1.0.*
