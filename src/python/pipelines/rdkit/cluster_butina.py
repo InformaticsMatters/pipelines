@@ -202,12 +202,9 @@ def main():
     fieldMetaProps = [{"fieldName":"Cluster", "values": {"source":source, "description":"Cluster number"}}]
 
     input,output,suppl,writer,output_base = utils.default_open_input_output(args.input, args.informat, args.output, 'cluster_butina', args.outformat,
-                                                                            thinOutput=args.thin, valueClassMappings=clsMappings, datasetMetaProps=datasetMetaProps, fieldMetaProps=fieldMetaProps)
+                                                                            thinOutput=False, valueClassMappings=clsMappings, datasetMetaProps=datasetMetaProps, fieldMetaProps=fieldMetaProps)
 
-    ### generate fingerprints
-    #mols = [x for x in suppl if x is not None]
-    #fps = [descriptor(x) for x in mols]
-
+    ### fragment and generate fingerprints
     mols = []
     fps = []
     errs = mol_utils.fragmentAndFingerprint(suppl, mols, fps, descriptor, fragmentMethod=args.fragment_method, outputFragment=args.output_fragment, quiet=args.quiet)
