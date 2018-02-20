@@ -157,8 +157,8 @@
           "@class": "org.squonk.options.SimpleTypeDescriptor"
         },
         "key": "arg.output_fragment",
-        "label": "Output fragment",
-        "description": "Output the biggest fragment rather than the whole molecules",
+        "label": "Output biggest fragment",
+        "description": "Output the biggest fragment rather than the whole molecule",
         "defaultValue": false,
         "visible": true
       },
@@ -223,6 +223,7 @@
     {
       "input": "input",
       "output": "output",
+      "preserve": false,
       "filtering": true,
       "fieldDescriptors": [
         {
