@@ -13,8 +13,8 @@
                  -rl ${PIN}sdf-aliphatic-primary-amines-175.sdf.gz
                  -o output''',
 
-        see: [ 'No output format specified - using sdf',
-               'Created [1-9]\\d+ molecules from a total of' ],
+        stderr: [ 'No output format specified - using sdf',
+                  'Created [1-9]\\d+ molecules from a total of' ],
 
         creates: [ 'output.sdf.gz' ],
 

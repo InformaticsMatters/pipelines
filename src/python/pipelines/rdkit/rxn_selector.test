@@ -8,7 +8,9 @@
     // Simply makes sure it starts cleanly.
     test_help = [
 
-        command: '''python -m pipelines.rdkit.rxn_selector -h'''
+        command: '''python -m pipelines.rdkit.rxn_selector -h''',
+
+        stdout: [ 'usage: rxn_selector.py' ]
 
     ],
 

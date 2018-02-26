@@ -10,9 +10,9 @@
         command: '''python -m pipelines.rdkit.rxn_smarts_filter
                  -i ${PIN}Kinase_inhibs.sdf.gz -o output --multi''',
 
-        see: [ 'Using 15 reaction filters',
-               'No output format specified - using sdf',
-               'Matched [1-9]\\d+ molecules from a total of' ],
+        stderr: [ 'Using 15 reaction filters',
+                  'No output format specified - using sdf',
+                  'Matched [1-9]\\d+ molecules from a total of' ],
 
         creates: [ 'output.sdf.gz',
                    'Amides.sdf',
@@ -42,9 +42,9 @@
                  python -m pipelines.rdkit.rxn_smarts_filter
                  -if sdf -o output''',
 
-        see: [ 'Using 15 reaction filters',
-               'No output format specified - using sdf',
-               'Matched [1-9]\\d+ molecules from a total of' ],
+        stderr: [ 'Using 15 reaction filters',
+                  'No output format specified - using sdf',
+                  'Matched [1-9]\\d+ molecules from a total of' ],
 
         creates: [ 'output.sdf.gz' ],
 
@@ -58,8 +58,8 @@
                  python -m pipelines.rdkit.rxn_smarts_filter
                  -if json -o output -of json --meta --thin''',
 
-        see: [ 'Using 15 reaction filters',
-               'Matched [1-9]\\d+ molecules from a total of 100' ],
+        stderr: [ 'Using 15 reaction filters',
+                  'Matched [1-9]\\d+ molecules from a total of 100' ],
 
         creates: [ 'output.data.gz',
                    'output_metrics.txt',

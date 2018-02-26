@@ -10,9 +10,9 @@
         command: '''gunzip -c ${PIN}Kinase_inhibs.sdf.gz |
                  python -m pipelines.rdkit.cluster_butina -t 0.6 -if sdf''',
 
-        see: [ 'No output format specified - using sdf',
-               'Found [1-9]\\d+ clusters',
-               'Final Clusters:'],
+        stderr: [ 'No output format specified - using sdf',
+                  'Found [1-9]\\d+ clusters',
+                  'Final Clusters:'],
 
     ],
 

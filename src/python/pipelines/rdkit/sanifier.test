@@ -13,7 +13,9 @@
     // - standardiser
     test_help = [
 
-        command: '''python -m pipelines.rdkit.sanifier -h'''
+        command: '''python -m pipelines.rdkit.sanifier -h''',
+
+        stdout: [ 'usage: sanifier.py' ]
 
     ],
 

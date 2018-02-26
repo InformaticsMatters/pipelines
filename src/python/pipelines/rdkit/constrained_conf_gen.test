@@ -13,7 +13,7 @@
                  -r ${PIN}ref_mol.sdf.gz
                  -o constrained_conf_gen''',
 
-        see: [ 'No output format specified - using sdf' ],
+        stderr: [ 'No output format specified - using sdf' ],
 
         creates: [ 'constrained_conf_gen.sdf.gz' ],
     ],

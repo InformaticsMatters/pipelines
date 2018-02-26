@@ -6,10 +6,11 @@
 
     // A basic start-up test for the module.
     // Simply makes sure it starts cleanly.
-    ignore_test_help = [
+    test_help = [
 
-        command: '''python -m pipelines.docking.smog2016 -h'''
+        command: '''python -m pipelines.docking.smog2016 -h''',
 
+        stdout: [ 'usage: smog2016.py' ]
     ],
 
 ]

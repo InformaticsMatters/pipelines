@@ -10,8 +10,8 @@
         command: '''gunzip -c ${PIN}Kinase_inhibs.sdf.gz |
                  python -m pipelines.rdkit.conformers -n 2 -if sdf''',
 
-        see: [ 'No output format specified - using sdf',
-               'Molecule 36 generated [1-9]\\d* conformers' ],
+        stderr: [ 'No output format specified - using sdf',
+                  'Molecule 36 generated [1-9]\\d* conformers' ],
 
     ],
 
@@ -22,8 +22,8 @@
         command: '''gunzip -c ${PIN}Kinase_inhibs.sdf.gz |
                  python -m pipelines.rdkit.conformers -n 2 -c RMSD -if sdf''',
 
-        see: [ 'No output format specified - using sdf',
-               'Molecule 35 generated [1-9]\\d* conformers and [1-9]\\d* clusters' ],
+        stderr: [ 'No output format specified - using sdf',
+                  'Molecule 35 generated [1-9]\\d* conformers and [1-9]\\d* clusters' ],
 
     ],
 

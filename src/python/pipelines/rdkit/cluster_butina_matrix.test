@@ -12,8 +12,8 @@
                  python -m pipelines.rdkit.cluster_butina_matrix
                  -t 0.6 -if sdf -of tsv -o output''',
 
-        see: [ 'Found [1-9]\\d+ clusters',
-               'Clusters:'],
+        stderr: [ 'Found [1-9]\\d+ clusters',
+                  'Clusters:'],
 
         creates: [ 'output.tsv.gz' ],
 
@@ -27,8 +27,8 @@
                  python -m pipelines.rdkit.cluster_butina_matrix
                  -t 0.6 -if sdf -of json -o output''',
 
-        see: [ 'Found [1-9]\\d+ clusters',
-               'Clusters:'],
+        stderr: [ 'Found [1-9]\\d+ clusters',
+                  'Clusters:'],
 
         creates: [ 'output.data.gz',
                    'output.metadata' ],

@@ -8,7 +8,9 @@
     // Simply makes sure it starts cleanly.
     test_help = [
 
-        command: '''python -m pipelines.rdkit.max_min_picker -h'''
+        command: '''python -m pipelines.rdkit.max_min_picker -h''',
+
+        stdout: [ 'usage: max_min_picker.py' ]
 
     ],
 

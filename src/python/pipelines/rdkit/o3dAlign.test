@@ -11,8 +11,8 @@
                  python -m pipelines.rdkit.o3dAlign
                  ${PIN}pyrimethamine.mol -n 2 -t 10 -if sdf''',
 
-        see: [ 'No output format specified - using sdf',
-               'Molecule 36 generated [1-9]\\d* conformers' ],
+        stderr: [ 'No output format specified - using sdf',
+                  'Molecule 36 generated [1-9]\\d* conformers' ],
 
     ],
 
