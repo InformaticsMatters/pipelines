@@ -48,11 +48,11 @@ def generatePlot(t_hf, t_hf_a, D, AUC, tn, quiet=False,
     V_F=D/kel/AUC
 
     outputs = collections.OrderedDict()
-    outputs['Tmax'] = round_sig(Tmax,3)
-    outputs['Cmax'] = round_sig(Cmax,3)
-    outputs['kel'] = round_sig(kel,3)
-    outputs['ka'] = round_sig(ka,3)
-    outputs['V_F'] = round_sig(V_F,3)
+    outputs['Tmax(hr)'] = round_sig(Tmax,3)
+    outputs['Cmax(mg/L)'] = round_sig(Cmax,3)
+    outputs['kel(hr-1)'] = round_sig(kel,3)
+    outputs['ka(hr-1)'] = round_sig(ka,3)
+    outputs['V/F(L)'] = round_sig(V_F,3)
 
     if not quiet:
         utils.log('------------------------------------------------------------------------------------------')

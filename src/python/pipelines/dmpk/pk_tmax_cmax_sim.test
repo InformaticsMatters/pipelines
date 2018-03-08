@@ -23,7 +23,7 @@
                   'Cmax 0.35088824801',
                   'V_F  0.181320535821' ],
 
-        metrics: [ '__StatusMessage__': 'Tmax: 0.899, Cmax: 0.351, kel: 0.877, ka: 1.39, V_F: 0.181',
+        metrics: [ '__StatusMessage__': 'Tmax(hr): 0.899, Cmax(mg/L): 0.351, kel(hr-1): 0.877, ka(hr-1): 1.39, V/F(L): 0.181',
                    'DMPK.Syg.TmaxCmax': '1' ]
 
     ],
@@ -40,7 +40,7 @@
                   'Cmax 0.35088824801',
                   'V_F  0.181320535821' ],
 
-        metrics: [ '__StatusMessage__': 'Tmax: 0.899, Cmax: 0.351, kel: 0.877, ka: 1.39, V_F: 0.181',
+        metrics: [ '__StatusMessage__': 'Tmax(hr): 0.899, Cmax(mg/L): 0.351, kel(hr-1): 0.877, ka(hr-1): 1.39, V/F(L): 0.181',
                    'DMPK.Syg.TmaxCmax': '1' ]
 
     ],
