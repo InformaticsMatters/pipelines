@@ -84,7 +84,7 @@ def generatePlot(t_hf, t_hf_a, D, AUC, tn, quiet=False,
 
     plt.plot(b_time,c_cp,linewidth=2,linestyle='dashed',color='coral')  #Plotting the observed data
     plt.xlabel('Time (h)',fontsize=font_size)
-    plt.ylabel('Cp(mg/L',fontsize=font_size)
+    plt.ylabel('Cp(mg/L)',fontsize=font_size)
     plt.title('cp Vs Time',color='coral',fontsize=font_size)
     plt.grid(True)
     #plt.yscale('log')   #Change the Y sclae to logscale
