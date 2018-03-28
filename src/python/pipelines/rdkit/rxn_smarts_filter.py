@@ -17,8 +17,8 @@
 import argparse
 import os
 
-from pipelines_utils import utils
-
+from pipelines_utils import parameter_utils, utils
+from pipelines_utils_rdkit import rdkit_utils
 
 ### start main execution #########################################
 
@@ -26,7 +26,7 @@ def main():
     ### command line args defintions #########################################
 
     parser = argparse.ArgumentParser(description='RDKit rxn smarts filter')
-    utils.add_default_io_args(parser)
+    parameter_utils.add_default_io_args(parser)
     parser.add_argument('-q', '--quiet', action='store_true', help='Quiet mode')
     parser.add_argument('-m', '--multi', action='store_true', help='Output one file for each reaction')
     parser.add_argument('--thin', action='store_true', help='Thin output mode')
@@ -59,9 +59,11 @@ def main():
         clsMappings[name] = "[Lorg.squonk.types.MoleculeObject;"
         fieldMetaProps.append({"fieldName":name, "values": {"source":source, "description":"Sythons from " + name + " reaction"}})
 
-    input, output, suppl, writer, output_base = utils.default_open_input_output(
+    input, output, suppl, writer, output_base = rdkit_utils.default_open_input_output(
         args.input, args.informat, args.output,
-        'rxn_smarts_filter', args.outformat, thinOutput=args.thin, valueClassMappings=clsMappings, datasetMetaProps=datasetMetaProps, fieldMetaProps=fieldMetaProps)
+        'rxn_smarts_filter', args.outformat, thinOutput=args.thin,
+        valueClassMappings=clsMappings, datasetMetaProps=datasetMetaProps,
+        fieldMetaProps=fieldMetaProps)
 
     i = 0
     count = 0

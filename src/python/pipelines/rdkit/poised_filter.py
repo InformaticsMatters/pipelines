@@ -19,7 +19,7 @@ import os
 from rdkit import Chem
 from rdkit.Chem import AllChem
 
-from pipelines_utils import utils
+from pipelines_utils_rdkit import rdkit_utils
 
 
 class Filter(object):
@@ -229,7 +229,7 @@ class Filter(object):
         products = [Chem.MolFromSmiles(x) for x in self.unique_products(self.run_reaction(input_molecule,reactant_mol,react_seq)) if Chem.MolFromSmiles(x)]
         for product in products:
             i+=1
-            utils.generate_2d_coords(product)
+            rdkit_utils.generate_2d_coords(product)
             if mol_uuid:
                 product.SetProp("source_uuid", mol_uuid)
             if reactant_uuid:

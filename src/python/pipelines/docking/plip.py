@@ -24,7 +24,8 @@ from multiprocessing.dummy import Pool as ThreadPool
 
 from rdkit import Chem
 
-from pipelines_utils import utils
+from pipelines_utils import parameter_utils, utils
+from pipelines_utils_rdkit import rdkit_utils
 
 lock = threading.Lock()
 PDB_PATH = ""
@@ -75,7 +76,7 @@ def run_dock(mol):
 def main():
     global PDB_PATH,WRITER,THRESHOLD
     parser = argparse.ArgumentParser(description='SMoG2016 - Docking calculation.')
-    utils.add_default_io_args(parser)
+    parameter_utils.add_default_io_args(parser)
     parser.add_argument('--no-gzip', action='store_true', help='Do not compress the output (STDOUT is never compressed')
     parser.add_argument('-pdb', '--pdb_file', help="PDB file for scoring")
     parser.add_argument('-t', '--threshold', type=float, help="The maximum score to allow", default=None)
@@ -86,9 +87,11 @@ def main():
     utils.log("PLI Args: ", args)
 
     # Open up the input file
-    input, suppl = utils.default_open_input(args.input, args.informat)
-    # Open the ouput file
-    output, WRITER, output_base = utils.default_open_output(args.output, "plip", args.outformat, compress=not args.no_gzip, thinOutput=args.thin)
+    input, suppl = rdkit_utils.default_open_input(args.input, args.informat)
+    # Open the output file
+    output, WRITER, output_base = rdkit_utils.\
+        default_open_output(args.output, "plip", args.outformat,
+                            compress=not args.no_gzip, thinOutput=args.thin)
 
     PDB_PATH = args.pdb_file
     if args.threshold:

@@ -21,7 +21,8 @@ from rdkit import Chem, rdBase
 from rdkit.Chem import AllChem, TorsionFingerprints
 from rdkit.ML.Cluster import Butina
 
-from pipelines_utils import utils
+from pipelines_utils import parameter_utils, utils
+from pipelines_utils_rdkit import rdkit_utils
 
 ### start field name defintions #########################################
 
@@ -151,7 +152,7 @@ def main():
     parser.add_argument('-c', '--cluster', type=str.lower, choices=['rmsd', 'tfd'], help='Cluster method (RMSD or TFD). If None then no clustering')
     parser.add_argument('-t', '--threshold', type=float, help='cluster threshold (default of 2.0 for RMSD and 0.3 for TFD)')
     parser.add_argument('-e', '--emin', type=int, default=0, help='energy minimisation iterations (default of 0 means none)')
-    utils.add_default_io_args(parser)
+    parameter_utils.add_default_io_args(parser)
     parser.add_argument('--smiles', help='input structure as smiles (incompatible with using files or stdin for input)')
 
     args = parser.parse_args()
@@ -189,9 +190,18 @@ def main():
         mol = Chem.MolFromSmiles(args.smiles)
         suppl = [mol]
         input = None
-        output,writer,output_base = utils.default_open_output(args.output, 'conformers', args.outformat, valueClassMappings=clsMappings, datasetMetaProps=datasetMetaProps, fieldMetaProps=fieldMetaProps)
+        output,writer,output_base = rdkit_utils.\
+            default_open_output(args.output, 'conformers', args.outformat,
+                                valueClassMappings=clsMappings,
+                                datasetMetaProps=datasetMetaProps,
+                                fieldMetaProps=fieldMetaProps)
     else:
-        input,output,suppl,writer,output_base = utils.default_open_input_output(args.input, args.informat, args.output, 'conformers', args.outformat, valueClassMappings=clsMappings, datasetMetaProps=datasetMetaProps, fieldMetaProps=fieldMetaProps)
+        input,output,suppl,writer,output_base = rdkit_utils.\
+            default_open_input_output(args.input, args.informat, args.output,
+                                      'conformers', args.outformat,
+                                      valueClassMappings=clsMappings,
+                                      datasetMetaProps=datasetMetaProps,
+                                      fieldMetaProps=fieldMetaProps)
 
     # OK, all looks good so we can hope that things will run OK.
     # But before we start lets write the metadata so that the results can be handled.

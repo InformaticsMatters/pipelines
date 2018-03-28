@@ -21,7 +21,8 @@ import uuid
 from rdkit import rdBase
 
 import cluster_butina
-from pipelines_utils import utils
+from pipelines_utils import parameter_utils, utils
+from pipelines_utils_rdkit import rdkit_utils
 
 ### start field name defintions #########################################
 
@@ -86,7 +87,7 @@ def main():
     ### command line args defintions #########################################
 
     parser = argparse.ArgumentParser(description='RDKit Butina Cluster Matrix')
-    utils.add_default_input_args(parser)
+    parameter_utils.add_default_input_args(parser)
     parser.add_argument('-o', '--output', help="Base name for output file (no extension). If not defined then SDTOUT is used for the structures and output is used as base name of the other files.")
     parser.add_argument('-of', '--outformat', choices=['tsv', 'json'], default='tsv', help="Output format. Defaults to 'tsv'.")
     parser.add_argument('--meta', action='store_true', help='Write metadata and metrics files')
@@ -103,7 +104,7 @@ def main():
     if descriptor is None:
         raise ValueError('Invalid descriptor name ' + args.descriptor)
 
-    input,suppl = utils.default_open_input(args.input, args.informat)
+    input,suppl = rdkit_utils.default_open_input(args.input, args.informat)
 
     # handle metadata
     source = "cluster_butina_matrix.py"
@@ -128,8 +129,12 @@ def main():
     fieldNames['M1'] = 'M1'
     fieldNames['M2'] = 'M2'
 
-    writer,output_base = utils.create_simple_writer(args.output, 'cluster_butina_matrix', args.outformat, fieldNames,
-                                                    valueClassMappings=clsMappings, datasetMetaProps=datasetMetaProps, fieldMetaProps=fieldMetaProps)
+    writer,output_base = utils.\
+        create_simple_writer(args.output, 'cluster_butina_matrix',
+                             args.outformat, fieldNames,
+                             valueClassMappings=clsMappings,
+                             datasetMetaProps=datasetMetaProps,
+                             fieldMetaProps=fieldMetaProps)
 
 
     ### generate fingerprints
@@ -196,4 +201,3 @@ def create_values(mols, x, y, dist):
 
 if __name__ == "__main__":
     main()
-

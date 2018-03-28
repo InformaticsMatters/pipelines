@@ -24,7 +24,8 @@ from multiprocessing.dummy import Pool as ThreadPool
 
 from rdkit import Chem
 
-from pipelines_utils import utils
+from pipelines_utils import parameter_utils, utils
+from pipelines_utils_rdkit import rdkit_utils
 
 lock = threading.Lock()
 PDB_PATH = ""
@@ -77,7 +78,7 @@ def main():
     global WRITER,THRESHOLD
     global PDB_PATH
     parser = argparse.ArgumentParser(description='SMoG2016 - Docking calculation.')
-    utils.add_default_io_args(parser)
+    parameter_utils.add_default_io_args(parser)
     parser.add_argument('--no-gzip', action='store_true', help='Do not compress the output (STDOUT is never compressed')
     parser.add_argument('-pdb', '--pdb_file', help="PDB file for scoring")
     parser.add_argument('-t', '--threshold', help="The maximum score to allow", default=None)
@@ -99,9 +100,11 @@ def main():
     shutil.copy(args.pdb_file,PDB_PATH)
 
     # Open up the input file
-    input, suppl = utils.default_open_input(args.input, args.informat)
-    # Open the ouput file
-    output, WRITER, output_base = utils.default_open_output(args.output, "SMoG2016", args.outformat, compress=not args.no_gzip)
+    input, suppl = rdkit_utils.default_open_input(args.input, args.informat)
+    # Open the output file
+    output, WRITER, output_base = rdkit_utils.\
+        default_open_output(args.output, "SMoG2016",
+                            args.outformat, compress=not args.no_gzip)
 
     # Cd to the route of the action
     # TODO - can this be done without changing dir? It gives problems in finding the input files and in writing the metrics

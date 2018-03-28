@@ -19,8 +19,8 @@ import argparse, logging, time
 from rdkit import DataStructs, rdBase, SimDivFilters
 from rdkit.Chem import AllChem, MACCSkeys
 
-from pipelines_utils import utils
-from rdkit_utils import mol_utils
+from pipelines_utils import parameter_utils, utils
+from pipelines_utils_rdkit import mol_utils
 
 descriptors = {
     #'atompairs':   lambda m: Pairs.GetAtomPairFingerprint(m),
@@ -54,7 +54,7 @@ def main():
     parser.add_argument('-s', '--seed-molecules', help='optional file containing any seed molecules that have already been picked')
     parser.add_argument('--fragment-method', choices=['hac', 'mw'], default='hac', help='Approach to find biggest fragment if more than one (hac = biggest by heavy atom count, mw = biggest by mol weight)')
     parser.add_argument('--output-fragment', action='store_true', help='Output the biggest fragment rather than the original molecule')
-    utils.add_default_io_args(parser)
+    parameter_utils.add_default_io_args(parser)
 
     args = parser.parse_args()
     utils.log("MaxMinPicker Args: ", args)

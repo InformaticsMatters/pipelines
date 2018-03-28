@@ -17,7 +17,8 @@
 import argparse
 import os
 
-from pipelines_utils import utils
+from pipelines_utils import parameter_utils, utils
+from pipelines_utils_rdkit import rdkit_utils
 
 
 ### start main execution #########################################
@@ -33,7 +34,7 @@ def main():
 
 
     parser = argparse.ArgumentParser(description='RDKit rxn process')
-    utils.add_default_io_args(parser)
+    parameter_utils.add_default_io_args(parser)
     parser.add_argument('-q', '--quiet', action='store_true', help='Quiet mode')
     parser.add_argument('-m', '--multi', action='store_true', help='Output one file for each reaction')
     parser.add_argument('-r', '--reaction', choices=filter_to_use.poised_reactions.keys(), help='Name of reaction to be run')
@@ -47,8 +48,8 @@ def main():
     if not args.output and args.multi:
         raise ValueError("Must specify output location when writing individual result files")
 
-    input, suppl = utils.default_open_input(args.input, args.informat)
-    output, writer, output_base = utils.default_open_output(args.output, "rxn_maker", args.outformat)
+    input, suppl = rdkit_utils.default_open_input(args.input, args.informat)
+    output, writer, output_base = rdkit_utils.default_open_output(args.output, "rxn_maker", args.outformat)
 
 
     i = 0
@@ -64,7 +65,7 @@ def main():
     for mol in suppl:
         i+=1
         if mol is None: continue
-        reagent_input, reagent_suppl = utils.default_open_input(args.reagent_lib, args.reagent_lib_format)
+        reagent_input, reagent_suppl = rdkit_utils.default_open_input(args.reagent_lib, args.reagent_lib_format)
         for r_mol in reagent_suppl:
             if r_mol is None:
                 continue

@@ -7,13 +7,16 @@
 #  which is included in the file license.txt, found at the root
 #  of the RDKit source tree.
 
-from pipelines_utils import utils
 import argparse
+
 from rdkit.Chem.Scaffolds import MurckoScaffold
 from rdkit import Chem
 from rdkit.Chem import AllChem
 import numpy as np
 from numpy import linalg
+
+from pipelines_utils import parameter_utils, utils
+from pipelines_utils_rdkit import rdkit_utils
 
 
 def write_out(mols,count,writer,file_format):
@@ -114,10 +117,10 @@ def main():
 
     ### command line args defintions #########################################
     parser = argparse.ArgumentParser(description='Calculate plane of best fit for molecules')
-    utils.add_default_io_args(parser)
+    parameter_utils.add_default_io_args(parser)
     args = parser.parse_args()
     utils.log("PBFEV args: ", args)
-    input ,output ,suppl ,writer ,output_base = utils.default_open_input_output(args.input, args.informat, args.output, 'PBFEV', args.outformat)
+    input ,output ,suppl ,writer ,output_base = rdkit_utils.default_open_input_output(args.input, args.informat, args.output, 'PBFEV', args.outformat)
     i=0
     count=0
     errors=0

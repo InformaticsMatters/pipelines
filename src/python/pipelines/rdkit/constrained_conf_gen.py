@@ -15,13 +15,14 @@
 # limitations under the License.
 
 import argparse
+import sys, logging
 
 from rdkit import Chem, rdBase
 from rdkit.Chem import AllChem
 from rdkit.Chem.MCS import FindMCS
 
-from pipelines_utils import utils
-import sys, logging
+from pipelines_utils import parameter_utils, utils
+from pipelines_utils_rdkit import rdkit_utils
 
 
 def guess_substruct(mol_one, mol_two):
@@ -62,16 +63,15 @@ def generate_conformers(molIdx, my_mol, NumOfConf, ref_mol, outputfile, coreSubs
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='RDKit constrained conformer generator')
-    utils.add_default_io_args(parser)
+    parameter_utils.add_default_io_args(parser)
     parser.add_argument('-n', '--num', type=int, default=10, help='number of conformers to generate')
     parser.add_argument('-r', '--refmol', help="Reference molecule file")
     parser.add_argument('--refmolidx', help="Reference molecule index in file", type=int, default=1)
     parser.add_argument('-c', '--core_smi', help='Core substructure. If not specified - guessed using MCS', default='')
 
-
     args = parser.parse_args()
     # Get the reference molecule
-    ref_mol_input, ref_mol_suppl = utils.default_open_input(args.refmol, args.refmol)
+    ref_mol_input, ref_mol_suppl = rdkit_utils.default_open_input(args.refmol, args.refmol)
     counter = 0
     # Get the specified reference molecule. Default is the first
     for mol in ref_mol_suppl:
@@ -92,9 +92,12 @@ if __name__ == '__main__':
     fieldMetaProps = [{"fieldName":"EmbedRMS", "values": {"source":source, "description":"Embedding RMS value"}}]
 
     # Get the molecules
-    input, suppl = utils.default_open_input(args.input, args.informat)
-    output, WRITER, output_base = utils.default_open_output(args.output, "const_conf_gen", args.outformat,
-                                                            valueClassMappings=clsMappings, datasetMetaProps=datasetMetaProps, fieldMetaProps=fieldMetaProps)
+    input, suppl = rdkit_utils.default_open_input(args.input, args.informat)
+    output, WRITER, output_base = rdkit_utils.\
+        default_open_output(args.output, "const_conf_gen", args.outformat,
+                            valueClassMappings=clsMappings,
+                            datasetMetaProps=datasetMetaProps,
+                            fieldMetaProps=fieldMetaProps)
 
     inputs = 0
     totalCount = 0

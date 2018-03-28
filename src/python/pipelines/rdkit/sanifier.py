@@ -16,8 +16,9 @@
 
 ### Use MolVS to do tautomer enumeration, sterochemistry enumeration, charge neutralisation.
 
-from pipelines_utils import utils
 import sys, argparse
+
+from pipelines_utils import parameter_utils, utils
 from rdkit import Chem
 from rdkit.Chem import AllChem
 from sanify_utils import enumerateStereoIsomers,enumerateTautomers,STANDARD_MOL_METHODS
@@ -48,7 +49,7 @@ def main():
     ### command line args defintions #########################################
 
     parser = argparse.ArgumentParser(description='RDKit molecule standardiser / enumerator')
-    utils.add_default_io_args(parser)
+    parameter_utils.add_default_io_args(parser)
     parser.add_argument('-et', '--enumerate_tauts', action='store_true', help='Enumerate all tautomers')
     parser.add_argument('-es', '--enumerate_stereo', action='store_true', help='Enumerate all stereoisomers')
     parser.add_argument('-st', '--standardize', action='store_true', help='Standardize molecules. Cannot  be true if enumerate is on.')

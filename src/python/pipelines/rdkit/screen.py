@@ -22,8 +22,8 @@ from rdkit.Chem import AllChem
 from rdkit.Chem import MACCSkeys
 from rdkit.Chem.Fingerprints import FingerprintMols
 
-from rdkit_utils import filter
-from pipelines_utils import utils
+from pipelines_utils_rdkit import filter, rdkit_utils
+from pipelines_utils import parameter_utils, utils
 
 ### start field name defintions #########################################
 
@@ -72,7 +72,7 @@ def main():
     parser.add_argument('--hacmax', type=int, help='Max heavy atom count')
     parser.add_argument('--mwmin', type=float, help='Min mol weight')
     parser.add_argument('--mwmax', type=float, help='Max mol weight')
-    utils.add_default_io_args(parser)
+    parameter_utils.add_default_io_args(parser)
     parser.add_argument('--thin', action='store_true', help='Thin output mode')
     parser.add_argument('-q', '--quiet', action='store_true', help='Quiet mode')
 
@@ -91,7 +91,7 @@ def main():
     
     query_fp = descriptor(query_rdkitmol)
 
-    input,output,suppl,writer,output_base = utils.default_open_input_output(args.input, args.informat, args.output, 'screen', args.outformat, thinOutput=args.thin)
+    input,output,suppl,writer,output_base = rdkit_utils.default_open_input_output(args.input, args.informat, args.output, 'screen', args.outformat, thinOutput=args.thin)
 
     i=0
     count = 0

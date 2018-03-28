@@ -20,7 +20,8 @@ from rdkit import Chem, rdBase
 from rdkit.Chem import rdMolAlign
 
 import conformers
-from pipelines_utils import utils
+from pipelines_utils import parameter_utils, utils
+from pipelines_utils_rdkit import rdkit_utils
 
 ### start field name defintions #########################################
 
@@ -68,12 +69,12 @@ def main():
     parser.add_argument('-a', '--attempts', default=0, type=int, help='number of attempts to generate conformers')
     parser.add_argument('-r', '--rmsd', type=float, default=1.0, help='prune RMSD threshold for excluding conformers')
     parser.add_argument('-e', '--emin', type=int, default=0, help='energy minimisation iterations for generated confomers (default of 0 means none)')
-    utils.add_default_io_args(parser)
+    parameter_utils.add_default_io_args(parser)
 
     args = parser.parse_args()
     utils.log("o3dAlign Args: ", args)
 
-    qmol = utils.read_single_molecule(args.query, index=args.qmolidx)
+    qmol = rdkit_utils.read_single_molecule(args.query, index=args.qmolidx)
     qmol = Chem.RemoveHs(qmol)
     qmol2 = Chem.Mol(qmol)
 
@@ -91,8 +92,12 @@ def main():
         fieldMetaProps.append({"fieldName":"EnergyAbs",   "values": {"source":source, "description":"Absolute energy"}})
 
 
-    input,output,suppl,writer,output_base = utils.default_open_input_output(args.input, args.informat, args.output, 'o3dAlign', args.outformat,
-                                                                            valueClassMappings=clsMappings, datasetMetaProps=datasetMetaProps, fieldMetaProps=fieldMetaProps)
+    input,output,suppl,writer,output_base = rdkit_utils.\
+        default_open_input_output(args.input, args.informat, args.output,
+                                  'o3dAlign', args.outformat,
+                                  valueClassMappings=clsMappings,
+                                  datasetMetaProps=datasetMetaProps,
+                                  fieldMetaProps=fieldMetaProps)
 
     pyO3A = rdMolAlign.GetO3A(qmol2, qmol)
     perfect_align = pyO3A.Align()

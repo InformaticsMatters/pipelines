@@ -21,8 +21,8 @@ from rdkit.Chem import AllChem, MACCSkeys
 from rdkit.Chem.Fingerprints import FingerprintMols
 from rdkit.ML.Cluster import Butina
 
-from pipelines_utils import utils
-from rdkit_utils import mol_utils
+from pipelines_utils import parameter_utils, utils
+from pipelines_utils_rdkit import rdkit_utils, mol_utils
 
 descriptors = {
     #'atompairs':   lambda m: Pairs.GetAtomPairFingerprint(m),
@@ -179,7 +179,7 @@ def main():
     group.add_argument('--min', action='store_true', help='pick lowest value specified by the --field option')
     group.add_argument('--max', action='store_true', help='pick highest value specified by the --field option')
 
-    utils.add_default_io_args(parser)
+    parameter_utils.add_default_io_args(parser)
     parser.add_argument('-q', '--quiet', action='store_true', help='Quiet mode')
     parser.add_argument('--thin', action='store_true', help='Thin output mode')
 
@@ -201,8 +201,12 @@ def main():
     clsMappings = {"Cluster": "java.lang.Integer"}
     fieldMetaProps = [{"fieldName":"Cluster", "values": {"source":source, "description":"Cluster number"}}]
 
-    input,output,suppl,writer,output_base = utils.default_open_input_output(args.input, args.informat, args.output, 'cluster_butina', args.outformat,
-                                                                            thinOutput=False, valueClassMappings=clsMappings, datasetMetaProps=datasetMetaProps, fieldMetaProps=fieldMetaProps)
+    input,output,suppl,writer,output_base = rdkit_utils.\
+        default_open_input_output(args.input, args.informat, args.output,
+                                  'cluster_butina', args.outformat,
+                                  thinOutput=False, valueClassMappings=clsMappings,
+                                  datasetMetaProps=datasetMetaProps,
+                                  fieldMetaProps=fieldMetaProps)
 
     ### fragment and generate fingerprints
     mols = []
