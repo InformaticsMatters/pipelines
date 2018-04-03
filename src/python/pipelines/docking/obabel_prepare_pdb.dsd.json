@@ -45,7 +45,7 @@
   "inputRoutes": [ {"route": "FILE"} ],
   "outputRoutes": [ {"route": "FILE"} ],
   "imageName": "abradle/obabel",
-  "command": "cp -r /pipelines /tmp/pipelines && pip install -e /tmp/pipelines && python -m pipelines.docking.obabel_prepare_pdb -i pdb.pdb.gz -o mol2 -mol2${protonate ? ' -prot ' + protonate : ''} --meta",
+  "command": "cp -r /pipelines /tmp/pipelines && pip install -e /tmp/pipelines && python -m pipelines.docking.obabel_prepare_pdb -i ${PIN}pdb.pdb.gz -o ${POUT}mol2 -mol2${protonate ? ' -prot ' + protonate : ''} --meta",
   "volumes": {
       "pipelines": "/pipelines"
     }

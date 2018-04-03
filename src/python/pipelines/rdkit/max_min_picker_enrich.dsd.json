@@ -126,5 +126,5 @@
   "inputRoutes": [{"route": "FILE"},{"route": "FILE"}],
   "outputRoutes": [{"route": "FILE"}],
   "imageName": "informaticsmatters/rdkit_pipelines",
-  "command": "python -m pipelines.rdkit.max_min_picker -i input.data.gz -if json -s seeds.data.gz -o output -of json${binding.variables.containsKey('num') ? ' --num ' + num : ''}${binding.variables.containsKey('threshold') ? ' --threshold ' + threshold : ''} --fragment-method ${fragment_method}${output_fragment ? ' --output-fragment' : ''} --descriptor ${descriptor} --meta --quiet"
+  "command": "python -m pipelines.rdkit.max_min_picker -i ${PIN}input.data.gz -if json -s seeds.data.gz -o ${POUT}output -of json${binding.variables.containsKey('num') ? ' --num ' + num : ''}${binding.variables.containsKey('threshold') ? ' --threshold ' + threshold : ''} --fragment-method ${fragment_method}${output_fragment ? ' --output-fragment' : ''} --descriptor ${descriptor} --meta --quiet"
 }

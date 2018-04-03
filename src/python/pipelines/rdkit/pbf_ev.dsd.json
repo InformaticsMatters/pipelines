@@ -29,5 +29,5 @@
   "inputRoutes": [ {"route": "FILE"} ],
   "outputRoutes": [ {"route": "FILE"} ],
   "imageName": "informaticsmatters/rdkit_pipelines",
-  "command": "python -m pipelines.rdkit.pbf_ev -i input.data.gz -if json -o output -of json --meta"
+  "command": "python -m pipelines.rdkit.pbf_ev -i ${PIN}input.data.gz -if json -o ${POUT}output -of json --meta"
 }

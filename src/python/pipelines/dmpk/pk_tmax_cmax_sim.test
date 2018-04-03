@@ -30,7 +30,7 @@
 
     test_raw_command = [
 
-        command: '''python -m pipelines.dmpk.pk_tmax_cmax_sim -o output
+        command: '''python -m pipelines.dmpk.pk_tmax_cmax_sim -o ${POUT}output
                     --half-life 0.79 --absorption 0.5 --dose 0.14
                     --auc 0.88 --time 8''',
 

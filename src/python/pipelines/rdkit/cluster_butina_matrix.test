@@ -10,7 +10,7 @@
 
         command: '''gunzip -c ${PIN}Kinase_inhibs.sdf.gz |
                  python -m pipelines.rdkit.cluster_butina_matrix
-                 -t 0.6 -if sdf -of tsv -o output''',
+                 -t 0.6 -if sdf -of tsv -o ${POUT}output''',
 
         stderr: [ 'Found [1-9]\\d+ clusters',
                   'Clusters:'],
@@ -25,7 +25,7 @@
 
         command: '''gunzip -c ${PIN}Kinase_inhibs.sdf.gz |
                  python -m pipelines.rdkit.cluster_butina_matrix
-                 -t 0.6 -if sdf -of json -o output''',
+                 -t 0.6 -if sdf -of json -o ${POUT}output''',
 
         stderr: [ 'Found [1-9]\\d+ clusters',
                   'Clusters:'],

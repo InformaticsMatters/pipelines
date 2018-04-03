@@ -11,4 +11,4 @@ COPY src/python /opt/python
 RUN pip install -e /opt/python
 # And the pipeline-utilities
 RUN pip install im-pipelines-utils==2.2.* \
-                im-pipelines-utils-rdkit==1.3.*
+                im-pipelines-utils-rdkit==1.4.*

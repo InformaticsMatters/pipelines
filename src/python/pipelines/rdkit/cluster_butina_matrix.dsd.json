@@ -132,5 +132,5 @@
     }
   ],
   "imageName": "informaticsmatters/rdkit_pipelines",
-  "command": "python -m pipelines.rdkit.cluster_butina_matrix -i input.data.gz -if json -o output -of json -t ${threshold} -mt ${matrixThreshold} -d ${descriptor} -m ${metric} --meta"
+  "command": "python -m pipelines.rdkit.cluster_butina_matrix -i ${PIN}input.data.gz -if json -o ${POUT}output -of json -t ${threshold} -mt ${matrixThreshold} -d ${descriptor} -m ${metric} --meta"
 }

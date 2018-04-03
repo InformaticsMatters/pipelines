@@ -156,5 +156,5 @@
     }
   ],
   "imageName": "informaticsmatters/rdkit_pipelines",
-  "command": "python -m pipelines.rdkit.conformers -i input.data.gz -if json -o output -of json -n $num -c $method${binding.variables.containsKey('attempts') ? ' -a ' + binding.variables.get('attempts') : ''}${binding.variables.containsKey('prune') ? ' -r ' + binding.variables.get('prune') : ''}${binding.variables.containsKey('threshold') ? ' -t ' + binding.variables.get('threshold') : ''}${binding.variables.containsKey('minimize') ? ' -e ' + binding.variables.get('minimize') : ''} --meta"
+  "command": "python -m pipelines.rdkit.conformers -i ${PIN}input.data.gz -if json -o ${POUT}output -of json -n $num -c $method${binding.variables.containsKey('attempts') ? ' -a ' + binding.variables.get('attempts') : ''}${binding.variables.containsKey('prune') ? ' -r ' + binding.variables.get('prune') : ''}${binding.variables.containsKey('threshold') ? ' -t ' + binding.variables.get('threshold') : ''}${binding.variables.containsKey('minimize') ? ' -e ' + binding.variables.get('minimize') : ''} --meta"
 }

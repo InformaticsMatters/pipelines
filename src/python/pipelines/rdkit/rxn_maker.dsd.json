@@ -94,5 +94,5 @@
     }
   ],
   "imageName": "informaticsmatters/rdkit_pipelines",
-  "command": "python -m pipelines.rdkit.rxn_maker -i input.data.gz --reagent_lib reactants.data.gz -o output --reaction ${reaction} -of json --meta"
+  "command": "python -m pipelines.rdkit.rxn_maker -i ${PIN}input.data.gz --reagent_lib reactants.data.gz -o ${POUT}output --reaction ${reaction} -of json --meta"
 }

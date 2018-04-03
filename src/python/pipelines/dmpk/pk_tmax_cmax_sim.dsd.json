@@ -117,5 +117,5 @@
     }
   ],
   "imageName": "informaticsmatters/rdkit_pipelines",
-  "command": "python -m pipelines.dmpk.pk_tmax_cmax_sim -o output --half-life $halfLife --absorption $absorption --dose $dose --auc $auc --time $time"
+  "command": "python -m pipelines.dmpk.pk_tmax_cmax_sim -o ${POUT}output --half-life $halfLife --absorption $absorption --dose $dose --auc $auc --time $time"
 }

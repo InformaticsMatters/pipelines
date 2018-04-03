@@ -155,5 +155,5 @@
     }
   ],
   "imageName": "informaticsmatters/rdkit_pipelines",
-  "command": "python -m pipelines.rdkit.cluster_butina -i input.data.gz -if json -o output -of json -t ${threshold} -d ${descriptor} -m ${metric}${binding.variables.containsKey('fragment_method') ? ' --fragment-method ' + fragment_method : ''}${binding.variables.containsKey('output_fragment') && output_fragment ? ' --output-fragment' : ''} --thin --meta"
+  "command": "python -m pipelines.rdkit.cluster_butina -i ${PIN}input.data.gz -if json -o ${POUT}output -of json -t ${threshold} -d ${descriptor} -m ${metric}${binding.variables.containsKey('fragment_method') ? ' --fragment-method ' + fragment_method : ''}${binding.variables.containsKey('output_fragment') && output_fragment ? ' --output-fragment' : ''} --thin --meta"
 }

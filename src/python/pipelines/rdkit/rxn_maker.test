@@ -11,7 +11,7 @@
                  -i ${PIN}sulfonyl_chloride.sdf
                  -r Sulfonamide
                  -rl ${PIN}sdf-aliphatic-primary-amines-175.sdf.gz
-                 -o output''',
+                 -o ${POUT}output''',
 
         stderr: [ 'No output format specified - using sdf',
                   'Created [1-9]\\d+ molecules from a total of' ],

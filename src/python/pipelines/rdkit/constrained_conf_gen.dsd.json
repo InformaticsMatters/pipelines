@@ -109,5 +109,5 @@
     }
   ],
   "imageName": "informaticsmatters/rdkit_pipelines",
-  "command": "python -m pipelines.rdkit.constrained_conf_gen -i input.data.gz -o output -of json -n $num -r refMol.data.gz --refmolidx $refmolidx${binding.variables.containsKey('coresmiles') ? ' -c \"' + binding.variables.get('coresmiles') + '\"': ''} --meta"
+  "command": "python -m pipelines.rdkit.constrained_conf_gen -i ${PIN}input.data.gz -o ${POUT}output -of json -n $num -r refMol.data.gz --refmolidx $refmolidx${binding.variables.containsKey('coresmiles') ? ' -c \"' + binding.variables.get('coresmiles') + '\"': ''} --meta"
 }

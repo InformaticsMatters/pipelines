@@ -8,7 +8,7 @@
     test_rxn_smarts_filter_raw = [
 
         command: '''python -m pipelines.rdkit.rxn_smarts_filter
-                 -i ${PIN}Kinase_inhibs.sdf.gz -o output --multi''',
+                 -i ${PIN}Kinase_inhibs.sdf.gz -o ${POUT}output --multi''',
 
         stderr: [ 'Using 15 reaction filters',
                   'No output format specified - using sdf',
@@ -40,7 +40,7 @@
 
         command: '''gunzip -c ${PIN}Kinase_inhibs.sdf.gz |
                  python -m pipelines.rdkit.rxn_smarts_filter
-                 -if sdf -o output''',
+                 -if sdf -o ${POUT}output''',
 
         stderr: [ 'Using 15 reaction filters',
                   'No output format specified - using sdf',
@@ -56,7 +56,7 @@
 
         command: '''gunzip -c ${PIN}nci100.data.gz |
                  python -m pipelines.rdkit.rxn_smarts_filter
-                 -if json -o output -of json --meta --thin''',
+                 -if json -o ${POUT}output -of json --meta --thin''',
 
         stderr: [ 'Using 15 reaction filters',
                   'Matched [1-9]\\d+ molecules from a total of 100' ],
