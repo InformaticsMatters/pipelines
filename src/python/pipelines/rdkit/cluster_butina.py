@@ -242,7 +242,7 @@ def main():
     for mol in mols:
         if lookup.has_key(i):
             if args.thin:
-                utils.clear_mol_props(mol, ["uuid"])
+                rdkit_utils.clear_mol_props(mol, ["uuid"])
             cluster = lookup[i]
             mol.SetIntProp(field_Cluster, cluster)
             writer.write(mol)
