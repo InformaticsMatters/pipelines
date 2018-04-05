@@ -33,7 +33,7 @@ def main():
     if not args.output and args.multi:
         raise ValueError("Must specify output location when writing individual result files")
 
-    input, suppl = utils.default_open_input(args.input, args.informat)
+    input, suppl = rdkit_utils.default_open_input(args.input, args.informat)
     reagent_input, reagent_suppl = rdkit_utils.default_open_input(args.reagent_lib, args.reagent_lib_format)
     output, writer, output_base = rdkit_utils.default_open_output(args.output, "rxn_maker", args.outformat)
 

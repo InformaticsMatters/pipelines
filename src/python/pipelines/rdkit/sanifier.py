@@ -19,6 +19,7 @@
 import sys, argparse
 
 from pipelines_utils import parameter_utils, utils
+from pipelines_utils_rdkit import rdkit_utils
 from rdkit import Chem
 from rdkit.Chem import AllChem
 from sanify_utils import enumerateStereoIsomers,enumerateTautomers,STANDARD_MOL_METHODS
@@ -72,7 +73,7 @@ def main():
     if args.standardize:
         getStandardMolecule = STANDARD_MOL_METHODS[args.standardize_method]
 
-    input ,output ,suppl ,writer ,output_base = utils.default_open_input_output(args.input, args.informat, args.output, 'sanify', args.outformat)
+    input ,output ,suppl ,writer ,output_base = rdkit_utils.default_open_input_output(args.input, args.informat, args.output, 'sanify', args.outformat)
     i=0
     count=0
     errors=0

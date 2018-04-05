@@ -91,7 +91,7 @@ def main():
 
     propName = args.qprop
     if args.qsmiles:
-        queryMolsupplier = utils.default_open_input_smiles(args.qsmiles, delimiter=args.qsmilesDelimiter, smilesColumn=args.qsmilesColumn,
+        queryMolsupplier = rdkit_utils.default_open_input_smiles(args.qsmiles, delimiter=args.qsmilesDelimiter, smilesColumn=args.qsmilesColumn,
                                                            nameColumn=args.qsmilesNameColumn, titleLine=args.qsmilesTitleLine)
         queryInput = None
     elif args.qsdf:

@@ -20,7 +20,7 @@ from rdkit import DataStructs, rdBase, SimDivFilters
 from rdkit.Chem import AllChem, MACCSkeys
 
 from pipelines_utils import parameter_utils, utils
-from pipelines_utils_rdkit import mol_utils
+from pipelines_utils_rdkit import mol_utils, rdkit_utils
 
 descriptors = {
     #'atompairs':   lambda m: Pairs.GetAtomPairFingerprint(m),
@@ -79,7 +79,7 @@ def main():
     firstPicks = []
     num_seeds = 0
     if args.seed_molecules:
-        seedsInput,seedsSuppl = utils.default_open_input(args.seed_molecules, None)
+        seedsInput,seedsSuppl = rdkit_utils.default_open_input(args.seed_molecules, None)
         start = time.time()
         errors += mol_utils.fragmentAndFingerprint(seedsSuppl, mols, fps, descriptor, fragmentMethod=args.fragment_method, outputFragment=args.output_fragment, quiet=args.quiet)
         end = time.time()
@@ -89,7 +89,7 @@ def main():
         firstPicks = list(range(num_seeds))
 
     # now the molecules to pick from
-    input,output,suppl,writer,output_base = utils.default_open_input_output(args.input, args.informat, args.output, 'cluster_butina',
+    input,output,suppl,writer,output_base = rdkit_utils.default_open_input_output(args.input, args.informat, args.output, 'cluster_butina',
                                                                             args.outformat, datasetMetaProps=datasetMetaProps)
     # reset the mols list as we don't need the seeds, only the candidates
     mols = []
