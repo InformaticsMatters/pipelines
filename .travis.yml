@@ -2,24 +2,20 @@ os:
   - linux
 language: python
 python:
-  - "2.6"
-  - "2.7"
-  - "3.2"
-  - "3.3"
-  - "3.4"
-  - "3.5"
+- "2.7"
+- "3.6"
 matrix:
-    include:
-        # Use generic language for osx
-        - os: osx
-          python: 3.5
-          language: generic
+  include:
+  # Use generic language for osx
+  - os: osx
+    python: 3.5
+    language: generic
 # Perform the manual steps on osx to install python3 and activate venv
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update          ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install python3; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then virtualenv venv -p python3; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then source venv/bin/activate; fi
+- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
+- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install python3; fi
+- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then virtualenv venv -p python3; fi
+- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then source venv/bin/activate; fi
 # Command to install dependencies
 #install:
 #    - pip install -r requirements.txt
