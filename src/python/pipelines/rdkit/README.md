@@ -213,7 +213,7 @@ Aligns the 3D structures in the file dhfr_3d.sdf.gz to the 3D structure pyrimeth
 ## 4. filter.py
 Filters and fixes molecules
 ```sh
-python -m rdkit_utils.filter -h
+python -m pipelines_utils_rdkit.filter -h
 usage: filter.py [-h] [-f {hac,mw}] [--hacmin HACMIN] [--hacmax HACMAX]
                  [--mwmin MWMIN] [--mwmax MWMAX] [-l LIMIT] [-c CHUNKSIZE]
                  [-d DIGITS] [--no-gzip] [--thin] [-q] [-i INPUT]
@@ -257,7 +257,7 @@ optional arguments:
 ```
 
 ```sh
-gunzip -c data/Kinase_inhibs.sdf.gz | python -m rdkit_utils.filter --hacmin 25 --hacmax 30 -if sdf
+gunzip -c data/Kinase_inhibs.sdf.gz | python -m pipelines_utils_rdkit.filter --hacmin 25 --hacmax 30 -if sdf
 ```
 
 

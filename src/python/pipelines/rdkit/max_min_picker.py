@@ -89,7 +89,7 @@ def main():
         firstPicks = list(range(num_seeds))
 
     # now the molecules to pick from
-    input,output,suppl,writer,output_base = rdkit_utils.default_open_input_output(args.input, args.informat, args.output, 'cluster_butina',
+    input,output,suppl,writer,output_base = rdkit_utils.default_open_input_output(args.input, args.informat, args.output, 'max_min_picker',
                                                                             args.outformat, datasetMetaProps=datasetMetaProps)
     # reset the mols list as we don't need the seeds, only the candidates
     mols = []

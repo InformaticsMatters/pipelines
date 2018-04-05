@@ -56,7 +56,7 @@ process splitter {
     file 'ligands_part_metrics.txt' into splitter_metrics
 
     """
-    python -m rdkit_utils.filter -i $ligands -c $params.chunk -l $params.limit -d $params.digits -o ligands_part -of sdf --no-gzip --meta
+    python -m pipelines_utils_rdkit.filter -i $ligands -c $params.chunk -l $params.limit -d $params.digits -o ligands_part -of sdf --no-gzip --meta
     """
 }
 
@@ -114,7 +114,7 @@ process metrics {
     file 'output_metrics.txt'
 
     """
-    python -m rdkit_utils.filter -i results.sdf -of json -o output --meta
+    python -m pipelines_utils_rdkit.filter -i results.sdf -of json -o output --meta
     mv output_metrics.txt old_metrics.txt
     grep '__InputCount__' splitter_metrics.txt | sed s/__InputCount__/DockingRDock/ > output_metrics.txt
     grep '__InputCount__' splitter_metrics.txt >> output_metrics.txt
