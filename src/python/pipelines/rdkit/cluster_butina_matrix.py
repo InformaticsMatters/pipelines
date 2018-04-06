@@ -14,6 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import print_function
+
 import argparse
 import collections
 import uuid
@@ -34,30 +36,30 @@ field_Similarity = "Similarity"
 def MapClusterToMols(clusters, mols):
     i = 0
     for cluster in clusters:
-        print "Cluster:", i, cluster
+        print("Cluster:", i, cluster)
         for c in cluster:
-            # print "Assigning mol",c,"to cluster",i
+            # print("Assigning mol",c,"to cluster",i)
             mols[c].SetIntProp("Cluster", i)
         i += 1
     j = 0
     for mol in mols:
         mol.SetIntProp("MolNum", j)
         j += 1
-        # print mol.GetPropsAsDict()
+        # print(mol.GetPropsAsDict())
 
 def MapClusterToMols(clusters, mols):
     i = 0
     for cluster in clusters:
-        print "Cluster:", i, cluster
+        print("Cluster:", i, cluster)
         for c in cluster:
-            # print "Assigning mol",c,"to cluster",i
+            # print("Assigning mol",c,"to cluster",i)
             mols[c].SetIntProp("Cluster", i)
         i += 1
     j = 0
     for mol in mols:
         mol.SetIntProp("MolNum", j)
         j += 1
-        # print mol.GetPropsAsDict()
+        # print(mol.GetPropsAsDict())
 
 
 def GetDistance(x, y, matrix):
@@ -69,7 +71,7 @@ def GetDistance(x, y, matrix):
     else:
         x2 = x
         y2 = y
-        # print "row",",".join(["%.2f" % x for x in matrix[y2-1]])
+        # print("row",",".join(["%.2f" % x for x in matrix[y2-1]]))
     return matrix[y2 - 1][x2]
 
 
