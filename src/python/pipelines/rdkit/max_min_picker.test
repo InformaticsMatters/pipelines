@@ -10,7 +10,47 @@
 
         command: '''python -m pipelines.rdkit.max_min_picker -h''',
 
-        stdout: [ 'usage: max_min_picker.py' ]
+        stdout: [ 'usage: max_min_picker.py' ],
+
+    ],
+
+    test_missing_threshold = [
+
+        command: '''python -m pipelines.rdkit.max_min_picker''',
+
+        exit_error: '--num or --threshold arguments must be specified, or both',
+
+    ],
+
+    test_missing_file = [
+
+        command: '''python -m pipelines.rdkit.max_min_picker -t 1.0''',
+
+        exit_error: 'Must specify either an input file name or an input format (or both)',
+
+    ],
+
+    test_missing_sdf_input = [
+
+        command: '''python -m pipelines.rdkit.max_min_picker
+            -i ${PIN}Kinase_inhibs.sdf.gz -if sdf -t 1.0''',
+
+        stderr: [ 'No output format specified - using sdf',
+                  'MaxMinPicking with descriptor morgan2 and threshold 1.0',
+                  'Output 1 molecules' ],
+
+    ],
+
+    test_missing_json_input_sdf_output = [
+
+        command: '''python -m pipelines.rdkit.max_min_picker
+            -i ${PIN}nci100.data.gz -if json -t 1.0 -o ${POUT}output -of sdf''',
+
+        stderr: [ "outformat='sdf'",
+                  'MaxMinPicking with descriptor morgan2 and threshold 1.0',
+                  'Output 1 molecules' ],
+
+        creates: [ 'output.sdf.gz' ],
 
     ],
 

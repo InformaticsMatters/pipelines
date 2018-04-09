@@ -10,10 +10,54 @@
 
         command: '''gunzip -c ${PIN}dhfr_3d.sdf.gz |
                  python -m pipelines.rdkit.screen_multi
-                 -if sdf --qjson ../../data/nci100.data.gz --simmin 0.55''',
+                 -if sdf --qjson ${PIN}nci100.data.gz --simmin 0.55''',
 
         stderr: [ 'Found [1-9]\\d* similar molecules' ],
 
+    ],
+
+    // Testing screen_multi.py reading target form sdf file,
+    // query as json file and writing to STDOUT
+    test_multi_from_file = [
+
+        command: '''gunzip -c ${PIN}dhfr_3d.sdf.gz |
+                 python -m pipelines.rdkit.screen_multi
+                 -i ${PIN}dhfr_3d.sdf.gz -if sdf
+                 --qjson ${PIN}nci100.data.gz --simmin 0.55''',
+
+        stderr: [ 'Found [1-9]\\d* similar molecules' ],
+
+    ],
+
+    // Testing screen_multi.py reading target form sdf file,
+    // query as json file and writing to file
+    test_multi_from_file_to_sdf = [
+
+        command: '''gunzip -c ${PIN}dhfr_3d.sdf.gz |
+                 python -m pipelines.rdkit.screen_multi
+                 -i ${PIN}dhfr_3d.sdf.gz -if sdf
+                 --qjson ${PIN}nci100.data.gz --simmin 0.55
+                 -o ${POUT}output -of sdf''',
+
+        stderr: [ 'Found [1-9]\\d* similar molecules' ],
+
+        creates: [ 'output.sdf.gz' ],
+    ],
+
+    // Testing screen_multi.py reading target form sdf file,
+    // query as json file and writing to file
+    test_multi_from_file_to_json = [
+
+        command: '''gunzip -c ${PIN}dhfr_3d.sdf.gz |
+                 python -m pipelines.rdkit.screen_multi
+                 -i ${PIN}dhfr_3d.sdf.gz -if sdf
+                 --qjson ${PIN}nci100.data.gz --simmin 0.55
+                 -o ${POUT}output -of json''',
+
+        stderr: [ 'Found [1-9]\\d* similar molecules' ],
+
+        creates: [ 'output.data.gz',
+                   'output.metadata' ],
     ],
 
 ]

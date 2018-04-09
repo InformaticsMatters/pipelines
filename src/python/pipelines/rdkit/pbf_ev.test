@@ -17,4 +17,29 @@
 
     ],
 
+    // Testing from file
+    test_pbf_ev_to_sdf = [
+
+        command: '''python -m pipelines.rdkit.pbf_ev
+                 -i ${PIN}dhfr_3d.sdf -o ${POUT}output -of sdf''',
+
+        stderr: [ 'Handled [1-9]\\d+ molecules, resulting in' ],
+
+        creates: [ 'output.sdf.gz' ],
+
+    ],
+
+    // Testing from file
+    test_pbf_ev_to_sdf = [
+
+        command: '''python -m pipelines.rdkit.pbf_ev
+                 -i ${PIN}dhfr_3d.sdf -o ${POUT}output -of json''',
+
+        stderr: [ 'Handled [1-9]\\d+ molecules, resulting in' ],
+
+        creates: [ 'output.data.gz',
+                   'output.metadata'],
+
+    ],
+
 ]

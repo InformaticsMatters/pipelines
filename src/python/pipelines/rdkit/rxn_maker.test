@@ -20,4 +20,33 @@
 
     ],
 
+    test_rxn_maker_raw_to_sdf = [
+
+        command: '''python -m pipelines.rdkit.rxn_maker
+                 -i ${PIN}sulfonyl_chloride.sdf
+                 -r Sulfonamide
+                 -rl ${PIN}sdf-aliphatic-primary-amines-175.sdf.gz
+                 -o ${POUT}output -of sdf''',
+
+        stderr: [ 'Created [1-9]\\d+ molecules from a total of' ],
+
+        creates: [ 'output.sdf.gz' ],
+
+    ],
+
+    test_rxn_maker_raw_to_json = [
+
+        command: '''python -m pipelines.rdkit.rxn_maker
+                 -i ${PIN}sulfonyl_chloride.sdf
+                 -r Sulfonamide
+                 -rl ${PIN}sdf-aliphatic-primary-amines-175.sdf.gz
+                 -o ${POUT}output -of json''',
+
+        stderr: [ 'Created [1-9]\\d+ molecules from a total of' ],
+
+        creates: [ 'output.data.gz',
+                   'output.metadata'],
+
+    ],
+
 ]

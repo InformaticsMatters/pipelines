@@ -50,6 +50,20 @@
 
     ],
 
+    // Testing rxn_smarts_filter.py reading from file
+    // and writing to files using SDF
+    test_rxn_smarts_filter_raw_sdf_file_to_sdf = [
+
+        command: '''python -m pipelines.rdkit.rxn_smarts_filter
+                 -i ${PIN}Kinase_inhibs.sdf.gz -if sdf -o ${POUT}output -of sdf''',
+
+        stderr: [ 'Using 15 reaction filters',
+                  'Matched [1-9]\\d+ molecules from a total of' ],
+
+        creates: [ 'output.sdf.gz' ],
+
+    ],
+
     // Testing rxn_smarts_filter.py
     // reading from STDIN and writing to files using JSON
     test_rxn_smarts_filter_raw_stdin_to_json = [
@@ -57,6 +71,28 @@
         command: '''gunzip -c ${PIN}nci100.data.gz |
                  python -m pipelines.rdkit.rxn_smarts_filter
                  -if json -o ${POUT}output -of json --meta --thin''',
+
+        stderr: [ 'Using 15 reaction filters',
+                  'Matched [1-9]\\d+ molecules from a total of 100' ],
+
+        creates: [ 'output.data.gz',
+                   'output_metrics.txt',
+                   'output.metadata' ],
+
+        metrics: [ 'RxnSmartsFilter': '\\d\\d',
+                   '__InputCount__': '100',
+                   '__OutputCount__': '\\d\\d' ],
+
+
+    ],
+
+    // Testing rxn_smarts_filter.py
+    // reading from STDIN and writing to files using JSON
+    test_rxn_smarts_filter_raw_file_to_json = [
+
+        command: '''python -m pipelines.rdkit.rxn_smarts_filter
+                 -i ${PIN}nci100.data.gz -if json
+                 -o ${POUT}output -of json --meta --thin''',
 
         stderr: [ 'Using 15 reaction filters',
                   'Matched [1-9]\\d+ molecules from a total of 100' ],

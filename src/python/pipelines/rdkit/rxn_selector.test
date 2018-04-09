@@ -10,7 +10,29 @@
 
         command: '''python -m pipelines.rdkit.rxn_selector -h''',
 
-        stdout: [ 'usage: rxn_selector.py' ]
+        stdout: [ 'usage: rxn_selector.py' ],
+
+    ],
+
+    test_basic = [
+
+        command: '''python -m pipelines.rdkit.rxn_selector
+            -rl ${PIN}sdf-aliphatic-primary-amines-175.sdf.gz -rlf sdf''',
+
+        exit_error: 'Must specify either an input file name or an input format (or both)',
+
+    ],
+
+    // Not sure this test makes any sense (abc)
+    // Added simply to trey and improve coverage
+    test_basic_to_sdf = [
+
+        command: '''python -m pipelines.rdkit.rxn_selector
+            -i ${PIN}sulfonyl_chloride.sdf -if sdf
+            -rl ${PIN}sdf-aliphatic-primary-amines-175.sdf.gz -rlf sdf
+            -o output -of sdf''',
+
+        exit_error: 'KeyError: None',
 
     ],
 

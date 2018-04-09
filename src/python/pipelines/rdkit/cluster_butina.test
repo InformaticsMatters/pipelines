@@ -5,7 +5,7 @@
     version = 1,
 
     // Testing cluster_butina.py reading from STDIN and writing to STDOUT
-    test_raw_cluster_butina = [
+    test_raw_cluster_butina_from_sdf_to_default = [
 
         command: '''gunzip -c ${PIN}Kinase_inhibs.sdf.gz |
                  python -m pipelines.rdkit.cluster_butina -t 0.6 -if sdf''',
@@ -13,6 +13,81 @@
         stderr: [ 'No output format specified - using sdf',
                   'Found [1-9]\\d+ clusters',
                   'Final Clusters:'],
+
+    ],
+
+    // Testing cluster_butina.py reading from STDIN and writing to STDOUT
+    test_raw_cluster_butina_from_sdf_to_sdf = [
+
+        command: '''gunzip -c ${PIN}Kinase_inhibs.sdf.gz |
+                 python -m pipelines.rdkit.cluster_butina -t 0.6 -if sdf -of sdf''',
+
+        stderr: [ "outformat='sdf'",
+                  'Found [1-9]\\d+ clusters',
+                  'Final Clusters:'],
+
+    ],
+
+    // Testing cluster_butina.py reading from STDIN and writing to STDOUT
+    test_raw_cluster_butina_from_sdf_to_json = [
+
+        command: '''gunzip -c ${PIN}Kinase_inhibs.sdf.gz |
+                 python -m pipelines.rdkit.cluster_butina -t 0.6 -if sdf -of json''',
+
+        stderr: [ "outformat='json'",
+                  'Found [1-9]\\d+ clusters',
+                  'Final Clusters:'],
+
+    ],
+
+    // Testing cluster_butina.py reading from file
+    test_raw_cluster_butina_from_json_file_to_sdf = [
+
+        command: '''python -m pipelines.rdkit.cluster_butina -t 0.6 -i ${PIN}nci100.data.gz -if json -of sdf''',
+
+        stderr: [ "outformat='sdf'",
+                  'Found [1-9]\\d+ clusters',
+                  'Final Clusters:'],
+
+    ],
+
+    // Testing cluster_butina.py reading from file
+    test_raw_cluster_butina_from_json_file_to_json = [
+
+        command: '''gunzip -c ${PIN}nci100.data.gz |
+                 python -m pipelines.rdkit.cluster_butina -t 0.6 -i ${PIN}nci100.data.gz -if json -of json''',
+
+        stderr: [ "outformat='json'",
+                  'Found [1-9]\\d+ clusters',
+                  'Final Clusters:'],
+
+    ],
+
+    // Testing cluster_butina.py reading and writing from/to file
+    test_raw_cluster_butina_from_json_to_json_file = [
+
+        command: '''gunzip -c ${PIN}nci100.data.gz |
+                 python -m pipelines.rdkit.cluster_butina -t 0.6 -i ${PIN}nci100.data.gz -if json -o ${POUT}output -of json''',
+
+        stderr: [ "outformat='json'",
+                  'Found [1-9]\\d+ clusters',
+                  'Final Clusters:'],
+
+        creates: [ 'output.data.gz' ],
+
+    ],
+
+    // Testing cluster_butina.py reading and writing from/to file
+    test_raw_cluster_butina_from_sdf_to_json_file = [
+
+        command: '''gunzip -c ${PIN}nci100.data.gz |
+                 python -m pipelines.rdkit.cluster_butina -t 0.6 -i ${PIN}Kinase_inhibs.sdf.gz -if json -o ${POUT}output -of json''',
+
+        stderr: [ "outformat='json'",
+                  'Found [1-9]\\d+ clusters',
+                  'Final Clusters:'],
+
+        creates: [ 'output.data.gz' ],
 
     ],
 

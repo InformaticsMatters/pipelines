@@ -5,7 +5,7 @@
     version = 1,
 
     // Testing cluster_butina_matrix.py
-    // reading from STDIN and writing TSV to STDOUT
+    // reading from STDIN and writing TSV to file
     test_raw_cluster_butina_matirx_to_tsv = [
 
         command: '''gunzip -c ${PIN}Kinase_inhibs.sdf.gz |
@@ -20,12 +20,55 @@
     ],
 
     // Testing cluster_butina_matrix.py
-    // reading from STDIN and writing JSON to STDOUT
+    // reading from SDF file and writing TSV to file
+    test_raw_cluster_butina_matirx_sdf_file_to_tsv = [
+
+        command: '''python -m pipelines.rdkit.cluster_butina_matrix
+                 -t 0.6 -i ${PIN}Kinase_inhibs.sdf.gz -if sdf -of tsv -o ${POUT}output''',
+
+        stderr: [ 'Found [1-9]\\d+ clusters',
+                  'Clusters:'],
+
+        creates: [ 'output.tsv.gz' ],
+
+    ],
+
+    // Testing cluster_butina_matrix.py
+    // reading from JSON file and writing TSV to file
+    test_raw_cluster_butina_matirx_json_file_to_tsv = [
+
+        command: '''python -m pipelines.rdkit.cluster_butina_matrix
+                 -t 0.6 -i ${PIN}nci100.data.gz -if json -of tsv -o ${POUT}output''',
+
+        stderr: [ 'Found [1-9]\\d+ clusters',
+                  'Clusters:'],
+
+        creates: [ 'output.tsv.gz' ],
+
+    ],
+
+    // Testing cluster_butina_matrix.py
+    // reading from STDIN and writing JSON to file
     test_raw_cluster_butina_matirx_to_json = [
 
         command: '''gunzip -c ${PIN}Kinase_inhibs.sdf.gz |
                  python -m pipelines.rdkit.cluster_butina_matrix
                  -t 0.6 -if sdf -of json -o ${POUT}output''',
+
+        stderr: [ 'Found [1-9]\\d+ clusters',
+                  'Clusters:'],
+
+        creates: [ 'output.data.gz',
+                   'output.metadata' ],
+
+    ],
+
+    // Testing cluster_butina_matrix.py
+    // reading from file (SDF) and writing JSON to file
+    test_raw_cluster_butina_matirx_sdf_file_to_json = [
+
+        command: '''python -m pipelines.rdkit.cluster_butina_matrix
+                 -t 0.6 -i ${PIN}Kinase_inhibs.sdf.gz -if sdf -of json -o ${POUT}output''',
 
         stderr: [ 'Found [1-9]\\d+ clusters',
                   'Clusters:'],

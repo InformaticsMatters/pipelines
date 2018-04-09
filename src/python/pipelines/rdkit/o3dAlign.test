@@ -16,4 +16,46 @@
 
     ],
 
+    // Testing o3dAlign.py reading from file and writing to file
+    test_raw_o3dalign_sdf_to_sdf = [
+
+        command: '''python -m pipelines.rdkit.o3dAlign
+                 ${PIN}pyrimethamine.mol -n 2 -t 10
+                 -i ${PIN}Kinase_inhibs.sdf.gz -if sdf
+                 -o ${POUT}output -of sdf''',
+
+        stderr: [ 'Molecule 36 generated [1-9]\\d* conformers' ],
+
+        creates: [ 'output.sdf.gz' ],
+
+    ],
+
+    // Testing o3dAlign.py reading from file and writing to file
+    test_raw_o3dalign_sdf_to_json = [
+
+        command: '''python -m pipelines.rdkit.o3dAlign
+                 ${PIN}pyrimethamine.mol -n 2 -t 10
+                 -i ${PIN}Kinase_inhibs.sdf.gz -if sdf
+                 -o ${POUT}output -of json''',
+
+        stderr: [ 'Molecule 36 generated [1-9]\\d* conformers' ],
+
+        creates: [ 'output.data.gz',
+                   'output.metadata'],
+
+    ],
+
+    // Uses an invalid file - but here just to improve coverage
+    // and trap any bad Python links.
+    test_raw_o3dalign_json_to_sdf = [
+
+        command: '''python -m pipelines.rdkit.o3dAlign
+                 ${PIN}pyrimethamine.mol -n 2 -t 10
+                 -i ${PIN}nci100.data.gz -if json
+                 -o ${POUT}output -of sdf''',
+
+        exit_error: 'missing MMFF94 parameters for probe molecule',
+
+    ],
+
 ]

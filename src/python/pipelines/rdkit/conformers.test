@@ -15,15 +15,51 @@
 
     ],
 
+    test_raw_conformers_to_sdf = [
+
+        command: '''gunzip -c ${PIN}Kinase_inhibs.sdf.gz |
+                 python -m pipelines.rdkit.conformers -n 2 -if sdf -of sdf''',
+
+        stderr: [ 'Molecule 36 generated [1-9]\\d* conformers' ],
+
+    ],
+
     // Testing conformers.py with clustering
     // reading from STDIN and writing to STDOUT
-    test_raw_conformers_with_clustering = [
+    test_raw_conformers_with_rmsd_clustering = [
 
         command: '''gunzip -c ${PIN}Kinase_inhibs.sdf.gz |
                  python -m pipelines.rdkit.conformers -n 2 -c RMSD -if sdf''',
 
-        stderr: [ 'No output format specified - using sdf',
+        stderr: [ "cluster='rmsd'",
                   'Molecule 35 generated [1-9]\\d* conformers and [1-9]\\d* clusters' ],
+
+    ],
+
+    // Testing conformers.py with clustering
+    // reading from file and writing to file
+    test_raw_conformers_with_tfd_clustering_from_sdf_file = [
+
+        command: '''python -m pipelines.rdkit.conformers -n 2 -c TFD
+            -i ${PIN}Kinase_inhibs.sdf.gz -if sdf''',
+
+        stderr: [ "cluster='tfd'",
+                  'Molecule 35 generated [1-9]\\d* conformers and [1-9]\\d* clusters' ],
+
+    ],
+
+    // Testing conformers.py with clustering
+    // reading from file and writing to file
+    test_raw_conformers_with_tfd_clustering_from_sdf_file_to_json_file = [
+
+        command: '''python -m pipelines.rdkit.conformers -n 2 -c TFD
+            -i ${PIN}Kinase_inhibs.sdf.gz -if sdf -o ${POUT}output -of json''',
+
+        stderr: [ "cluster='tfd'",
+                  'Molecule 35 generated [1-9]\\d* conformers and [1-9]\\d* clusters' ],
+
+        creates: [ 'output.data.gz',
+                   'output.metadata' ],
 
     ],
 
