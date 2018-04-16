@@ -24,7 +24,7 @@ pipeline {
             // Again, the standard agents provided by OpenShift are not
             // enough, we need an agent that's capable of building images.
             agent {
-                label 'buildah-slave'
+                label 'docker-slave'
             }
 
             steps {
