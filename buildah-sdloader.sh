@@ -12,7 +12,8 @@ SD_DST=/sd-dst
 
 CTR=`buildah from busybox`
 
-buildah config --author "Tim Dudgeon <tdudgeon@informaticsmatters.com>" $CTR
+# Some environment variables
+# (expected to be available inside the final container image)
 buildah config --env SD_SRC=/sd-src $CTR
 buildah config --env SD_DST=/sd-dst $CTR
 
@@ -26,4 +27,8 @@ buildah run $CTR -- rm -f `find ${SD_SRC} -type f -not -name "*.json" -not -name
 # On execution copy files from source to destination...
 buildah config --cmd "cp -R ${SD_SRC}/* ${SD_DST}" $CTR
 
-buildah unmount $CTR
+# Apply some annotations
+buildah config --author "Tim Dudgeon <tdudgeon@informaticsmatters.com>" $CTR
+
+# Commit the image to a name...
+buildah commit $CTR informaticsmatters/rdkit_pipelines-sdloader
