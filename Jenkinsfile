@@ -29,6 +29,8 @@ pipeline {
 
             steps {
                 sh './buildah-sdloader.sh'
+                sh 'buildah bud -f Dockerfile-sdloader .'
+                sh 'buildah bud -f Dockerfile-rdkit .'
             }
 
         }
