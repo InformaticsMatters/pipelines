@@ -14,10 +14,11 @@ pipeline {
 
     // Some environment varibales for every stage...
     environment {
-        TAG = "latest"
-        IMAGE = "informaticsmatters/rdkit_pipelines"
-        LOADER = "informaticsmatters/rdkit_pipelines_loader"
-        REGISTRY = "172.30.23.200:5000"
+        USER = 'jenkins'
+        TAG = 'latest'
+        IMAGE = 'informaticsmatters/rdkit_pipelines'
+        LOADER = "${IMAGE}_loader"
+        REGISTRY = "172.30.23.200:5000'
     }
 
     stages {
@@ -34,10 +35,11 @@ pipeline {
                 label 'buildah-slave'
             }
 
+            token = sh(script: 'oc whoami -t, returnStdout: true)
+
             steps {
 
-                // Get oc login token
-                sh 'set TOKEN = $(oc whoami -t)'
+                echo "${token}"
 
                 // Build...
                 sh "buildah bud -f Dockerfile-rdkit -t ${env.IMAGE}:${env.TAG} ."
@@ -45,7 +47,9 @@ pipeline {
 
                 // Deploy...
                 // (login to the target registry, push and logout)
-                sh "podman login --tls-verify=false --username jenkins --password ${TOKEN} ${env.REGISTRY}"
+                // Get user login token
+                sh 'set TOKEN=$(oc whoami -t)'
+                sh "podman login --tls-verify=false --username ${env.USER} --password ${token} ${env.REGISTRY}"
                 sh "buildah push --format=v2s2 --tls-verify=false ${env.IMAGE}:${env.TAG} docker://${env.REGISTRY}/${env.IMAGE}:${env.TAG}"
                 sh "buildah push --format=v2s2 --tls-verify=false ${env.LOADER}:${env.TAG} docker://${env.REGISTRY}/${env.LOADER}:${env.TAG}"
                 sh "podman logout ${env.REGISTRY}"
