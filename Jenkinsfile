@@ -37,15 +37,15 @@ pipeline {
             steps {
 
                 // Build...
-                sh 'buildah bud -f Dockerfile-rdkit -t ${env.IMAGE}:${env.TAG} .'
-                sh 'buildah bud -f Dockerfile-sdloader -t ${env.LOADER}:${env.TAG} .'
+                sh "buildah bud -f Dockerfile-rdkit -t ${env.IMAGE}:${env.TAG} ."
+                sh "buildah bud -f Dockerfile-sdloader -t ${env.LOADER}:${env.TAG} ."
 
                 // Deploy...
                 // (login to the target registry, push and logout)
-                sh 'podman login --tls-verify=false --username jenkins --password $(oc whoami -t) ${env.REGISTRY}'
-                sh 'buildah push --format=v2s2 --tls-verify=false ${env.IMAGE}:${env.TAG} docker://${env.REGISTRY}/${env.IMAGE}:${env.TAG}'
-                sh 'buildah push --format=v2s2 --tls-verify=false ${env.LOADER}:${env.TAG} docker://${env.REGISTRY}/${env.LOADER}:${env.TAG}'
-                sh 'podman logout ${env.REGISTRY}'
+                sh "podman login --tls-verify=false --username jenkins --password $(oc whoami -t) ${env.REGISTRY}"
+                sh "buildah push --format=v2s2 --tls-verify=false ${env.IMAGE}:${env.TAG} docker://${env.REGISTRY}/${env.IMAGE}:${env.TAG}"
+                sh "buildah push --format=v2s2 --tls-verify=false ${env.LOADER}:${env.TAG} docker://${env.REGISTRY}/${env.LOADER}:${env.TAG}"
+                sh "podman logout ${env.REGISTRY}"
 
             }
 
@@ -56,7 +56,7 @@ pipeline {
     // End-of-pipeline post-processing actions...
     post {
         failure {
-            mail to: 'achristie@informaticsmatters.com',
+            mail to: "achristie@informaticsmatters.com",
             subject: "Failed Core Pipeline",
             body: "Something is wrong with ${env.BUILD_URL}"
         }
