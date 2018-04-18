@@ -18,7 +18,7 @@ pipeline {
         TAG = 'latest'
         IMAGE = 'informaticsmatters/rdkit_pipelines'
         LOADER = "${IMAGE}_loader"
-        REGISTRY = "172.30.23.200:5000'
+        REGISTRY = '172.30.23.200:5000'
     }
 
     stages {
