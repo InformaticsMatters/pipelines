@@ -14,9 +14,6 @@ pipeline {
 
     // Some environment varibales for every stage...
     environment {
-        def token = sh (script: 'oc whoami -t', returnStdout: true).trim()
-        TOKEN = "${token}"
-
         TAG = "latest"
         IMAGE = "informaticsmatters/rdkit_pipelines"
         LOADER = "informaticsmatters/rdkit_pipelines_loader"
@@ -40,6 +37,7 @@ pipeline {
             steps {
 
                 // Get oc login token
+                sh 'set TOKEN = $(oc whoami -t)'
 
                 // Build...
                 sh "buildah bud -f Dockerfile-rdkit -t ${env.IMAGE}:${env.TAG} ."
@@ -47,7 +45,7 @@ pipeline {
 
                 // Deploy...
                 // (login to the target registry, push and logout)
-                sh "podman login --tls-verify=false --username jenkins --password ${env.TOKEN} ${env.REGISTRY}"
+                sh "podman login --tls-verify=false --username jenkins --password ${TOKEN} ${env.REGISTRY}"
                 sh "buildah push --format=v2s2 --tls-verify=false ${env.IMAGE}:${env.TAG} docker://${env.REGISTRY}/${env.IMAGE}:${env.TAG}"
                 sh "buildah push --format=v2s2 --tls-verify=false ${env.LOADER}:${env.TAG} docker://${env.REGISTRY}/${env.LOADER}:${env.TAG}"
                 sh "podman logout ${env.REGISTRY}"
