@@ -1,5 +1,7 @@
 #!/bin/bash -x
 
+set -e
+
 # Just echo/log the Buildah & Podman versions we have...
 buildah version
 podman version
