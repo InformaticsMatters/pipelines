@@ -15,7 +15,7 @@ pipeline {
     // Some environment varibales for every stage...
     environment {
         TOKEN = sh (
-            script: 'oc whoami -t'
+            script: 'oc whoami -t',
             returnStdout: true
         ).trim()
         TAG = 'latest'
