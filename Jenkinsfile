@@ -44,7 +44,7 @@ pipeline {
                 // Deploy...
                 // Get user login token
                 script {
-                    TOKEN = sh(script: 'oc whoami -t', returnStdout: true)
+                    TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
                 }
                 // Login to the target registry, push images and logout
                 sh "podman login --tls-verify=false --username ${env.USER} --password ${TOKEN} ${env.REGISTRY}"
