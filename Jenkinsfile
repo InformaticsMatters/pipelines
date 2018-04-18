@@ -39,6 +39,7 @@ pipeline {
                 // Login, push and logout...
                 sh 'podman login --tls-verify=false --username jenkins --password $(oc whoami -t) 172.30.23.200:5000'
                 sh 'buildah push --format=v2s2 --tls-verify=false test/image:latest docker://172.30.23.200:5000/test/image:latest'
+                sh 'buildah images'
                 sh 'podman logout 172.30.23.200:5000'
 
             }
