@@ -13,7 +13,7 @@ pipeline {
     agent none
 
     // Some environment varibales for every stage...
-    enviornment {
+    environment {
         TAG = 'latest'
         IMAGE = 'informaticsmatters/rdkit_pipelines'
         LOADER = 'informaticsmatters/rdkit_pipelines_loader'
