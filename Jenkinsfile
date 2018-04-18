@@ -32,12 +32,13 @@ pipeline {
 //                sh 'buildah bud -f Dockerfile-rdkit .'
 
                 // Build...
-                sh 'buildah bud --format docker -f Dockerfile-sdloader -t test/image:latest .'
+//                sh 'buildah bud --format docker -f Dockerfile-sdloader -t test/image:latest .'
+                sh 'buildah bud -f Dockerfile-sdloader -t test/image:latest .'
                 sh 'buildah images'
 
                 // Login, push and logout...
                 sh 'podman login --tls-verify=false --username jenkins --password $(oc whoami -t) 172.30.23.200:5000'
-                sh 'buildah push --tls-verify=false test/image:latest docker://172.30.23.200:5000/test/image:latest'
+                sh 'buildah push --format=v2s2 --tls-verify=false test/image:latest docker://172.30.23.200:5000/test/image:latest'
                 sh 'podman logout 172.30.23.200:5000'
 
             }
