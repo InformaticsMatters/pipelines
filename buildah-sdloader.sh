@@ -23,6 +23,7 @@ buildah config --env SD_SRC=/sd-src ${CNTR}
 buildah config --env SD_DST=/sd-dst ${CNTR}
 
 # Copy all potential Service Descriptors into the image...
+buildah run ${CNTR} -- mkdir -p ${SD_SRC}
 buildah copy ${CNTR} src/python/ ${SD_SRC}/python/
 buildah copy ${CNTR} src/nextflow/ ${SD_SRC}/nextflow/
 
@@ -36,12 +37,13 @@ buildah config --cmd "cp -R ${SD_SRC}/* ${SD_DST}" ${CNTR}
 buildah config --author "Tim Dudgeon <tdudgeon@informaticsmatters.com>" ${CNTR}
 
 # Commit the image to a name...
-IMAGE_ID=buildah commit $CNTR $TGT_IMG:$TGT_TAG
+IMAGE_ID=$(buildah commit ${CNTR} ${TGT_IMG}:${TGT_TAG})
+echo ${IMAGE_ID}
 
 # List local images...
 buildah images
 
 # Push...
-podman login --tls-verify=false --username jenkins --password $(oc whoami -t) ${REGISTRY}
+podman login --tls-verify=false --username jenkins --password $(oc whoami -t) ${REGISTRY}:5000
 buildah push --tls-verify=false ${IMAGE_ID} docker://${REGISTRY}:5000/${TGT_IMG}:${TGT_TAG}
-podman logout ${REGISTRY}
+podman logout ${REGISTRY}:5000
