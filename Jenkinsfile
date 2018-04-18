@@ -12,13 +12,18 @@ pipeline {
     // the agent definition is deferred to each stage.
     agent none
 
-    // Some environment varibales for every stage...
+    // Some environment variables for every stage...
+    //
+    // Some are expected to be defined in credentials.
+    // One such variable is REGISTRY -
+    // the address (and port) of the cluster's infrastructure registry.
+    // i.e. something like '172.30.23.200:5000'.
     environment {
         USER = 'jenkins'
         TAG = 'latest'
         IMAGE = 'informaticsmatters/rdkit_pipelines'
         LOADER = "${IMAGE}_loader"
-        REGISTRY = '172.30.23.200:5000'
+        REGISTRY = credentials('clusterRegistry')
     }
 
     stages {
