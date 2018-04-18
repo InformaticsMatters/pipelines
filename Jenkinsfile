@@ -12,35 +12,40 @@ pipeline {
     // the agent definition is deferred to each stage.
     agent none
 
+    // Some environment varibales for every stage...
+    enviornment {
+        TAG = 'latest'
+        IMAGE = 'informaticsmatters/rdkit_pipelines'
+        LOADER = 'informaticsmatters/rdkit_pipelines_loader'
+        REGISTRY = '172.30.23.200:5000'
+    }
+
     stages {
 
         // --------------------------------------------------------------------
-        // Build (Buildah)
+        // Deploy
         // --------------------------------------------------------------------
 
-        stage ('Build (Buildah)') {
+        stage ('Deploy') {
 
-            // Here we build the docker images.
-            // Again, the standard agents provided by OpenShift are not
-            // enough, we need an agent that's capable of building images.
+            // Here we build and Deploy the docker images.
+            // We need a custom agent that's capable of building images.
             agent {
                 label 'buildah-slave'
             }
 
             steps {
-//                sh './buildah-sdloader.sh'
-//                sh 'buildah bud -f Dockerfile-rdkit .'
 
                 // Build...
-//                sh 'buildah bud --format docker -f Dockerfile-sdloader -t test/image:latest .'
-                sh 'buildah bud -f Dockerfile-sdloader -t test/image:latest .'
-                sh 'buildah images'
+                sh 'buildah bud -f Dockerfile-rdkit -t ${env.IMAGE}:${env.TAG} .'
+                sh 'buildah bud -f Dockerfile-sdloader -t ${env.LOADER}:${env.TAG} .'
 
-                // Login, push and logout...
-                sh 'podman login --tls-verify=false --username jenkins --password $(oc whoami -t) 172.30.23.200:5000'
-                sh 'buildah push --format=v2s2 --tls-verify=false test/image:latest docker://172.30.23.200:5000/test/image:latest'
-                sh 'buildah images'
-                sh 'podman logout 172.30.23.200:5000'
+                // Deploy...
+                // (login to the target registry, push and logout)
+                sh 'podman login --tls-verify=false --username jenkins --password $(oc whoami -t) ${env.REGISTRY}'
+                sh 'buildah push --format=v2s2 --tls-verify=false ${env.IMAGE}:${env.TAG} docker://${env.REGISTRY}/${env.IMAGE}:${env.TAG}'
+                sh 'buildah push --format=v2s2 --tls-verify=false ${env.LOADER}:${env.TAG} docker://${env.REGISTRY}/${env.LOADER}:${env.TAG}'
+                sh 'podman logout ${env.REGISTRY}'
 
             }
 
