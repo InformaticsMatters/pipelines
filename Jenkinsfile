@@ -32,6 +32,9 @@ pipeline {
                 sh 'buildah bud -f Dockerfile-sdloader .'
                 sh 'buildah bud -f Dockerfile-rdkit .'
                 sh 'buildah images'
+                sh 'podman login 172.30.23.200:5000 -u jenkins -p $(oc whom -t)'
+                sh 'podman images'
+                sh 'podman logout 172.30.23.200:5000'
             }
 
         }
