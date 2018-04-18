@@ -35,7 +35,7 @@ pipeline {
                 label 'buildah-slave'
             }
 
-            token = sh(script: 'oc whoami -t, returnStdout: true)
+            token = sh(script: 'oc whoami -t', returnStdout: true)
 
             steps {
 
