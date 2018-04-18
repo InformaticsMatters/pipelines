@@ -15,12 +15,12 @@ pipeline {
     // Some environment varibales for every stage...
     environment {
         def token = sh (script: 'oc whoami -t', returnStdout: true).trim()
-        TOKEN = token
+        TOKEN = "${token}"
 
-        TAG = 'latest'
-        IMAGE = 'informaticsmatters/rdkit_pipelines'
-        LOADER = 'informaticsmatters/rdkit_pipelines_loader'
-        REGISTRY = '172.30.23.200:5000'
+        TAG = "latest"
+        IMAGE = "informaticsmatters/rdkit_pipelines"
+        LOADER = "informaticsmatters/rdkit_pipelines_loader"
+        REGISTRY = "172.30.23.200:5000"
     }
 
     stages {
