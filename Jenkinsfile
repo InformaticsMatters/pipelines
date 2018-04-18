@@ -37,20 +37,16 @@ pipeline {
 
             steps {
 
-                script {
-                    TOKEN = sh(script: 'oc whoami -t', returnStdout: true)
-                }
-                echo "${LOADER}"
-                echo "${TOKEN}"
-
                 // Build...
                 sh "buildah bud -f Dockerfile-rdkit -t ${env.IMAGE}:${env.TAG} ."
                 sh "buildah bud -f Dockerfile-sdloader -t ${env.LOADER}:${env.TAG} ."
 
                 // Deploy...
-                // (login to the target registry, push and logout)
                 // Get user login token
-                sh 'set TOKEN=$(oc whoami -t)'
+                script {
+                    TOKEN = sh(script: 'oc whoami -t', returnStdout: true)
+                }
+                // Login to the target registry, push images and logout
                 sh "podman login --tls-verify=false --username ${env.USER} --password ${TOKEN} ${env.REGISTRY}"
                 sh "buildah push --format=v2s2 --tls-verify=false ${env.IMAGE}:${env.TAG} docker://${env.REGISTRY}/${env.IMAGE}:${env.TAG}"
                 sh "buildah push --format=v2s2 --tls-verify=false ${env.LOADER}:${env.TAG} docker://${env.REGISTRY}/${env.LOADER}:${env.TAG}"
