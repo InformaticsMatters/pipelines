@@ -43,6 +43,11 @@ pipeline {
 
             steps {
 
+                // Expose tool versions...
+                sh 'buildah -v'
+                sh 'podman -v'
+                sh 'skopeo -v'
+
                 // Build...
                 sh "buildah bud -f Dockerfile-rdkit -t ${env.IMAGE}:${env.TAG} ."
                 sh "buildah bud -f Dockerfile-sdloader -t ${env.LOADER}:${env.TAG} ."
