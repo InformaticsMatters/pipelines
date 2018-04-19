@@ -37,6 +37,10 @@ pipeline {
 
             steps {
 
+                // Registry..
+                echo "Expecting registry at ${env.REGISTRY}"
+                echo "Expecting registry user ${env.USER}"
+
                 // Expose tool versions...
                 sh 'buildah -v'
                 sh 'podman -v'
@@ -54,8 +58,8 @@ pipeline {
                 }
                 // Login to the target registry, push images and logout
                 sh "podman login --tls-verify=false --username ${env.USER} --password ${TOKEN} ${env.REGISTRY}"
-                sh "buildah push --tls-verify=false ${env.LOADER}:${env.TAG} docker://${env.REGISTRY}/${env.LOADER}:${env.TAG}"
-                sh "buildah push --tls-verify=false ${env.IMAGE}:${env.TAG} docker://${env.REGISTRY}/${env.IMAGE}:${env.TAG}"
+                sh "buildah push --format=v2s2 --tls-verify=false ${env.LOADER}:${env.TAG} docker://${env.REGISTRY}/${env.LOADER}:${env.TAG}"
+                sh "buildah push --format=v2s2 --tls-verify=false ${env.IMAGE}:${env.TAG} docker://${env.REGISTRY}/${env.IMAGE}:${env.TAG}"
 
             }
 
