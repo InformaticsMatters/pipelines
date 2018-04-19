@@ -69,7 +69,7 @@ pipeline {
         always {
             script {
                 if ((new File('/run/containers/0/auth.json')).exists()) {
-                    sh "podman logout ${env.REGISTRY}"
+                    sh(script: "podman logout ${env.REGISTRY}")
                 }
             }
         }
