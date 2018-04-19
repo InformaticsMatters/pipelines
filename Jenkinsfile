@@ -13,17 +13,11 @@ pipeline {
     agent none
 
     // Some environment variables for every stage...
-    //
-    // Some are expected to be defined in credentials.
-    // One such variable is REGISTRY -
-    // the address (and port) of the cluster's infrastructure registry.
-    // i.e. something like '172.30.23.200:5000'.
     environment {
         USER = 'jenkins'
         TAG = 'latest'
         IMAGE = 'informaticsmatters/rdkit_pipelines'
         LOADER = "${IMAGE}_loader"
-//        REGISTRY = credentials('clusterRegistry')
         REGISTRY = 'docker-registry.default:5000'
     }
 
@@ -49,8 +43,9 @@ pipeline {
                 sh 'skopeo -v'
 
                 // Build...
-                sh "buildah bud --format docker -f Dockerfile-rdkit -t ${env.IMAGE}:${env.TAG} ."
+                // (Small image first)
                 sh "buildah bud --format docker -f Dockerfile-sdloader -t ${env.LOADER}:${env.TAG} ."
+                sh "buildah bud --format docker -f Dockerfile-rdkit -t ${env.IMAGE}:${env.TAG} ."
 
                 // Deploy...
                 // Get user login token
@@ -59,9 +54,8 @@ pipeline {
                 }
                 // Login to the target registry, push images and logout
                 sh "podman login --tls-verify=false --username ${env.USER} --password ${TOKEN} ${env.REGISTRY}"
-                sh "buildah push --tls-verify=false ${env.IMAGE}:${env.TAG} docker://${env.REGISTRY}/${env.IMAGE}:${env.TAG}"
                 sh "buildah push --tls-verify=false ${env.LOADER}:${env.TAG} docker://${env.REGISTRY}/${env.LOADER}:${env.TAG}"
-                sh "podman logout ${env.REGISTRY}"
+                sh "buildah push --tls-verify=false ${env.IMAGE}:${env.TAG} docker://${env.REGISTRY}/${env.IMAGE}:${env.TAG}"
 
             }
 
@@ -71,11 +65,21 @@ pipeline {
 
     // End-of-pipeline post-processing actions...
     post {
+
+        always {
+            script {
+                if ((new File('/run/containers/0/auth.json')).exists()) {
+                    sh "podman logout ${env.REGISTRY}"
+                }
+            }
+        }
+
         failure {
             mail to: "achristie@informaticsmatters.com",
             subject: "Failed Core Pipeline",
             body: "Something is wrong with ${env.BUILD_URL}"
         }
+
     }
 
 }
