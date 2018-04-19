@@ -24,7 +24,7 @@ pipeline {
         IMAGE = 'informaticsmatters/rdkit_pipelines'
         LOADER = "${IMAGE}_loader"
 //        REGISTRY = credentials('clusterRegistry')
-        REGISTRY = 'docker-registry-default.dev.openrisknet.org:5000'
+        REGISTRY = 'docker-registry.default:5000'
     }
 
     stages {
