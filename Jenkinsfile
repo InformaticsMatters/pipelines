@@ -61,6 +61,7 @@ pipeline {
                 sh "podman login --tls-verify=false --username ${env.USER} --password ${TOKEN} ${env.REGISTRY}"
                 sh "buildah push --format=v2s2 --tls-verify=false ${env.LOADER}:${env.TAG} docker://${env.REGISTRY}/${env.PROJECT}"
                 sh "buildah push --format=v2s2 --tls-verify=false ${env.IMAGE}:${env.TAG} docker://${env.REGISTRY}/${env.PROJECT}"
+                sh "podman logout ${env.REGISTRY}"
 
             }
 
@@ -70,14 +71,6 @@ pipeline {
 
     // End-of-pipeline post-processing actions...
     post {
-
-        always {
-            script {
-                if ((new File('/run/containers/0/auth.json')).exists()) {
-                    sh(script: "podman logout ${env.REGISTRY}")
-                }
-            }
-        }
 
         failure {
             mail to: "achristie@informaticsmatters.com",
