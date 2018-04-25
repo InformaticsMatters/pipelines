@@ -19,7 +19,7 @@ pipeline {
         REGISTRY = 'docker-registry.default:5000'
 
         PIPELINES_IMAGE = 'rdkit_pipelines'
-        LOADER_IMAGE = "${IMAGE}_loader"
+        LOADER_IMAGE = "${PIPELINES_IMAGE}_loader"
         TAG = 'latest'
         BUILD_NAMESPACE = 'informaticsmatters'
         PUSH_NAMESPACE = 'squonk-cicd'
@@ -30,10 +30,10 @@ pipeline {
         // The build and push namespaces can be dfifferent but the push
         // namespace must be the name of a pre-exisiting OpenShift project.
 
-        PIPELINES_BUILD_IMAGE = "${BUID_NAMESPACE}/${PIPELINES_IMAGE}:${TAG}"
-        PIPELINES_PUSH_IMAGE = "${PUSH_NAMESPACE}/${PIPELINES_IMAGE}:${TAG}"
+        PIPELINES_BUILD_IMAGE = "${BUILD_NAMESPACE}/${PIPELINES_IMAGE}:${TAG}"
+        LOADER_BUILD_IMAGE = "${BUILD_NAMESPACE}/${LOADER_IAMGE}:${TAG}"
 
-        LOADER_BUILD_IMAGE = "${BUID_NAMESPACE}/${LOADER_IAMGE}:${TAG}"
+        PIPELINES_PUSH_IMAGE = "${PUSH_NAMESPACE}/${PIPELINES_IMAGE}:${TAG}"
         LOADER_PUSH_IMAGE = "${PUSH_NAMESPACE}/${LOADER_IAMGE}:${TAG}"
 
     }
