@@ -59,6 +59,13 @@ pipeline {
                 echo "Expecting registry user ${env.USER}"
                 echo "Expecting registry project ${env.PUSH_NAMESPACE}"
 
+                echo "ENV ${env.PIPELINES_IMAGE}"
+                echo "ENV ${env.LOADER_IMAGE}"
+                echo "ENV ${env.PIPELINES_BUILD_IMAGE}"
+                echo "ENV ${env.LOADER_BUILD_IMAGE}"
+                echo "ENV ${env.PIPELINES_PUSH_IMAGE}"
+                echo "ENV ${env.LOADER_PUSH_IMAGE}"
+
                 // Expose tool versions...
                 sh 'buildah -v'
                 sh 'podman -v'
