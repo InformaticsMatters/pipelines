@@ -18,23 +18,13 @@ pipeline {
         USER = 'jenkins'
         REGISTRY = 'docker-registry.default:5000'
 
+        NAMESPACE = 'squonk-cicd'
         PIPELINES_IMAGE = 'rdkit_pipelines'
         LOADER_IMAGE = "${PIPELINES_IMAGE}_loader"
         TAG = 'latest'
-        BUILD_NAMESPACE = 'informaticsmatters'
-        PUSH_NAMESPACE = 'squonk-cicd'
 
-        // *_BUILD_IMAGE is the name and tag of the built container image.
-        // *_PUSH_IMAGE is the name and tag of the pushed container image,
-        // which must use a pre-existing OpenShift project (namespace).
-        // The build and push namespaces can be dfifferent but the push
-        // namespace must be the name of a pre-exisiting OpenShift project.
-
-        PIPELINES_BUILD_IMAGE = "${BUILD_NAMESPACE}/${PIPELINES_IMAGE}:${TAG}"
-        LOADER_BUILD_IMAGE = "${BUILD_NAMESPACE}/${LOADER_IMAGE}:${TAG}"
-
-        PIPELINES_PUSH_IMAGE = "${PUSH_NAMESPACE}/${PIPELINES_IMAGE}:${TAG}"
-        LOADER_PUSH_IMAGE = "${PUSH_NAMESPACE}/${LOADER_IMAGE}:${TAG}"
+        P_IMAGE = "${NAMESPACE}/${PIPELINES_IMAGE}:${TAG}"
+        L_IMAGE = "${NAMESPACE}/${LOADER_IMAGE}:${TAG}"
 
     }
 
@@ -66,8 +56,8 @@ pipeline {
 
                 // Build...
                 // (Small image first)
-                sh "buildah bud -f Dockerfile-sdloader -t ${env.PIPELINES_BUILD_IMAGE} ."
-                sh "buildah bud -f Dockerfile-rdkit -t ${env.LOADER_BUILD_IMAGE} ."
+                sh "buildah bud -f Dockerfile-sdloader -t ${env.P_IMAGE} ."
+                sh "buildah bud -f Dockerfile-rdkit -t ${env.L_IMAGE} ."
 
                 // Deploy...
                 // Get user login token
@@ -76,8 +66,8 @@ pipeline {
                 }
                 // Login to the target registry, push images and logout
                 sh "podman login --tls-verify=false --username ${env.USER} --password ${TOKEN} ${env.REGISTRY}"
-                sh "buildah push --format=v2s2 --tls-verify=false ${env.PIPELINES_BUILD_IMAGE} docker://${env.REGISTRY}/${env.PIPELINES_PUSH_IMAGE}"
-                sh "buildah push --format=v2s2 --tls-verify=false ${env.LOADER_BUILD_IMAGE} docker://${env.REGISTRY}/${env.LOADER_PUSH_IMAGE}"
+                sh "buildah push --format=v2s2 --tls-verify=false ${env.P_IMAGE} docker://${env.REGISTRY}/${env.P_IMAGE}"
+                sh "buildah push --format=v2s2 --tls-verify=false ${env.L_IMAGE} docker://${env.REGISTRY}/${env.L_IMAGE}"
                 sh "podman logout ${env.REGISTRY}"
 
             }
