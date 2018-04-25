@@ -31,10 +31,10 @@ pipeline {
         // namespace must be the name of a pre-exisiting OpenShift project.
 
         PIPELINES_BUILD_IMAGE = "${BUILD_NAMESPACE}/${PIPELINES_IMAGE}:${TAG}"
-        LOADER_BUILD_IMAGE = "${BUILD_NAMESPACE}/${LOADER_IAMGE}:${TAG}"
+        LOADER_BUILD_IMAGE = "${BUILD_NAMESPACE}/${LOADER_IMAGE}:${TAG}"
 
         PIPELINES_PUSH_IMAGE = "${PUSH_NAMESPACE}/${PIPELINES_IMAGE}:${TAG}"
-        LOADER_PUSH_IMAGE = "${PUSH_NAMESPACE}/${LOADER_IAMGE}:${TAG}"
+        LOADER_PUSH_IMAGE = "${PUSH_NAMESPACE}/${LOADER_IMAGE}:${TAG}"
 
     }
 
