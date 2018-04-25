@@ -59,13 +59,6 @@ pipeline {
                 echo "Expecting registry user ${env.USER}"
                 echo "Expecting registry project ${env.PUSH_NAMESPACE}"
 
-                echo "ENV ${env.PIPELINES_IMAGE}"
-                echo "ENV ${env.LOADER_IMAGE}"
-                echo "ENV ${env.PIPELINES_BUILD_IMAGE}"
-                echo "ENV ${env.LOADER_BUILD_IMAGE}"
-                echo "ENV ${env.PIPELINES_PUSH_IMAGE}"
-                echo "ENV ${env.LOADER_PUSH_IMAGE}"
-
                 // Expose tool versions...
                 sh 'buildah -v'
                 sh 'podman -v'
@@ -83,8 +76,8 @@ pipeline {
                 }
                 // Login to the target registry, push images and logout
                 sh "podman login --tls-verify=false --username ${env.USER} --password ${TOKEN} ${env.REGISTRY}"
-//                sh "buildah push --format=v2s2 --tls-verify=false ${env.PIPELINES_BUILD_IMAGE} docker://${env.PIPELINES_PUSH_IMAGE}"
-                sh "buildah push --format=v2s2 --tls-verify=false ${env.LOADER_BUILD_IMAGE} docker://${env.LOADER_PUSH_IMAGE}"
+//                sh "buildah push --format=v2s2 --tls-verify=false ${env.PIPELINES_BUILD_IMAGE} docker://${env.REGISTRY}/${env.PIPELINES_PUSH_IMAGE}"
+                sh "buildah push --format=v2s2 --tls-verify=false ${env.LOADER_BUILD_IMAGE} docker://${env.REGISTRY}/${env.LOADER_PUSH_IMAGE}"
                 sh "podman logout ${env.REGISTRY}"
 
             }
