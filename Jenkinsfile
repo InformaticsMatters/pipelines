@@ -19,6 +19,7 @@ pipeline {
         IMAGE = 'informaticsmatters/rdkit_pipelines'
         LOADER = "${IMAGE}_loader"
         REGISTRY = 'docker-registry.default:5000'
+        PROJECT = 'squonk-cicd'
     }
 
     stages {
@@ -58,8 +59,8 @@ pipeline {
                 }
                 // Login to the target registry, push images and logout
                 sh "podman login --tls-verify=false --username ${env.USER} --password ${TOKEN} ${env.REGISTRY}"
-                sh "buildah push --format=v2s2 --tls-verify=false ${env.LOADER}:${env.TAG} docker://${env.REGISTRY}/${env.LOADER}:${env.TAG}"
-                sh "buildah push --format=v2s2 --tls-verify=false ${env.IMAGE}:${env.TAG} docker://${env.REGISTRY}/${env.IMAGE}:${env.TAG}"
+                sh "buildah push --format=v2s2 --tls-verify=false ${env.LOADER}:${env.TAG} docker://${env.REGISTRY}/${env.PROJECT}"
+                sh "buildah push --format=v2s2 --tls-verify=false ${env.IMAGE}:${env.TAG} docker://${env.REGISTRY}/${env.PROJECT}"
 
             }
 
