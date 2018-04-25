@@ -66,7 +66,7 @@ pipeline {
 
                 // Build...
                 // (Small image first)
-//                sh "buildah bud -f Dockerfile-sdloader -t ${env.PIPELINES_BUILD_IMAGE} ."
+                sh "buildah bud -f Dockerfile-sdloader -t ${env.PIPELINES_BUILD_IMAGE} ."
                 sh "buildah bud -f Dockerfile-rdkit -t ${env.LOADER_BUILD_IMAGE} ."
 
                 // Deploy...
@@ -76,7 +76,7 @@ pipeline {
                 }
                 // Login to the target registry, push images and logout
                 sh "podman login --tls-verify=false --username ${env.USER} --password ${TOKEN} ${env.REGISTRY}"
-//                sh "buildah push --format=v2s2 --tls-verify=false ${env.PIPELINES_BUILD_IMAGE} docker://${env.REGISTRY}/${env.PIPELINES_PUSH_IMAGE}"
+                sh "buildah push --format=v2s2 --tls-verify=false ${env.PIPELINES_BUILD_IMAGE} docker://${env.REGISTRY}/${env.PIPELINES_PUSH_IMAGE}"
                 sh "buildah push --format=v2s2 --tls-verify=false ${env.LOADER_BUILD_IMAGE} docker://${env.REGISTRY}/${env.LOADER_PUSH_IMAGE}"
                 sh "podman logout ${env.REGISTRY}"
 
