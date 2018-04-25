@@ -17,8 +17,8 @@ pipeline {
 
         USER = 'jenkins'
         REGISTRY = 'docker-registry.default:5000'
-
         NAMESPACE = 'squonk-cicd'
+
         PIPELINES_IMAGE = 'rdkit_pipelines'
         LOADER_IMAGE = "${PIPELINES_IMAGE}_loader"
         TAG = 'latest'
