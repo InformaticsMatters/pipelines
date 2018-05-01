@@ -1,10 +1,17 @@
-FROM abradle/pli
-MAINTAINER Tim Dudgeon <tdudgeon@informaticsmatters.com>
+FROM informaticsmatters/rdkit_pipelines:latest
+LABEL maintainer="Tim Dudgeon<tdudgeon@informaticsmatters.com>"
 
-COPY src/python /root/python
 
-# install pipelines python modules
-WORKDIR /root
-RUN source activate my-rdkit-env
-RUN pip install -e python
+USER root
+RUN apt-get install zlib1g-dev make gcc git -y
+RUN mkdir -p /usr/local/
+WORKDIR /usr/local/
+RUN git clone https://bitbucket.org/AstexUK/pli.git
+WORKDIR /usr/local/pli
+RUN make
 
+RUN useradd -u 1001 -g 0 -m pli
+USER 1001
+
+WORKDIR /home/pli
+ENV PLI_DIR /usr/local/pli

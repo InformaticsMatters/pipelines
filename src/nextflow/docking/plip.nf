@@ -27,7 +27,6 @@ process sdsplit {
     
     
     """
-    source activate my-rdkit-env
     python -m pipelines_utils_rdkit.filter -i $ligands -c $params.chunk -d 5 -o ligands_part -of sdf
     """
 }
@@ -41,14 +40,14 @@ process pli_scoring {
 	file protein
 
     output:
-    file 'scored_part*.sd' into scored_parts
+    file 'scored_part*.sdf' into scored_parts
     
     """
-	python -m pipelines.docking.plip -i $part -pdb $params.protein -o ${part.name.replace('ligands', 'scored')[0..-8]} -of sdf ${params.score ? ' -t ' + params.score : ''} --threads 1 &> scored_out.log
+	python -m pipelines.docking.plip -i $part -pdb $protein -o ${part.name.replace('ligands', 'scored')[0..-8]} -of sdf --no-gzip ${params.score ? ' -t ' + params.score : ''} --threads 1 &> scored_out.log
     """
 }
 
-/* Filter, combine and publish the results
+/* Recombine and publish the results
 */
 process results {
 
@@ -63,7 +62,7 @@ process results {
 	
  
 	"""
-	cat scored_part*.sdf.gz > output.sdf.gz
+	cat scored_part*.sdf | gzip > output.sdf.gz
 	"""
 }
 

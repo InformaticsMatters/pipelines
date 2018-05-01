@@ -16,7 +16,7 @@ basic cheminformatics and comp chem functionality, though other tools will
 be coming soon, including some from the Java ecosystem.
 
 * See [here](src/python/pipelines/rdkit/README.md) for more info on the RDKit components.
-* See [here](src/nextflow/rdkit/README.md) for more info on running these in Nextflow.
+* See [here](src/nextflow/README.md) for more info on running these in Nextflow.
 
 Note: this is experimental, subject to change, and there are no guarantees that things work as expected!
 That said, its already proved to be highly useful in the Squonk Computational Notebook, and if you are interested let us know, and join the fun.

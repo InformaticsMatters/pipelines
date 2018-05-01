@@ -58,12 +58,21 @@ task dist(type: Copy) {
 def pipeline = 'pipelines'
 def squonkSdDir = '../squonk/docker/deploy/data/docker-services'
 
-task buildDockerImage(type: DockerBuildImage) {
+task buildPipelinesImage(type: DockerBuildImage) {
     description 'Builds the pipelines Docker image'
 
     dockerFile = file('Dockerfile-rdkit')
     inputDir = file('.')
     tag = "informaticsmatters/rdkit_${pipeline}:latest"
+}
+
+task buildPliImage(type: DockerBuildImage) {
+    dependsOn buildPipelinesImage
+    description 'Builds the PLI Docker image'
+
+    dockerFile = file('Dockerfile-pli')
+    inputDir = file('.')
+    tag = "informaticsmatters/pli:latest"
 }
 
 task buildSdLoaderDockerImage(type: DockerBuildImage) {
@@ -75,7 +84,7 @@ task buildSdLoaderDockerImage(type: DockerBuildImage) {
 }
 
 task buildDockerImages() {
-    dependsOn buildDockerImage
+    dependsOn buildPliImage // that one depends on buildPipelinesImage
     dependsOn buildSdLoaderDockerImage
 
     group 'Docker'

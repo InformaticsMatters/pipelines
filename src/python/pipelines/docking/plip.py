@@ -21,6 +21,7 @@ import subprocess
 import tempfile
 import threading
 from multiprocessing.dummy import Pool as ThreadPool
+import datetime
 
 from rdkit import Chem
 
@@ -75,7 +76,7 @@ def run_dock(mol):
 
 def main():
     global PDB_PATH,WRITER,THRESHOLD
-    parser = argparse.ArgumentParser(description='SMoG2016 - Docking calculation.')
+    parser = argparse.ArgumentParser(description='PLI scoring - Docking calculation.')
     parameter_utils.add_default_io_args(parser)
     parser.add_argument('--no-gzip', action='store_true', help='Do not compress the output (STDOUT is never compressed')
     parser.add_argument('-pdb', '--pdb_file', help="PDB file for scoring")
@@ -89,9 +90,22 @@ def main():
     # Open up the input file
     input, suppl = rdkit_utils.default_open_input(args.input, args.informat)
     # Open the output file
-    output, WRITER, output_base = rdkit_utils.\
-        default_open_output(args.output, "plip", args.outformat,
-                            compress=not args.no_gzip, thinOutput=args.thin)
+    s_now = datetime.datetime.utcnow().strftime("%d-%b-%Y %H:%M:%S UTC")
+    source = 'pipelines/docking/plip.py'
+    output, WRITER, output_base = \
+        rdkit_utils.default_open_output(args.output, "plip", args.outformat,
+                                        compress=not args.no_gzip,
+                                        thinOutput=args.thin,
+                                        valueClassMappings={'pliff_iscore': 'java.lang.Float',
+                                                            'pliff_cscore': 'java.lang.Float',
+                                                            'pliff_nb_score': 'java.lang.Float',
+                                                            'pliff_gscore': 'java.lang.Float',
+                                                            'pliff_score': 'java.lang.Float',
+                                                            'pliff_tscore': 'java.lang.Float'},
+                                        datasetMetaProps={'created': s_now,
+                                                          'source': source,
+                                                          'description': 'PLI scoring of docked structures'}
+                                        )
 
     PDB_PATH = args.pdb_file
     if args.threshold:
