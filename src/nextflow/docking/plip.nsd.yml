@@ -1,0 +1,51 @@
+---
+serviceConfig:
+  id: "pipelines.pli.v1"
+  "name": "PLI docking scoring"
+  "description": "Score docked ligands with PLI"
+  tags:
+  - "pli"
+  - "docking"
+  - "scoring"
+  - "3d"
+  - "docker"
+  - "nextflow"
+  resourceUrl: null
+  icon: "icons/filter_molecules.png"
+  inputDescriptors:
+  - name: "ligands"
+    mediaType: "application/x-squonk-dataset-molecule+json"
+    primaryType: "org.squonk.dataset.Dataset"
+    secondaryType: "org.squonk.types.MoleculeObject"
+  - name: "protein"
+    mediaType: "chemical/x-pdb"
+    primaryType: "org.squonk.types.PDBFile"
+  outputDescriptors:
+  - name: "output"
+    mediaType: "application/x-squonk-dataset-molecule+json"
+    primaryType: "org.squonk.dataset.Dataset"
+    secondaryType: "org.squonk.types.MoleculeObject"
+  optionDescriptors:
+  - !<org.squonk.options.OptionDescriptor>
+    typeDescriptor: !<org.squonk.options.SimpleTypeDescriptor>
+      type: "java.lang.Float"
+    key: "arg.score"
+    label: "Score threshold"
+    description: "Keep only molecules with scores better than this value"
+    minValues: 0
+    maxValues: 1
+    visible: true
+    editable: true
+    modes:
+    - "User"
+
+  executorClassName: "org.squonk.execution.steps.impl.ThinDatasetNextflowInDockerExecutorStep"
+thinDescriptors:
+  - input: ligands
+    output: output
+inputRoutes:
+- route: "FILE"
+- route: "FILE"
+outputRoutes:
+- route: "FILE"
+nextflowParams: "${binding.variables.containsKey('score') ? ' --score ' + score: ''}"
