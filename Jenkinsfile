@@ -66,8 +66,8 @@ pipeline {
                 }
                 // Login to the target registry, push images and logout
                 sh "podman login --tls-verify=false --username ${env.USER} --password ${TOKEN} ${env.REGISTRY}"
-                sh "buildah push --tls-verify=false ${env.P_IMAGE} docker://${env.REGISTRY}/${env.P_IMAGE}"
-                sh "buildah push --tls-verify=false ${env.L_IMAGE} docker://${env.REGISTRY}/${env.L_IMAGE}"
+//                sh "buildah push --tls-verify=false ${env.P_IMAGE} docker://${env.REGISTRY}/${env.P_IMAGE}"
+//                sh "buildah push --tls-verify=false ${env.L_IMAGE} docker://${env.REGISTRY}/${env.L_IMAGE}"
                 sh "podman logout ${env.REGISTRY}"
 
             }
@@ -80,9 +80,9 @@ pipeline {
     post {
 
         failure {
-            mail to: "achristie@informaticsmatters.com",
+            mail to: 'achristie@informaticsmatters.com tdudgeon@informaticsmatters.com',
             subject: "Failed Core Pipeline",
-            body: "Something is wrong with ${env.BUILD_URL}"
+            body: "Something is wrong with the Squonk CI/CD PIPELINES build ${env.BUILD_URL}"
         }
 
     }
