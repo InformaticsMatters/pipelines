@@ -29,7 +29,7 @@ process splitter {
 
 /* Scores each file from the ligand_parts channel sending each resulting SD file to the results channel
 */
-process pli_scoring {
+process smog_scoring {
 
     beforeScript 'chmod g+w .'
 
@@ -41,7 +41,7 @@ process pli_scoring {
     file 'scored_part*.sdf' into scored_parts
 
     """
-	python -m pipelines.docking.plip -i $part -pdb $protein -o ${part.name.replace('ligand', 'scored')[0..-8]} -of sdf --no-gzip ${params.score ? ' -t ' + params.score : ''} --threads 1 &> scored_out.log
+	python -m pipelines.docking.smog2016 -i $part -pdb $protein -o ${part.name.replace('ligand', 'scored')[0..-8]} -of sdf --no-gzip ${params.score ? ' -t ' + params.score : ''} --threads 1 &> scored_out.log
     """
 }
 
@@ -66,6 +66,7 @@ process metrics_meta {
 
     beforeScript 'chmod g+w .'
     publishDir baseDir
+
 
     input:
     file 'splitter_metrics.txt' from splitter_metrics

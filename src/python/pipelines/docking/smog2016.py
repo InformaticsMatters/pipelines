@@ -40,7 +40,7 @@ def run_and_get_ans(mol):
     out_f.write(Chem.MolToMolBlock(mol))
     out_f.close()
     # Run command
-    proc = subprocess.Popen(["/usr/local/SMoG2016_Rev1/SMoG2016.exe", PDB_PATH, smogmol, "DeltaG"],
+    proc = subprocess.Popen(["/usr/local/SMoG2016/SMoG2016.exe", PDB_PATH, smogmol, "DeltaG"],
                             stdout=subprocess.PIPE)
     # Parse the output
     me = proc.stdout.read()
@@ -89,7 +89,7 @@ def main():
 
     utils.log("SMoG2016 Args: ", args)
 
-    smog_path = "/usr/local/SMoG2016_Rev1/"
+    smog_path = "/usr/local/SMoG2016/"
     if args.threshold:
         THRESHOLD = float(args.threshold)
     else:

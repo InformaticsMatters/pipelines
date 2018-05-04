@@ -75,6 +75,15 @@ task buildPliImage(type: DockerBuildImage) {
     tag = "informaticsmatters/pli:latest"
 }
 
+task buildSmogImage(type: DockerBuildImage) {
+    dependsOn buildPipelinesImage
+    description 'Builds the SMoG2016 Docker image'
+
+    dockerFile = file('Dockerfile-smog')
+    inputDir = file('.')
+    tag = "informaticsmatters/smog:latest"
+}
+
 task buildSdLoaderDockerImage(type: DockerBuildImage) {
     description 'Builds the pipelines SD-loader Docker image'
 
@@ -85,6 +94,7 @@ task buildSdLoaderDockerImage(type: DockerBuildImage) {
 
 task buildDockerImages() {
     dependsOn buildPliImage // that one depends on buildPipelinesImage
+    dependsOn buildSmogImage // and so does this one
     dependsOn buildSdLoaderDockerImage
 
     group 'Docker'

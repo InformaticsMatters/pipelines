@@ -1,0 +1,18 @@
+FROM informaticsmatters/rdkit_pipelines:latest
+LABEL maintainer="Tim Dudgeon<tdudgeon@informaticsmatters.com>"
+
+
+USER root
+RUN apt-get install libopenbabel-dev -y
+
+WORKDIR /usr/local
+RUN wget https://sourceforge.net/projects/opengrowth/files/SMoG2016.tar.gz/download -O smog.tar.gz &&\
+  tar xfz smog.tar.gz &&\
+  rm smog.tar.gz &&\
+  g++ -O3 -Wall -std=c++11 -Wno-uninitialized -I/usr/include/openbabel-2.0 -lm -c /usr/local/SMoG2016/SMoG2016.cpp -o /usr/local/SMoG2016/SMoG2016.o &&\
+  g++ /usr/local/SMoG2016/SMoG2016.o -o /usr/local/SMoG2016/SMoG2016.exe -rdynamic /usr/lib/libopenbabel.so -Wl,-rpath,/usr/lib
+
+RUN useradd -u 1001 -g 0 -m smog
+USER 1001
+
+WORKDIR /home/smog
