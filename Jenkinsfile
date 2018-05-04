@@ -81,7 +81,7 @@ pipeline {
 
         failure {
             mail to: 'achristie@informaticsmatters.com tdudgeon@informaticsmatters.com',
-            subject: "Failed Core Pipeline",
+            subject: 'Failed Pipelines Job',
             body: "Something is wrong with the Squonk CI/CD PIPELINES build ${env.BUILD_URL}"
         }
 
