@@ -44,7 +44,7 @@ This is an example that screens an SD file as in the previous example and then g
 that passed the screening step. As such it's an example of a two step pipeline.
 
 ```
-$ nextflow run src/nextflow/rdkit/screen+conformers.nf -c  src/nextflow/rdkit/screen.config -with-docker informaticsmatters/rdkit_pipelines
+$ nextflow run src/nextflow/rdkit/screen+conformers.nf -c  src/nextflow/rdkit/screen.config -with-docker
 N E X T F L O W  ~  version 0.22.6
 Launching `src/nextflow/rdkit/screen+conformers.nf` [sad_poincare] - revision: 67201accca
 [warm up] executor > local
@@ -55,7 +55,7 @@ Results: /Users/timbo/dev/git/pipelines/work/88/72fd4de1f7186f244efd8db7f0d6af/r
 
 Of course the notes in the previous section about running in a Docker container and providing real parameters also apply here.
 
-### PLI scoring
+## PLI scoring
 
 ```
 $ nextflow run src/nextflow/docking/plip.nf -c src/nextflow/docking/plip.config -with-docker --ligands data/smog/confs.sdf --protein data/smog/DCP2_1.pdb informaticsmatters/pli:latest
@@ -81,7 +81,7 @@ Launching `src/nextflow/docking/plip.nf` [lethal_northcutt] - revision: 41ef9aeb
 [a6/0b1ad3] Submitted process > results
 ```
 
-### SMoG2016 scoring
+## SMoG2016 scoring
 
 ```
 $ nextflow run src/nextflow/docking/smog.nf -c src/nextflow/docking/smog.config -with-docker --ligands data/smog/confs.sdf --protein data/smog/DCP2_1.pdb informaticsmatters/smog:latest
@@ -143,3 +143,5 @@ An example of how to execute would be this:
 ```bash
 docker run -it --rm -v $PWD:$PWD:z -w $PWD -v /var/run/docker.sock:/var/run/docker.sock informaticsmatters/nextflow sh -c 'nextflow run plip.nsd.nf -c plip.nsd.config --score 100.0 -with-docker'
 ``` 
+
+See [test-nextflow.sh](test-nextflow.sh) for some real examples.

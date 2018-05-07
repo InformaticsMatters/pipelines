@@ -3,7 +3,7 @@ LABEL maintainer="Tim Dudgeon<tdudgeon@informaticsmatters.com>"
 
 
 USER root
-RUN apt-get install libopenbabel-dev -y
+RUN apt-get install libopenbabel-dev g++ -y
 
 WORKDIR /usr/local
 RUN wget https://sourceforge.net/projects/opengrowth/files/SMoG2016.tar.gz/download -O smog.tar.gz &&\

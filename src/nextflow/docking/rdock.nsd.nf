@@ -1,7 +1,7 @@
 #!/usr/bin/env nextflow
 
 /* Squonk Nextflow pipline that runs Docking using rDock.
-* The contents of the file specified by params.receptor must contian the following:
+* The contents of the zip file specified by params.receptor must contain the following:
 * 1. receptor.mol2 - the prepared protein in mol2 format
 * 2. receptor.as - the receptor active site definition
 * 3. receptor.prm - the rDock configuration file that refers to receptor.mol2 in its RECEPTOR_FILE property.
@@ -26,6 +26,7 @@ receptorzip = file(params.receptor)
 
 process unzip_config {
 
+    beforeScript 'chmod g+w .'
     container 'informaticsmatters/rdkit_pipelines'
 
     input:
@@ -46,6 +47,7 @@ process unzip_config {
 */
 process splitter {
 
+    beforeScript 'chmod g+w .'
     container 'informaticsmatters/rdkit_pipelines'
 
     input:
@@ -105,6 +107,7 @@ process results {
 
 process metrics {
 
+    beforeScript 'chmod g+w .'
     container 'informaticsmatters/rdkit_pipelines'
 
     publishDir baseDir

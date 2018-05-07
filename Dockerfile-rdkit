@@ -1,10 +1,10 @@
-FROM informaticsmatters/rdkit:Release_2017_09_1
+FROM informaticsmatters/rdkit-python-debian:Release_2018_03_01
 LABEL maintainer="Tim Dudgeon<tdudgeon@informaticsmatters.com>"
 
 USER root
 
 # install pipelines python modules
-RUN apt-get -y update && apt-get install -y --no-install-recommends python-setuptools
+RUN apt-get -y update && apt-get -y install zip unzip
 
 # Copy the pipeline implementation into the image
 COPY src/python /opt/python
