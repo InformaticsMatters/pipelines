@@ -1,7 +1,7 @@
 FROM busybox
 MAINTAINER Tim Dudgeon <tdudgeon@informaticsmatters.com>
 
-# An image to populate a Service Descriptor desitination directory
+# An image to populate a Service Descriptor destination directory
 # (SD_DST), which is normally mounted when the image is run,
 # with built-in Service Descriptor files from a source directory (SD_SRC).
 
