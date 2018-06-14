@@ -1,20 +1,17 @@
-FROM busybox
+FROM centos
 MAINTAINER Tim Dudgeon <tdudgeon@informaticsmatters.com>
 
 # An image to populate the Core with the contents of the
 # Service Descriptors located in SD_SRC.
 
-ENV APP_ROOT /code
 ENV SD_SRC /sd-src
-
 WORKDIR ${SD_SRC}
-WORKDIR ${APP_ROOT}
 
 # Copy all potential Service Descriptors into the image...
-COPY src/python/ ${SD_SRC}/python/
-COPY src/nextflow/ ${SD_SRC}/nextflow/
-COPY post-service-descriptors.sh ${APP_ROOT}/
-RUN chmod +x ${APP_ROOT}/post-service-descriptors.sh
+COPY src/python/ ${SD_SRC}/src/python/
+COPY src/nextflow/ ${SD_SRC}/src/nextflow/
+COPY post-service-descriptors.sh ${SD_SRC}/
+RUN chmod 755 post-service-descriptors.sh
 
 # On execution copy files from source to destination...
 CMD ./post-service-descriptors.sh
