@@ -66,7 +66,7 @@ process splitter {
 */
 process rdock {
 
-    container 'informaticsmatters/rdock'
+    container 'informaticsmatters/rdock-mini:latest'
     // change permissions on the work dir so that the rdock user in the container
     // can write to the directory that is owned by root
     beforeScript 'chmod g+w .'

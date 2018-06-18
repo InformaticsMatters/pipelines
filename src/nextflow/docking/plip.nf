@@ -51,14 +51,13 @@ process pli_scoring {
 */
 process results {
 
-	publishDir './', mode: 'copy'
 	
 	input:
 	file ligands
 	file part from scored_parts.collect()
 	
 	output:
-	file 'output.sdf.gz'
+	file 'output.sdf.gz' into results
 	
  
 	"""
@@ -66,5 +65,5 @@ process results {
 	"""
 }
 
-    
+results.println { "Results: $it" }
     
