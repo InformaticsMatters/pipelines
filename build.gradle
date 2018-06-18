@@ -92,10 +92,19 @@ task buildSdLoaderDockerImage(type: DockerBuildImage) {
     tag = "informaticsmatters/rdkit_${pipeline}-sdloader:latest"
 }
 
+task buildSdPosterDockerImage(type: DockerBuildImage) {
+    description 'Builds the pipelines SD-poster Docker image'
+
+    dockerFile = file('Dockerfile-sdposter')
+    inputDir = file('.')
+    tag = "informaticsmatters/rdkit_${pipeline}-sdposter:latest"
+}
+
 task buildDockerImages() {
     dependsOn buildPliImage // that one depends on buildPipelinesImage
     dependsOn buildSmogImage // and so does this one
     dependsOn buildSdLoaderDockerImage
+    dependsOn buildSdPosterDockerImage
 
     group 'Docker'
     description 'Builds all the project Docker images'
