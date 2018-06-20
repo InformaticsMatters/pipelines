@@ -1,0 +1,22 @@
+---
+
+# The OpenShift Job definition for the Pipelines SD-Loader image.
+# With Squonk running you can execute this in the Squonk project namespace
+# to enable the defined pipelines.
+#
+# oc create -f post-service-descriptors.yaml
+# oc delete job/pipelines-sdposter
+
+kind: Job
+apiVersion: batch/v1
+metadata:
+  name: pipelines-sd-poster
+spec:
+  template:
+    metadata:
+      name: pipelines-sd-poster
+    spec:
+      containers:
+      - name: pipelines-sd-poster
+        image: squonk/rdkit-pipelines-sdposter:latest
+      restartPolicy: Never

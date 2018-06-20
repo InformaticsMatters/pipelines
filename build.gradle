@@ -97,7 +97,7 @@ task buildSdPosterDockerImage(type: DockerBuildImage) {
 
     dockerFile = file('Dockerfile-sdposter')
     inputDir = file('.')
-    tag = "informaticsmatters/rdkit_${pipeline}-sdposter:latest"
+    tag = "squonk/rdkit-${pipeline}-sdposter:latest"
 }
 
 task buildDockerImages() {
