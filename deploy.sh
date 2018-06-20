@@ -9,4 +9,4 @@ set -e pipefail
 
 oc create -f post-service-descriptors.yaml
 
-echo "Squonk pipeline deployment is underway..."
+echo "Squonk pipelines deployment is underway..."
