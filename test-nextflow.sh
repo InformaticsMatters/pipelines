@@ -24,38 +24,35 @@ nextflow run src/nextflow/docking/rdock.nf -c src/nextflow/docking/rdock.config 
 
 echo 'Running SMoG2016 in squonk mode'
 sudo rm -rf tmp/*
-cp src/nextflow/docking/smog.nsd.nf tmp/nextflow.nf
-cp src/nextflow/docking/smog.nsd.config tmp/nextflow.config
-gzip -c data/smog/DCP2_1.pdb > tmp/protein.pdb.gz
-cp data/smog/confs.data.gz tmp/ligands.data.gz
-cp data/smog/confs.metadata tmp/ligands.metadata
 cd tmp
-docker run -it --rm -v $PWD:$PWD:z -w $PWD -v /var/run/docker.sock:/var/run/docker.sock informaticsmatters/nextflow sh -c 'nextflow run nextflow.nf -c nextflow.config --score 100.0 -with-docker'
+ln ../src/nextflow/docking/smog.nsd.nf nextflow.nf
+ln ../src/nextflow/docking/smog.nsd.config nextflow.config
+gzip -c ../data/smog/DCP2_1.pdb > protein.pdb.gz
+ln ../data/smog/confs.data.gz ligands.data.gz
+ln ../data/smog/confs.metadata ligands.metadata
+docker run -it --rm -v $PWD:$PWD:z -w $PWD -v /var/run/docker.sock:/var/run/docker.sock informaticsmatters/nextflow-docker:0.30.2 sh -c 'nextflow run nextflow.nf -c nextflow.config --score 100.0 -with-docker'
 cd ..
-sudo rm -rf tmp/*
-
 
 echo 'Running PLI in squonk mode'
 sudo rm -rf tmp/*
-cp src/nextflow/docking/plip.nsd.nf tmp/nextflow.nf
-cp src/nextflow/docking/plip.nsd.config tmp/nextflow.config
-gzip -c data/smog/DCP2_1.pdb > tmp/protein.pdb.gz
-cp data/smog/confs.data.gz tmp/ligands.data.gz
-cp data/smog/confs.metadata tmp/ligands.metadata
 cd tmp
-docker run -it --rm -v $PWD:$PWD:z -w $PWD -v /var/run/docker.sock:/var/run/docker.sock informaticsmatters/nextflow sh -c 'nextflow run nextflow.nf -c nextflow.config --score 100.0 -with-docker'
+ln ../src/nextflow/docking/plip.nsd.nf nextflow.nf
+ln ../src/nextflow/docking/plip.nsd.config nextflow.config
+gzip -c ../data/smog/DCP2_1.pdb > protein.pdb.gz
+ln ../data/smog/confs.data.gz ligands.data.gz
+ln ../data/smog/confs.metadata ligands.metadata
+docker run -it --rm -v $PWD:$PWD:z -w $PWD -v /var/run/docker.sock:/var/run/docker.sock informaticsmatters/nextflow-docker:0.30.2 sh -c 'nextflow run nextflow.nf -c nextflow.config --score 100.0 -with-docker'
 cd ..
-sudo rm -rf tmp/*
-
 
 echo 'Running rDock in squonk mode'
 sudo rm -rf tmp/*
-cp src/nextflow/docking/rdock.nsd.nf tmp/nextflow.nf
-cp src/nextflow/docking/rdock.nsd.config tmp/nextflow.config
-cp data/hivpr.config.zip tmp/config.zip
-cp data/dhfr_3d.data.gz tmp/ligands.data.gz
-cp data/dhfr_3d.metadata tmp/ligands.metadata
 cd tmp
-docker run -it --rm -v $PWD:$PWD:z -w $PWD -v /var/run/docker.sock:/var/run/docker.sock informaticsmatters/nextflow sh -c 'nextflow run nextflow.nf -c nextflow.config --num_dockings 1 --limit 40 --chunk 5 -with-docker'
+ln ../src/nextflow/docking/rdock.nsd.nf nextflow.nf
+ln ../src/nextflow/docking/rdock.nsd.config nextflow.config
+ln ../data/hivpr.config.zip config.zip
+ln ../data/dhfr_3d.data.gz ligands.data.gz
+ln ../data/dhfr_3d.metadata ligands.metadata
+docker run -it --rm -v $PWD:$PWD:z -w $PWD -v /var/run/docker.sock:/var/run/docker.sock informaticsmatters/nextflow-docker:0.30.2 sh -c 'nextflow run nextflow.nf -c nextflow.config --num_dockings 1 --limit 40 --chunk 5 -with-docker'
 cd ..
+
 sudo rm -rf tmp/*

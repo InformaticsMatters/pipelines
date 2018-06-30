@@ -48,39 +48,23 @@ process smog_scoring {
 process joiner {
 
     beforeScript 'chmod g+w .'
-    publishDir baseDir, pattern: "{output.data.gz,output.metadata}"
+    publishDir baseDir, mode: 'link'
 
     input:
-	file parts from scored_parts.collect()
+    file parts from scored_parts.collect()
+    file 'splitter_metrics.txt' from splitter_metrics
 
 	output:
-	file 'output_metrics.txt' into joiner_metrics
+	file 'output_metrics.txt'
 	file 'output.data.gz'
+    file 'output.metadata'
 
 	"""
 	cat scored_part*.sdf | python -m pipelines_utils_rdkit.filter -if sdf -of json -o output --meta --thin
-	"""
-}
-
-process metrics_meta {
-
-    beforeScript 'chmod g+w .'
-    publishDir baseDir
-
-
-    input:
-    file 'splitter_metrics.txt' from splitter_metrics
-    file 'joiner_metrics.txt' from joiner_metrics
-
-    output:
-    file 'output_metrics.txt'
-    file 'output.metadata'
-
-    """
-    grep '__InputCount__' splitter_metrics.txt | sed s/__InputCount__/PLI/ > output_metrics.txt
+	mv output_metrics.txt joiner_metrics.txt
+    grep '__InputCount__' splitter_metrics.txt | sed s/__InputCount__/SMOG/ > output_metrics.txt
     grep '__InputCount__' splitter_metrics.txt >> output_metrics.txt
     grep '__OutputCount__' joiner_metrics.txt >> output_metrics.txt
-    echo '{"type":"org.squonk.types.BasicObject","valueClassMappings":{"pliff_cscore":"java.lang.Float","pliff_iscore":"java.lang.Float","pliff_tscore":"java.lang.Float","pliff_gscore":"java.lang.Float","pliff_score":"java.lang.Float","pliff_nb_score":"java.lang.Float"}}' > output.metadata
-    """
+    echo '{"type":"org.squonk.types.BasicObject","valueClassMappings":{"SMoG2016_SCORE":"java.lang.Float","EmbedRMS":"java.lang.Float"}}' > output.metadata
+  	"""
 }
-

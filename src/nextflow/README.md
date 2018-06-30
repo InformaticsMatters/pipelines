@@ -138,7 +138,7 @@ When Squonk executes your pipeline it does the following:
 * copies your `*.nsd.conf` file to the file `nextflow.conf` in this directory
 * creates a simple `execute` bash script that will executes the pipeline with the options provided by the user and as specified 
 in the service descriptor
-* Runs a container using the `informaticsmatters/nextflow` Docker image, mounting in the working directory and running the
+* Runs a container using the `informaticsmatters/nextflow-docker` Docker image, mounting in the working directory and running the
 `execute` script
 * After execution grabs the expected output files and as the results of execution
 * deletes the temporary working directory (unless working in debug mode)

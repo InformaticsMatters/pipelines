@@ -10,6 +10,7 @@
       "cmax",
       "tmax",
       "simulation",
+      "prediction",
       "docker"
     ],
     "resourceUrl": null,

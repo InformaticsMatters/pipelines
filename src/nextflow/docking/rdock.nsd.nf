@@ -27,7 +27,7 @@ receptorzip = file(params.receptor)
 process unzip_config {
 
     beforeScript 'chmod g+w .'
-    container 'informaticsmatters/rdkit_pipelines'
+    container 'informaticsmatters/rdkit_pipelines:latest'
 
     input:
     file receptorzip
@@ -48,7 +48,7 @@ process unzip_config {
 process splitter {
 
     beforeScript 'chmod g+w .'
-    container 'informaticsmatters/rdkit_pipelines'
+    container 'informaticsmatters/rdkit_pipelines:latest'
 
     input:
     file ligands
@@ -89,7 +89,7 @@ process rdock {
 */
 process results {
 
-	container 'informaticsmatters/rdock'
+	container 'informaticsmatters/rdock-mini'
 	// change permissions - see above
 	beforeScript 'chmod g+w .'
 
@@ -108,9 +108,9 @@ process results {
 process metrics {
 
     beforeScript 'chmod g+w .'
-    container 'informaticsmatters/rdkit_pipelines'
+    container 'informaticsmatters/rdkit_pipelines:latest'
 
-    publishDir baseDir
+    publishDir baseDir, mode: 'link'
 
     input:
     file 'results.sdf' from results
