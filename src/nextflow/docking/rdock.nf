@@ -65,8 +65,6 @@ process rdock {
 */
 process results {
 
-    publishDir './', mode: 'copy'
-
 	input:
 	file part from docked_parts.collect()
 

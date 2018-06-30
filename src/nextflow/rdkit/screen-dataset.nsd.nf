@@ -14,7 +14,7 @@ target = file(params.input)
 
 process splitter {
 
-    container 'informaticsmatters/rdkit_pipelines'
+    container 'informaticsmatters/rdkit_pipelines:latest'
 
     input:
     file target
@@ -45,40 +45,24 @@ process rdkitScreen {
 
 process joiner {
 
-    container 'informaticsmatters/rdkit_pipelines'
+    container 'informaticsmatters/rdkit_pipelines:latest'
 
-    publishDir baseDir, pattern: "{output.data.gz,output.metadata}"
+    publishDir baseDir, mode: 'link'
 
     input:
+    file 'splitter_metrics.txt' from splitter_metrics
 	file parts from screened_parts.collect()
 
 	output:
-	file 'output_metrics.txt' into joiner_metrics
+	file 'output_metrics.txt'
 	file 'output.data.gz'
 	file 'output.metadata'
 
 	"""
 	zcat $parts | python -m pipelines_utils_rdkit.filter -if sdf -of json -o output --meta
-	"""
-}
-
-process metrics {
-
-    container 'informaticsmatters/rdkit_pipelines'
-
-    publishDir baseDir
-
-    input:
-    file 'splitter_metrics.txt' from splitter_metrics
-    file 'joiner_metrics.txt' from joiner_metrics
-
-    output:
-    file 'output_metrics.txt'
-
-    """
-    grep '__InputCount__' splitter_metrics.txt | sed s/__InputCount__/RDKitScreen/ > output_metrics.txt
+	mv output_metrics.txt joiner_metrics.txt
+	grep '__InputCount__' splitter_metrics.txt | sed s/__InputCount__/RDKitScreen/ > output_metrics.txt
     grep '__InputCount__' splitter_metrics.txt >> output_metrics.txt
     grep '__OutputCount__' joiner_metrics.txt >> output_metrics.txt
-    """
+	"""
 }
-

@@ -4,7 +4,7 @@
 
 set -e
 
-echo 'Running screen+config'
+echo 'Running screen+conformers in basic mode'
 nextflow run src/nextflow/rdkit/screen+conformers.nf -c  src/nextflow/rdkit/screen.config -with-docker
 
 
@@ -53,6 +53,28 @@ ln ../data/hivpr.config.zip config.zip
 ln ../data/dhfr_3d.data.gz ligands.data.gz
 ln ../data/dhfr_3d.metadata ligands.metadata
 docker run -it --rm -v $PWD:$PWD:z -w $PWD -v /var/run/docker.sock:/var/run/docker.sock informaticsmatters/nextflow-docker:0.30.2 sh -c 'nextflow run nextflow.nf -c nextflow.config --num_dockings 1 --limit 40 --chunk 5 -with-docker'
+cd ..
+
+echo 'Running screen in squonk mode'
+sudo rm -rf tmp/*
+cd tmp
+ln ../src/nextflow/rdkit/screen-dataset.nsd.nf nextflow.nf
+ln ../src/nextflow/rdkit/screen-dataset.nsd.config nextflow.config
+ln ../data/dhfr_3d.data.gz input.data.gz
+ln ../data/dhfr_3d.metadata ligands.metadata
+docker run -it --rm -v $PWD:$PWD:z -w $PWD -v /var/run/docker.sock:/var/run/docker.sock informaticsmatters/nextflow-docker:0.30.2\
+  sh -c 'nextflow run nextflow.nf -c nextflow.config -with-docker --chunk 100 --simmin 0.5 --qsmiles "OC(=O)C1=CC=C(NC2=NC3=C(CN=C(C4=CC(Cl)=CC=C34)C3=C(F)C=CC=C3F)C=N2)C=C1"'
+cd ..
+
+echo 'Running screen-multi in squonk mode'
+sudo rm -rf tmp/*
+cd tmp
+ln ../src/nextflow/rdkit/screen-multi-dataset.nsd.nf nextflow.nf
+ln ../src/nextflow/rdkit/screen-multi-dataset.nsd.config nextflow.config
+ln ../data/dhfr_3d.data.gz target.data.gz
+ln ../data/nci100.data.gz query.data.gz
+docker run -it --rm -v $PWD:$PWD:z -w $PWD -v /var/run/docker.sock:/var/run/docker.sock informaticsmatters/nextflow-docker:0.30.2\
+  sh -c 'nextflow run nextflow.nf -c nextflow.config -with-docker --chunk 100 --simmin 0.55'
 cd ..
 
 sudo rm -rf tmp/*
