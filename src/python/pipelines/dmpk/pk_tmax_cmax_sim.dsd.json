@@ -1,4 +1,4 @@
-{
+{ "@class":"org.squonk.core.DockerServiceDescriptor",
   "serviceConfig": {
     "id": "pipelines.dmpk.sygnature.tmax_cmax_sim.1",
     "name": "TmaxCmaxSimulation",

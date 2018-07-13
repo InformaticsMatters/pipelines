@@ -1,4 +1,5 @@
 ---
+!<org.squonk.core.NextflowServiceDescriptor>
 serviceConfig:
   id: "pipelines.pli.v1"
   "name": "PLI docking scoring"

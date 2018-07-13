@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# run locally with something like this:
+# ./post-service-descriptors.sh http://localhost:8091/coreservices/rest/v1/services
 
 set -e
 

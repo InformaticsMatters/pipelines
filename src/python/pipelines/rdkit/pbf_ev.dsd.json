@@ -1,4 +1,6 @@
-{ "serviceConfig": {
+{
+  "@class":"org.squonk.core.DockerServiceDescriptor",
+  "serviceConfig": {
   "id": "pipelines.xchem.pbf_ev.v1",
   "name": "PBF EV analyisis",
   "description": "PBF EV analysis ",

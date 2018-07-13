@@ -1,4 +1,6 @@
-{ "serviceConfig": {
+{
+  "@class":"org.squonk.core.DockerServiceDescriptor",
+  "serviceConfig": {
   "id": "pipelines.xchem.sanify.enumerate.v1",
   "name": "MoleculeEnumerator",
   "description": "Enumerate stereoisomers and tautomers",

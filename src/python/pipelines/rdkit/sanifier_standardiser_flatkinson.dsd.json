@@ -1,4 +1,6 @@
-{ "serviceConfig": {
+{
+  "@class":"org.squonk.core.DockerServiceDescriptor",
+  "serviceConfig": {
   "id": "pipelines.xchem.sanify.standardise.flatkinson.v1",
   "name": "FlatkinsonStandardiser",
   "description": "Molecule standardiser from Francis Atkinson",
