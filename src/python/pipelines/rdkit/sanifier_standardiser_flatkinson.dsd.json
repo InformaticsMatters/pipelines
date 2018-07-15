@@ -56,9 +56,6 @@
   "thinDescriptors": [{"input": "input", "preserve": false}],
   "inputRoutes": [ {"route": "FILE"} ],
   "outputRoutes": [ {"route": "FILE"} ],
-  "imageName": "abradle/standardiser",
-  "command": "cp -r /pipelines /tmp/pipelines && pip install -e /tmp/pipelines && python -m pipelines.rdkit.sanifier -i ${PIN}input.data.gz -if json -o ${POUT}output -of json -st -stm flatkinson --meta",
-  "volumes": {
-      "pipelines": "/pipelines"
-    }
+  "imageName": "informaticsmatters/rdkit_pipelines",
+  "command": "python -m pipelines.rdkit.sanifier -i ${PIN}input.data.gz -if json -o ${POUT}output -of json -st -stm flatkinson --meta"
 }

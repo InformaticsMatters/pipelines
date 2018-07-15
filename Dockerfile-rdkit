@@ -10,4 +10,4 @@ RUN apt-get -y update && apt-get -y install zip unzip
 COPY src/python /opt/python
 RUN pip install -e /opt/python
 # And the pipeline-utilities
-RUN pip install matplotlib im-pipelines-utils==2.2.* im-pipelines-utils-rdkit==1.4.*
+RUN pip install molvs standardiser matplotlib im-pipelines-utils==2.2.* im-pipelines-utils-rdkit==1.4.*
