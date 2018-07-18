@@ -3,11 +3,11 @@ LABEL maintainer="Tim Dudgeon<tdudgeon@informaticsmatters.com>"
 
 USER root
 
-# install pipelines python modules
-RUN apt-get -y update && apt-get -y install zip unzip
+# install required packages
+RUN apt-get -y update && apt-get -y install zip unzip procps
 
 # Copy the pipeline implementation into the image
 COPY src/python /opt/python
 RUN pip install -e /opt/python
-# And the pipeline-utilities
+# And the pip packages including pipeline-utilities and im-pipelines-utils-rdkit
 RUN pip install molvs standardiser matplotlib im-pipelines-utils==2.2.* im-pipelines-utils-rdkit==1.4.*
