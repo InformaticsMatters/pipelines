@@ -1,4 +1,4 @@
-FROM centos
+FROM centos:7
 MAINTAINER Tim Dudgeon <tdudgeon@informaticsmatters.com>
 
 # An image to populate the Core with the contents of the

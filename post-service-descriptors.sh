@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # run locally with something like this:
 # ./post-service-descriptors.sh http://localhost:8091/coreservices/rest/v1/services
+# or
+# docker run -it --rm -v $PWD:$PWD:Z -w $PWD --network deploy_squonk_back centos:7 ./post-service-descriptors.sh
 
 set -e
 
