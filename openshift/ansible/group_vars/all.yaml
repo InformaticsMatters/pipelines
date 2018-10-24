@@ -1,0 +1,14 @@
+---
+
+oc_admin: "{{ ansible_env.OC_ADMIN }}"
+oc_admin_password: "{{ ansible_env.OC_ADMIN_PASSWORD }}"
+oc_master_hostname: "{{ ansible_env.OC_MASTER_HOSTNAME }}"
+oc_project: "{{ ansible_env.OC_PROJECT }}"
+oc_pipelines_sd_poster_image_tag: "{{ ansible_env.OC_PIPELINES_SD_POSTER_IMAGE_TAG }}"
+
+# Various retry timeouts (seconds)...
+pod_ready_timeout: 600
+
+# Our template directory
+# (relative to the role_path directory)
+t_dir: ../../../..

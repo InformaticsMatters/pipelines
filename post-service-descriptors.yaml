@@ -2,23 +2,42 @@
 
 # The OpenShift Job definition for the Squonk Pipelines SD-Loader image.
 # With Squonk running you can execute this in the Squonk project namespace
-# to enable the defined pipelines.
+# to enable the defined pipelines
+# (by using the Ansible playbook 'pipelines/deploy.yaml')
 #
-# oc create -f post-service-descriptors.yaml
+# oc process -f post-service-descriptors.yaml | oc create -f -
+# oc delete job --selector template=pipelines-sd-poster
 
-kind: Job
-apiVersion: batch/v1
+kind: Template
+apiVersion: v1
 metadata:
-  generateName: pipelines-sd-poster-
-spec:
-  template:
-    spec:
-      initContainers:
-      - image: yauritux/busybox-curl
-        name: wait-for-core-before-pipelines-post
-        command: ['sh', '-c',
-          'until (( curl http://coreservices:8080/rest/ping --connect-timeout 5 )); do sleep 2; done']
-      containers:
-      - image: squonk/rdkit-pipelines-sdposter:latest
-        name: pipelines-sd-poster
-      restartPolicy: Never
+  name: pipelines-sd-poster
+labels:
+  template: pipelines-sd-poster
+
+parameters:
+
+- name: POSTER_IMAGE_TAG
+  value: latest
+
+objects:
+
+- kind: Job
+  apiVersion: batch/v1
+  metadata:
+    name: pipelines-sd-poster
+  spec:
+    template:
+      spec:
+
+        initContainers:
+        - image: yauritux/busybox-curl
+          name: wait-for-core-before-pipelines-post
+          command: ['sh', '-c',
+            'until (( curl http://coreservices:8080/rest/ping --connect-timeout 5 )); do sleep 2; done']
+
+        containers:
+        - image: squonk/rdkit-pipelines-sdposter:${POSTER_IMAGE_TAG}
+          name: pipelines-sd-poster
+
+        restartPolicy: Never

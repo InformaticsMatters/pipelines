@@ -1,0 +1,37 @@
+---
+
+# Login and move to the Squonk project
+# and then remove any existing poster job
+# before deploying a new one (and waiting for completion).
+
+- name: Login (admin)
+  shell: oc login {{ oc_master_hostname }} -u {{ oc_admin }} -p {{ oc_admin_password }}
+  changed_when: False
+
+- name: Move to Squonk Project
+  shell: oc project {{ oc_project }}
+  changed_when: False
+
+- name: Get jobs
+  shell: oc get jobs
+  register: jobs_result
+  changed_when: False
+
+- name: Delete existing SD poster job
+  shell: oc delete jobs/{{ job_name }}
+  when: jobs_result.stdout | regex_search('^%s' % job_name, multiline=True)
+
+- name: Run SD poster job (always)
+  shell: >
+    oc process
+    -f {{ role_path }}/{{ t_dir }}/post-service-descriptors.yaml
+    -p POSTER_IMAGE_TAG={{ oc_pipelines_sd_poster_image_tag }}
+    | oc create -f -
+
+- name: Wait for SD poster success
+  shell: oc describe jobs/{{ job_name }} | grep '1 Succeeded'  | grep 1
+  delay: 10
+  retries: "{{ (pod_ready_timeout | int / 10) | int }}"
+  register: result
+  until: result.rc == 0
+  changed_when: False
