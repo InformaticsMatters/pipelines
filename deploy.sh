@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+# DEPRECATION NOTICE
+#
+# YOU SHOULD BE USING THE ANSIBLE PLAYBOOKS in openshift/ansible
+# WHERE YOU WILL ALSO FIND A SIMPLE README. ALTHOUGH EVERY ATTEMPT HAS BEEN
+# MADE TO KEEP THE SCRIPT YOU SEE HERE IN GOOD ORDER IT MIGHT BE OUT OF DATE.
+# IF THE EXISTING ANSIBLE PLAYBOOKS ARE NOT SUITABLE MAKE THEM SO!
+
 # A simple deployment script for OpenShift.
 # It is assumed that your OpenShift Squonk application has been deployed
 # and that you are running this from the Squonk project/namespace
