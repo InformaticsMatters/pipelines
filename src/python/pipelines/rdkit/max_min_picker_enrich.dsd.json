@@ -1,4 +1,6 @@
-{ "serviceConfig": {
+{
+  "@class":"org.squonk.core.DockerServiceDescriptor",
+  "serviceConfig": {
   "id": "pipelines.rdkit.maxminpicker.enrich.1",
   "name": "RDKitMaxMinPickerEnrich",
   "description": "RDKit MaxMin picker for enriching a dataset with a diverse selection",

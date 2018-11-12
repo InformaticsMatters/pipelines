@@ -1,4 +1,5 @@
 {
+  "@class":"org.squonk.core.DockerServiceDescriptor",
   "serviceConfig": {
     "id": "pipelines.rdkit.o3da.basic",
     "name": "RDKitOpen3DAlign",

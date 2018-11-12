@@ -1,18 +1,18 @@
 {
   "@class":"org.squonk.core.DockerServiceDescriptor",
   "serviceConfig": {
-    "id": "pipelines.xchem.reaction.maker.v1",
-    "name": "XChemReactionMaker",
-    "description": "XChem react molecules and reactants",
+    "id": "pipelines.rdkit.sucos.basic",
+    "name": "RDKitSuCOS",
+    "description": "Generate 3D overlay using SuCOS in RDKit",
     "tags": [
       "rdkit",
-      "xchem",
-      "enumeration",
-      "reaction",
+      "alignment",
+      "sucos",
+      "3d",
       "docker"
     ],
     "resourceUrl": null,
-    "icon": "icons/chemreaction.png",
+    "icon": "icons/filter_molecules.png",
     "inputDescriptors": [
       {
         "primaryType": "org.squonk.dataset.Dataset",
@@ -24,7 +24,7 @@
         "primaryType": "org.squonk.dataset.Dataset",
         "secondaryType": "org.squonk.types.MoleculeObject",
         "mediaType": "application/x-squonk-dataset-molecule+json",
-        "name": "reactants"
+        "name": "target"
       }
     ],
     "outputDescriptors": [
@@ -41,34 +41,17 @@
           "User"
         ],
         "editable": true,
-        "@class": "org.squonk.options.OptionDescriptor",
+        "visible": true,
+        "description": "Target molecule index (default is the first)",
+        "label": "Target mol index",
+        "key": "arg.target",
+        "minValues": 0,
+        "maxValues": 1,
         "typeDescriptor": {
-          "type": "java.lang.String",
+          "type": "java.lang.Integer",
           "@class": "org.squonk.options.SimpleTypeDescriptor"
         },
-        "key": "arg.reaction",
-        "label": "Reaction",
-        "description": "Reaction to use",
-        "values": [
-          "Amides",
-          "Benzimidazole",
-          "Benzoxazole",
-          "Ester_Coupling",
-          "Ether_Coupling",
-          "Indole",
-          "N-Alkylation",
-          "Oxadiazole",
-          "Reductive_Amination",
-          "SNAr",
-          "Sonogashira",
-          "Sulfonamide",
-          "Suzuki_Coupling",
-          "Triazole",
-          "Urea"
-        ],
-        "visible": true,
-        "minValues": 1,
-        "maxValues": 1
+        "@class": "org.squonk.options.OptionDescriptor"
       }
     ],
     "executorClassName": "org.squonk.execution.steps.impl.ThinDatasetDockerExecutorStep"
@@ -76,9 +59,6 @@
   "thinDescriptors": [
     {
       "input": "input"
-    },
-    {
-      "input": "reactants"
     }
   ],
   "inputRoutes": [
@@ -95,5 +75,5 @@
     }
   ],
   "imageName": "informaticsmatters/rdkit_pipelines",
-  "command": "python -m pipelines.rdkit.rxn_maker -i ${PIN}input.data.gz --reagent_lib reactants.data.gz -o ${POUT}output --reaction ${reaction} -of json --meta"
+  "command": "python -m pipelines.rdkit.sucos --target target.data.gz -i ${PIN}input.data.gz -o ${POUT}output -of json${binding.variables.containsKey('target') ? ' --targetidx ' + binding.variables.get('targetidx') : ''} --meta"
 }

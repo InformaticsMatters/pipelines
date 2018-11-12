@@ -1,4 +1,5 @@
-{ "serviceConfig": {
+{ "@class":"org.squonk.core.DockerServiceDescriptor",
+  "serviceConfig": {
   "id": "pipelines.xchem.obabel.prepare.pdb.v1",
   "name": "OBabelPreparePDB",
   "description": "Prepare PDB file uisng Open Babel",

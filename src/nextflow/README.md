@@ -162,3 +162,8 @@ docker run -it --rm -v $PWD:$PWD:z -w $PWD -v /var/run/docker.sock:/var/run/dock
 ``` 
 
 See [test-nextflow.sh](../..test-nextflow.sh) for some real examples.
+
+To debug in squonk move into the execution dir (/squonk/work/docker/<uuid>) and then execute:
+```
+docker run -it --rm -v $PWD:$PWD:z -w $PWD -v /var/run/docker.sock:/var/run/docker.sock informaticsmatters/nextflow-docker:0.30.2 ./execute
+```

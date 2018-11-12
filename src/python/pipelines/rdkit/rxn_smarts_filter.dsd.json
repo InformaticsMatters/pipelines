@@ -1,4 +1,6 @@
-{ "serviceConfig": {
+{
+  "@class":"org.squonk.core.DockerServiceDescriptor",
+  "serviceConfig": {
   "id": "pipelines.xchem.smarts_filter.reaction",
   "name": "XChemReactionSmartsFilter",
   "description": "XChem Reaction Smarts Filter",
