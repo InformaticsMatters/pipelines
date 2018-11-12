@@ -1,0 +1,79 @@
+{
+  "@class":"org.squonk.core.DockerServiceDescriptor",
+  "serviceConfig": {
+    "id": "pipelines.rdkit.sucos.basic",
+    "name": "RDKitSuCOS",
+    "description": "Generate 3D overlay using SuCOS in RDKit",
+    "tags": [
+      "rdkit",
+      "alignment",
+      "sucos",
+      "3d",
+      "docker"
+    ],
+    "resourceUrl": null,
+    "icon": "icons/filter_molecules.png",
+    "inputDescriptors": [
+      {
+        "primaryType": "org.squonk.dataset.Dataset",
+        "secondaryType": "org.squonk.types.MoleculeObject",
+        "mediaType": "application/x-squonk-dataset-molecule+json",
+        "name": "input"
+      },
+      {
+        "primaryType": "org.squonk.dataset.Dataset",
+        "secondaryType": "org.squonk.types.MoleculeObject",
+        "mediaType": "application/x-squonk-dataset-molecule+json",
+        "name": "target"
+      }
+    ],
+    "outputDescriptors": [
+      {
+        "primaryType": "org.squonk.dataset.Dataset",
+        "secondaryType": "org.squonk.types.MoleculeObject",
+        "mediaType": "application/x-squonk-dataset-molecule+json",
+        "name": "output"
+      }
+    ],
+    "optionDescriptors": [
+      {
+        "modes": [
+          "User"
+        ],
+        "editable": true,
+        "visible": true,
+        "description": "Target molecule index (default is the first)",
+        "label": "Target mol index",
+        "key": "arg.target",
+        "minValues": 0,
+        "maxValues": 1,
+        "typeDescriptor": {
+          "type": "java.lang.Integer",
+          "@class": "org.squonk.options.SimpleTypeDescriptor"
+        },
+        "@class": "org.squonk.options.OptionDescriptor"
+      }
+    ],
+    "executorClassName": "org.squonk.execution.steps.impl.ThinDatasetDockerExecutorStep"
+  },
+  "thinDescriptors": [
+    {
+      "input": "input"
+    }
+  ],
+  "inputRoutes": [
+    {
+      "route": "FILE"
+    },
+    {
+      "route": "FILE"
+    }
+  ],
+  "outputRoutes": [
+    {
+      "route": "FILE"
+    }
+  ],
+  "imageName": "informaticsmatters/rdkit_pipelines",
+  "command": "python -m pipelines.rdkit.sucos --target target.data.gz -i ${PIN}input.data.gz -o ${POUT}output -of json${binding.variables.containsKey('target') ? ' --targetidx ' + binding.variables.get('targetidx') : ''} --meta"
+}
