@@ -16,6 +16,34 @@
 
         creates: [ 'output.sdf.gz' ],
 
+    ],
+
+         test_raw_sucos_sdf_pick_target_1 = [
+
+                 command: '''python -m pipelines.rdkit.sucos
+                          --target ${PIN}/sucos/mols.sdf
+                          --targetidx 1
+                          -i ${PIN}/sucos/mols.sdf -if sdf
+                          -o ${POUT}output -of sdf''',
+
+                 stderr: [ 'Score: 0.843' ],
+
+                 creates: [ 'output.sdf.gz' ],
+
+    ],
+
+    test_raw_sucos_sdf_pick_target_6 = [
+
+            command: '''python -m pipelines.rdkit.sucos
+                     --target ${PIN}/sucos/mols.sdf
+                     --targetidx 6
+                     -i ${PIN}/sucos/mols.sdf -if sdf
+                     -o ${POUT}output -of sdf''',
+
+            stderr: [ 'Score: 1.0' ],
+
+            creates: [ 'output.sdf.gz' ],
+
     ]
 
 ]
