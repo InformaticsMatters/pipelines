@@ -5,10 +5,10 @@
     version = 1,
 
     // Testing sucos.py reading from file and writing to file
-    test_raw_sucos_sdf_to_sdf = [
+    test_raw_sucos_sdf_to_mol = [
 
         command: '''python -m pipelines.rdkit.sucos
-                 --target ${PIN}/sucos/4e3g_lig.sdf
+                 --target ${PIN}/sucos/4e3g_lig.mol
                  -i ${PIN}/sucos/benzene.sdf -if sdf
                  -o ${POUT}output -of sdf''',
 
