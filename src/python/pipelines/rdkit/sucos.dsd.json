@@ -44,7 +44,7 @@
         "visible": true,
         "description": "Target molecule index (default is the first)",
         "label": "Target mol index",
-        "key": "arg.target",
+        "key": "arg.targetidx",
         "minValues": 0,
         "maxValues": 1,
         "typeDescriptor": {
@@ -75,5 +75,5 @@
     }
   ],
   "imageName": "informaticsmatters/rdkit_pipelines",
-  "command": "python -m pipelines.rdkit.sucos --target target.data.gz -i ${PIN}input.data.gz -o ${POUT}output -of json${binding.variables.containsKey('target') ? ' --targetidx ' + binding.variables.get('targetidx') : ''} --meta"
+  "command": "python -m pipelines.rdkit.sucos --target ${PIN}target.data.gz -i ${PIN}input.data.gz -o ${POUT}output -of json${binding.variables.containsKey('targetidx') ? ' --targetidx ' + binding.variables.get('targetidx') : ''} --meta"
 }
