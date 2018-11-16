@@ -11,4 +11,4 @@ pod_ready_timeout: 600
 
 # Our template directory
 # (relative to the role_path directory)
-t_dir: ../../../..
+t_dir: ../../../templates
