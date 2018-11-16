@@ -56,7 +56,7 @@ pipeline {
 
                 // Build...
                 // (Small image first)
-                sh "buildah bud --format docker -f Dockerfile-sdloader -t ${env.P_IMAGE} ."
+                sh "buildah bud --format docker -f Dockerfile-sdposter -t ${env.P_IMAGE} ."
                 sh "buildah bud --format docker -f Dockerfile-rdkit -t ${env.L_IMAGE} ."
 
                 // Deploy...
