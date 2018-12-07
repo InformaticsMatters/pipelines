@@ -72,6 +72,23 @@
         "@class": "org.squonk.options.OptionDescriptor"
       },
       {
+        "modes": [
+          "User"
+        ],
+        "editable": true,
+        "visible": true,
+        "description": "Use Crippen (logP) contributions",
+        "label": "Use Crippen (logP) contributions",
+        "key": "arg.crippen",
+        "minValues": 1,
+        "maxValues": 1,
+        "typeDescriptor": {
+          "type": "java.lang.Boolean",
+          "@class": "org.squonk.options.SimpleTypeDescriptor"
+        },
+        "@class": "org.squonk.options.OptionDescriptor"
+      },
+      {
         "@class": "org.squonk.options.OptionDescriptor",
         "modes": [
           "User"
@@ -110,5 +127,5 @@
     }
   ],
   "imageName": "informaticsmatters/rdkit_pipelines",
-  "command": "python -m pipelines.rdkit.o3dAlign queryMol.data.gz -i ${PIN}input.data.gz -o ${POUT}output -of json${binding.variables.containsKey('qmolidx') ? ' --qmolidx ' + binding.variables.get('qmolidx') : ''}${binding.variables.containsKey('num') ? ' --num ' + binding.variables.get('num') : ''}${binding.variables.containsKey('threshold') ? ' --threshold ' + binding.variables.get('threshold') : ''} --meta"
+  "command": "python -m pipelines.rdkit.o3dAlign queryMol.data.gz -i ${PIN}input.data.gz -o ${POUT}output -of json${binding.variables.containsKey('qmolidx') ? ' --qmolidx ' + binding.variables.get('qmolidx') : ''}${binding.variables.containsKey('num') ? ' --num ' + binding.variables.get('num') : ''}${binding.variables.containsKey('threshold') ? ' --threshold ' + binding.variables.get('threshold') : ''}${crippen ? ' --crippen' : ''} --meta"
 }
