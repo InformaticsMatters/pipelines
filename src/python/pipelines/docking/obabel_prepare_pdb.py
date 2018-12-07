@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright 2017 Informatics Matters Ltd.
+# Copyright 2018 Informatics Matters Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,15 +21,19 @@ from pipelines_utils import utils
 
 
 def execute(input, output, extension, format, ph, noGzip):
+
+    # TODO - convert this to use the Python API rather than an external process
+
     filename = output + "." + extension
     base_args = ["obabel", "-ipdb", input, format, "-O", filename]
     if ph:
         base_args.append("-p")
-        base_args.append("ph")
+        base_args.append(str(ph))
+    utils.log("Command: " + " ".join(base_args))
 
     subprocess.check_call(base_args, stdout=sys.stderr, stderr=sys.stderr)
 
-    # NOTE the -z argument does not seem to work correctly with obabel (truncted files generated) so we
+    # NOTE the -z argument does not seem to work correctly with obabel (truncated files generated) so we
     # fall back to good old gzip to handle the compression once the uncompressed file is created
     if not noGzip:
         subprocess.check_call(['gzip', filename], stdout=sys.stderr, stderr=sys.stderr)

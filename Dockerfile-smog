@@ -3,7 +3,10 @@ LABEL maintainer="Tim Dudgeon<tdudgeon@informaticsmatters.com>"
 
 
 USER root
-RUN apt-get install libopenbabel-dev g++ -y
+
+RUN echo 'deb http://deb.debian.org/debian experimental main' >> /etc/apt/sources.list
+
+RUN apt-get update -y && apt-get install -t experimental libopenbabel-dev g++ -y
 
 WORKDIR /usr/local
 RUN wget https://sourceforge.net/projects/opengrowth/files/SMoG2016.tar.gz/download -O smog.tar.gz &&\

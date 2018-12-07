@@ -84,7 +84,7 @@ task buildSmogImage(type: DockerBuildImage) {
     tag = "informaticsmatters/smog:latest"
 }
 
-task buildSdPosterDockerImage(type: DockerBuildImage) {
+task buildSdPosterImage(type: DockerBuildImage) {
     description 'Builds the pipelines SD-poster Docker image'
 
     dockerFile = file('Dockerfile-sdposter')
@@ -92,10 +92,20 @@ task buildSdPosterDockerImage(type: DockerBuildImage) {
     tag = "squonk/rdkit-${pipeline}-sdposter:latest"
 }
 
+task buildObabelImage(type: DockerBuildImage) {
+    // TODO - remove this once the pipelines-obabel project becomes active
+    description 'Builds the obabel Docker image'
+
+    dockerFile = file('Dockerfile-obabel')
+    inputDir = file('.')
+    tag = "informaticsmatters/pipelines-obabel:latest"
+}
+
 task buildDockerImages() {
     dependsOn buildPliImage // that one depends on buildPipelinesImage
     dependsOn buildSmogImage // and so does this one
-    dependsOn buildSdPosterDockerImage
+    dependsOn buildSdPosterImage
+    dependsOn buildObabelImage
 
     group 'Docker'
     description 'Builds all the project Docker images'
