@@ -12,6 +12,7 @@ protein = file(params.protein)
 
 process splitter {
 
+    container 'informaticsmatters/pli:latest'
     beforeScript 'chmod g+w .'
 
     input:
@@ -31,6 +32,7 @@ process splitter {
 */
 process pli_scoring {
 
+    container 'informaticsmatters/pli:latest'
     beforeScript 'chmod g+w .'
 
 	input:
@@ -47,6 +49,7 @@ process pli_scoring {
 
 process joiner {
 
+    container 'informaticsmatters/pli:latest'
     beforeScript 'chmod g+w .'
     publishDir baseDir, mode: 'link'
 

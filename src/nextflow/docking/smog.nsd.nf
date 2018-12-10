@@ -12,6 +12,7 @@ protein = file(params.protein)
 
 process splitter {
 
+    container 'informaticsmatters/smog:latest'
     beforeScript 'chmod g+w .'
 
     input:
@@ -31,6 +32,7 @@ process splitter {
 */
 process smog_scoring {
 
+    container 'informaticsmatters/smog:latest'
     beforeScript 'chmod g+w .'
 
 	input:
@@ -47,6 +49,7 @@ process smog_scoring {
 
 process joiner {
 
+    container 'informaticsmatters/smog:latest'
     beforeScript 'chmod g+w .'
     publishDir baseDir, mode: 'link'
 
