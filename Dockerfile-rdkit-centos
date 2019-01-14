@@ -1,0 +1,14 @@
+FROM informaticsmatters/rdkit-python-centos:latest
+LABEL maintainer="Tim Dudgeon<tdudgeon@informaticsmatters.com>"
+
+USER root
+
+# install required packages
+RUN yum -y update && yum -y install zip unzip python-devel python2-pip python-setuptools python2-matplotlib
+
+# Copy the pipeline implementation into the image
+COPY src/python /opt/python
+RUN pip install -e /opt/python
+# And the pip packages including pipeline-utilities and im-pipelines-utils-rdkit
+# NOTE: matplotlib is missing
+RUN pip install molvs standardiser im-pipelines-utils==2.2.* im-pipelines-utils-rdkit==1.4.*

@@ -1,50 +1,50 @@
-{ "@class":"org.squonk.core.DockerServiceDescriptor",
+{ "@class": "org.squonk.core.DockerServiceDescriptor",
   "serviceConfig": {
-  "id": "pipelines.xchem.obabel.prepare.pdb.v1",
-  "name": "OBabelPreparePDB",
-  "description": "Prepare PDB file uisng Open Babel",
-  "tags": [ "rdkit", "xchem", "docker", "openbabel", "obabel", "prepare", "pdb", "convert"],
-  "resourceUrl": null,
-  "icon": "icons/transform_molecule.png",
+    "id": "pipelines.xchem.obabel.prepare.pdb.v1",
+    "name": "OBabelPreparePDB",
+    "description": "Prepare PDB file using Open Babel",
+    "tags": [ "rdkit", "xchem", "docker", "openbabel", "obabel", "prepare", "pdb", "convert", "protein"],
+    "resourceUrl": null,
+    "icon": "icons/transform_molecule.png",
 
-  "inputDescriptors": [
-    {
-      "primaryType": "org.squonk.types.PDBFile",
-      "mediaType": "chemical/x-pdb",
-      "name": "pdb"
-    }
-  ],
-  "outputDescriptors": [
-    {
-      "primaryType": "org.squonk.types.Mol2File",
-      "mediaType": "chemical/x-mol2",
-      "name": "mol2"
-    }
-  ],
+    "inputDescriptors": [
+      {
+        "primaryType": "org.squonk.types.PDBFile",
+        "mediaType": "chemical/x-pdb",
+        "name": "pdb"
+      }
+    ],
+    "outputDescriptors": [
+      {
+        "primaryType": "org.squonk.types.Mol2File",
+        "mediaType": "chemical/x-mol2",
+        "name": "mol2"
+      }
+    ],
 
-  "optionDescriptors": [
-    {
-      "modes": [
-        "User"
-      ],
-      "editable": true,
-      "@class": "org.squonk.options.OptionDescriptor",
-      "typeDescriptor": {
-        "type": "java.lang.Float",
-        "@class": "org.squonk.options.SimpleTypeDescriptor"
-      },
-      "key": "arg.protonate",
-      "label": "Protonate at pH",
-      "description": "Optionally protonate side chains at this pH",
-      "visible": true,
-      "minValues": 0,
-      "maxValues": 1
-    }
-  ],
-  "executorClassName": "org.squonk.execution.steps.impl.ThinDatasetDockerExecutorStep"
+    "optionDescriptors": [
+      {
+        "modes": [
+          "User"
+        ],
+        "editable": true,
+        "@class": "org.squonk.options.OptionDescriptor",
+        "typeDescriptor": {
+          "type": "java.lang.Float",
+          "@class": "org.squonk.options.SimpleTypeDescriptor"
+        },
+        "key": "arg.protonate",
+        "label": "Protonate at pH",
+        "description": "Optionally protonate side chains at this pH",
+        "visible": true,
+        "minValues": 0,
+        "maxValues": 1
+      }
+    ],
+    "executorClassName": "org.squonk.execution.steps.impl.ThinDatasetDockerExecutorStep"
   },
   "inputRoutes": [ {"route": "FILE"} ],
   "outputRoutes": [ {"route": "FILE"} ],
-  "imageName": "informaticsmatters/rdkit_pipelines",
-  "command": "python -m pipelines.docking.obabel_prepare_pdb -i ${PIN}pdb.pdb.gz -o ${POUT}mol2 -mol2${protonate ? ' -prot ' + protonate : ''} --meta"
+  "imageName": "informaticsmatters/pipelines-obabel:latest",
+  "command": "python -m pipelines.docking.obabel_prepare_pdb -i ${PIN}pdb.pdb.gz -o ${POUT}mol2 -mol2${binding.variables.containsKey('protonate') ? ' -prot ' + protonate : ''} --meta"
 }

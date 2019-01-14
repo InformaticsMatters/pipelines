@@ -29,8 +29,13 @@ field_O3DAScore = "O3DAScore"
 
 ### start function definitions #########################################
 
-def doO3Dalign(i, mol, qmol, threshold, perfect_score, writer, conformerProps=None, minEnergy=None):
-    pyO3As = rdMolAlign.GetO3AForProbeConfs(mol, qmol)
+def doO3Dalign(i, mol, qmol, use_crippen, threshold, perfect_score, writer, conformerProps=None, minEnergy=None):
+
+    if use_crippen:
+        pyO3As = rdMolAlign.GetCrippenO3AForProbeConfs(mol, qmol)
+    else:
+        pyO3As = rdMolAlign.GetO3AForProbeConfs(mol, qmol)
+
     if len(pyO3As) == 0:
         return 0
 
@@ -68,6 +73,7 @@ def main():
     parser = argparse.ArgumentParser(description='Open3DAlign with RDKit')
     parser.add_argument('query', help='query molfile')
     parser.add_argument('--qmolidx', help="Query molecule index in SD file if not the first", type=int, default=1)
+    parser.add_argument('--crippen', action='store_true', help='Use Crippen (logP) contributions')
     parser.add_argument('-t', '--threshold', type=float, help='score cuttoff relative to alignment of query to itself')
     parser.add_argument('-n', '--num', default=0, type=int, help='number of conformers to generate, if None then input structures are assumed to already be 3D')
     parser.add_argument('-a', '--attempts', default=0, type=int, help='number of attempts to generate conformers')
@@ -106,7 +112,11 @@ def main():
                                   datasetMetaProps=datasetMetaProps,
                                   fieldMetaProps=fieldMetaProps)
 
-    pyO3A = rdMolAlign.GetO3A(qmol2, qmol)
+    if args.crippen:
+        pyO3A = rdMolAlign.GetCrippenO3A(qmol2, qmol)
+    else:
+        pyO3A = rdMolAlign.GetO3A(qmol2, qmol)
+
     perfect_align = pyO3A.Align()
     perfect_score = pyO3A.Score()
     utils.log('Perfect score:', perfect_align, perfect_score, Chem.MolToSmiles(qmol, isomericSmiles=True), qmol.GetNumAtoms())
@@ -124,10 +134,10 @@ def main():
                 mol.RemoveAllConformers()
                 conformerProps, minEnergy = conformers.process_mol_conformers(mol, i, args.num, args.attempts, args.rmsd, None, None, 0)
                 mol = Chem.RemoveHs(mol)
-                count += doO3Dalign(i, mol, qmol, args.threshold, perfect_score, writer, conformerProps=conformerProps, minEnergy=minEnergy)
+                count += doO3Dalign(i, mol, qmol, args.crippen, args.threshold, perfect_score, writer, conformerProps=conformerProps, minEnergy=minEnergy)
             else:
                 mol = Chem.RemoveHs(mol)
-                count += doO3Dalign(i, mol, qmol, args.threshold, perfect_score, writer)
+                count += doO3Dalign(i, mol, qmol, args.crippen, args.threshold, perfect_score, writer)
             total += mol.GetNumConformers()
         except ValueError as e:
             errors +=1

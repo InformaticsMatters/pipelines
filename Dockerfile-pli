@@ -3,7 +3,7 @@ LABEL maintainer="Tim Dudgeon<tdudgeon@informaticsmatters.com>"
 
 
 USER root
-RUN apt-get install zlib1g-dev make gcc git -y
+RUN apt-get update -y && apt-get install zlib1g-dev make gcc git -y
 RUN mkdir -p /usr/local/
 WORKDIR /usr/local/
 RUN git clone https://bitbucket.org/AstexUK/pli.git
