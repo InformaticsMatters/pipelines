@@ -4,8 +4,8 @@
 # and then remove any existing poster job
 # before deploying a new one (and waiting for completion).
 
-- name: Login (admin)
-  shell: oc login {{ oc_master_hostname }} -u {{ oc_admin }} -p {{ oc_admin_password }}
+- name: Login (user)
+  shell: oc login {{ oc_master_hostname }} -u {{ oc_user }} -p {{ oc_user_password }}
   changed_when: False
 
 - name: Move to Squonk Project
@@ -25,6 +25,7 @@
   shell: >
     oc process
     -f {{ role_path }}/{{ t_dir }}/post-service-descriptors.yaml
+    -p POSTER_SA={{ oc_project_sa }}
     -p POSTER_IMAGE_TAG={{ oc_pipelines_sd_poster_image_tag }}
     | oc create -f -
 

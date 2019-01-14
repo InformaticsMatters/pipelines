@@ -19,6 +19,8 @@ parameters:
 
 - name: POSTER_IMAGE_TAG
   value: latest
+- name: POSTER_SA
+  value: squonk
 
 objects:
 
@@ -29,6 +31,7 @@ objects:
   spec:
     template:
       spec:
+        serviceAccountName: ${POSTER_SA}
 
         initContainers:
         - image: yauritux/busybox-curl
