@@ -2,6 +2,7 @@
 
 oc_user: "{{ ansible_env.OC_USER }}"
 oc_user_password: "{{ ansible_env.OC_USER_PASSWORD }}"
+oc_master_url: "{{ ansible_env.OC_MASTER_URL }}"
 oc_master_hostname: "{{ ansible_env.OC_MASTER_HOSTNAME }}"
 oc_project: "{{ ansible_env.OC_PROJECT }}"
 oc_project_sa: "{{ ansible_env.OC_PROJECT_SA }}"
