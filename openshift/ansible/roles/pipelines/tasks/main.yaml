@@ -24,7 +24,7 @@
 - name: Run SD poster job (always)
   shell: >
     oc process
-    -f {{ role_path }}/{{ t_dir }}/post-service-descriptors.yaml
+    -f {{ role_path }}/files/post-service-descriptors.yaml
     -p POSTER_SA={{ oc_project_sa }}
     -p POSTER_IMAGE_TAG={{ oc_pipelines_sd_poster_image_tag }}
     | oc create -f -
