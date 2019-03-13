@@ -49,5 +49,5 @@ inputRoutes:
 - route: "FILE"
 outputRoutes:
 - route: "FILE"
-nextflowParams: >
+nextflowParams: |
   ${binding.variables.containsKey('score') ? 'params.score = ' + score : ''}

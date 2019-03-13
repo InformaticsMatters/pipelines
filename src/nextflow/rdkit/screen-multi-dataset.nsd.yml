@@ -90,7 +90,7 @@ inputRoutes:
 outputRoutes:
 - route: "FILE"
 nextflowParams: >
-  params.simmin = $sim.minValue \n
-  params.simmax = $sim.maxValue \n
-  params.descriptor = '$descriptor' \n
+  params.simmin = $sim.minValue
+  params.simmax = $sim.maxValue
+  params.descriptor = '$descriptor'
   params.metric = '$metric'
