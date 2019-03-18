@@ -21,7 +21,7 @@
   shell: oc delete jobs/{{ job_name }}
   when: jobs_result.stdout | regex_search('^%s' % job_name, multiline=True)
 
-- name: Run SD poster job (always)
+- name: Run SD poster job (always) (tag={{ oc_pipelines_sd_poster_image_tag }})
   shell: >
     oc process
     -f {{ role_path }}/files/post-service-descriptors.yaml
