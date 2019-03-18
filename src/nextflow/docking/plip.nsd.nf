@@ -51,7 +51,7 @@ process joiner {
 
     container 'informaticsmatters/pli:latest'
     beforeScript 'chmod g+w .'
-    publishDir "$baseDir/results", mode: 'copy'
+    publishDir "$baseDir/results", mode: 'move'
 
     input:
     file parts from scored_parts.collect()

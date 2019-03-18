@@ -110,7 +110,7 @@ process metrics {
     beforeScript 'chmod g+w .'
     container 'informaticsmatters/rdkit_pipelines:latest'
 
-    publishDir "$baseDir/results", mode: 'copy'
+    publishDir "$baseDir/results", mode: 'move'
 
     input:
     file 'results.sdf' from results
