@@ -51,7 +51,7 @@ process joiner {
 
     container 'informaticsmatters/smog:latest'
     beforeScript 'chmod g+w .'
-    publishDir "$baseDir/results", mode: 'symlink'
+    publishDir "$baseDir/results", mode: 'copy'
 
     input:
     file parts from scored_parts.collect()

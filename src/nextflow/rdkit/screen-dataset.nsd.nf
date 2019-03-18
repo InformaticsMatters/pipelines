@@ -47,7 +47,7 @@ process joiner {
 
     container 'informaticsmatters/rdkit_pipelines:latest'
 
-    publishDir "$baseDir/results", mode: 'symlink'
+    publishDir "$baseDir/results", mode: 'copy'
 
     input:
     file 'splitter_metrics.txt' from splitter_metrics
