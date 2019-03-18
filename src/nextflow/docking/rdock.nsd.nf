@@ -110,7 +110,7 @@ process metrics {
     beforeScript 'chmod g+w .'
     container 'informaticsmatters/rdkit_pipelines:latest'
 
-    publishDir baseDir, mode: 'link'
+    publishDir "$baseDir/results", mode: 'symlink'
 
     input:
     file 'results.sdf' from results
