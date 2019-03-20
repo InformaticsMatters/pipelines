@@ -87,8 +87,8 @@ inputRoutes:
 outputRoutes:
 - route: "FILE"
 nextflowParams: |
-  params.ligands = ligands.data.gz
-  params.receptor = config.zip
+  params.ligands = 'ligands.data.gz'
+  params.receptor = 'config.zip'
   params.num_dockings = $num
   params.top = $top
   ${binding.variables.containsKey('score') ? 'params.score = ' + score : ''}
