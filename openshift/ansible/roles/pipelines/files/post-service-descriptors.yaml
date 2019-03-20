@@ -21,6 +21,8 @@ parameters:
   value: latest
 - name: POSTER_SA
   value: squonk
+- name: PULL_POLICY
+  value: Always
 
 objects:
 
@@ -42,5 +44,6 @@ objects:
         containers:
         - image: squonk/rdkit-pipelines-sdposter:${POSTER_IMAGE_TAG}
           name: pipelines-sd-poster
+          imagePullPolicy: ${PULL_POLICY}
 
         restartPolicy: Never

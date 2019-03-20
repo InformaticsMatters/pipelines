@@ -13,3 +13,4 @@ work
 /tmp
 **/*.egg-info
 **/.DS_Store
+*.retry

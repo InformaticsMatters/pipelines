@@ -95,4 +95,9 @@ inputRoutes:
 - route: "FILE"
 outputRoutes:
 - route: "FILE"
-nextflowParams: "--qsmiles \"$query_source\" --simmin $sim.minValue --simmax $sim.maxValue --descriptor $descriptor --metric $metric"
+nextflowParams: |
+  params.qsmiles = '$query_source'
+  params.simmin = $sim.minValue
+  params.simmax = $sim.maxValue
+  params.descriptor = '$descriptor'
+  params.metric = '$metric'

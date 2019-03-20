@@ -86,4 +86,10 @@ inputRoutes:
 - route: "FILE"
 outputRoutes:
 - route: "FILE"
-nextflowParams: "--ligands ligands.data.gz --receptor config.zip --num_dockings $num --top $top${binding.variables.containsKey('score') ? ' --score ' + score: ''}${binding.variables.containsKey('nscore') ? ' --nscore ' + nscore: ''}"
+nextflowParams: |
+  params.ligands = ligands.data.gz
+  params.receptor = config.zip
+  params.num_dockings = $num
+  params.top = $top
+  ${binding.variables.containsKey('score') ? 'params.score = ' + score : ''}
+  ${binding.variables.containsKey('nscore') ? 'params.nscore = ' + nscore : ''}
