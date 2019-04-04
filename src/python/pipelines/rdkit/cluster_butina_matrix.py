@@ -22,7 +22,7 @@ import uuid
 
 from rdkit import rdBase
 
-import cluster_butina
+from . import cluster_butina
 from pipelines_utils import parameter_utils, utils
 from pipelines_utils_rdkit import rdkit_utils
 

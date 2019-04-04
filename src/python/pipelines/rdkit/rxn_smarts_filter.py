@@ -43,7 +43,7 @@ def main():
     # Should make this configurable so that this can be specified by the user at some stage.
     poised_filter = True
     if poised_filter == True:
-        from poised_filter import Filter
+        from .poised_filter import Filter
         filter_to_use = Filter()
     rxn_names = filter_to_use.get_rxn_names()
     utils.log("Using", len(rxn_names), "reaction filters")

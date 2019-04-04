@@ -22,7 +22,7 @@ from pipelines_utils import parameter_utils, utils
 from pipelines_utils_rdkit import rdkit_utils
 from rdkit import Chem
 from rdkit.Chem import AllChem
-from sanify_utils import enumerateStereoIsomers,enumerateTautomers,STANDARD_MOL_METHODS
+from .sanify_utils import enumerateStereoIsomers,enumerateTautomers,STANDARD_MOL_METHODS
 
 
 def write_out(mols,count,writer,mol_format,file_format):
