@@ -240,7 +240,7 @@ def main():
     i = 0
     result_count = 0
     for mol in mols:
-        if lookup.has_key(i):
+        if i in lookup:
             if args.thin:
                 rdkit_utils.clear_mol_props(mol, ["uuid"])
             cluster = lookup[i]

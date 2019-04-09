@@ -15,6 +15,7 @@
 # limitations under the License.
 
 import argparse
+from builtins import range
 import sys, logging
 
 from rdkit import Chem, rdBase
@@ -43,7 +44,7 @@ def generate_conformers(molIdx, my_mol, NumOfConf, ref_mol, outputfile, coreSubs
     conf_lst = []
     count = 0
     errors = 0
-    for i in (xrange(NumOfConf)):
+    for i in range(NumOfConf):
         try:
             conf_lst.append(Chem.AddHs(my_mol))
             AllChem.ConstrainedEmbed(conf_lst[i], core1, randomseed=i)
