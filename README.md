@@ -200,7 +200,7 @@ in this project. The are deployed from the Squonk project using Ansible
 playbooks. 
 
 >   A discussion about the deployment of pipelines can be found in the
-    `Posting Squonk pipelines` section of Squonk's
+    `Posting Squonk pipelines` section of Squonk's OpenShift Ansible
     [README](https://github.com/InformaticsMatters/squonk/blob/master/openshift/ansible/README.md).
 
 ## Contact
