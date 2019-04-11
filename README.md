@@ -186,30 +186,15 @@ how to do this.
 
 The service descriptors need to to POSTed to the Squonk coreservices REST API. 
 
-### Openshift
+### OpenShift/OKD
 
-You must previously have deployed Squonk using the OpenShift templates (e.g. using the deployment
-scripts or Ansible playbooks).
-The deployment uses the [post-service-descriptors.yaml]() template to create a pod that posts the 
-service descriptors using a `squonk/rdkit-pipelines-sdposter` Docker container.
+The pipelines and service-descriptor container images are built using gradle
+in this project. The are deployed from the Squonk project using Ansible
+playbooks. 
 
-Build the Docker image and push to docker hub:
-
-```
-docker build -t squonk/rdkit-pipelines-sdposter:latest -f Dockerfile-sdposter .
-docker push squonk/rdkit-pipelines-sdposter:latest
-```
-
-Post the service descriptors by creating the pod. You must been in the `squonk` project and be logged in as a suitable
-user.
-
-```
-oc create -f post-service-descriptors.yaml
-```
-
-Alternatively you can run the `deploy.sh` script having defined some environment variables
-using the `setenv.sh` script in the Squonk openshift deployment.
-
+>   A discussion about the deployment of pipelines can be found in the
+    `Posting Squonk pipelines` section of Squonk's
+    `openshift/ansible/README.md`.
 
 ## Contact
 
