@@ -186,6 +186,13 @@ how to do this.
 
 The service descriptors need to to POSTed to the Squonk coreservices REST API. 
 
+### Docker
+
+A shell script can be used to deploy the pipelines to a running
+containerised Squonk deployment: -
+
+    $ ./post-service-descriptors.sh
+    
 ### OpenShift/OKD
 
 The pipelines and service-descriptor container images are built using gradle
