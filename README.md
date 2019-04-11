@@ -201,7 +201,7 @@ playbooks.
 
 >   A discussion about the deployment of pipelines can be found in the
     `Posting Squonk pipelines` section of Squonk's
-    `openshift/ansible/README.md`.
+    [README](https://github.com/InformaticsMatters/squonk/blob/master/openshift/ansible/README.md).
 
 ## Contact
 
