@@ -1,0 +1,36 @@
+---
+"@class": org.squonk.core.DockerServiceDescriptor
+serviceConfig:
+  id: pipelines.xchem.smarts_filter.reaction
+  name: XChemReactionSmartsFilter
+  description: XChem Reaction Smarts Filter
+  tags:
+  - rdkit
+  - xchem
+  - docker
+  - smarts
+  - reaction
+  - filter
+  - poised
+  resourceUrl:
+  icon: icons/filter_molecules.png
+  inputDescriptors:
+  - primaryType: org.squonk.dataset.Dataset
+    secondaryType: org.squonk.types.MoleculeObject
+    mediaType: application/x-squonk-dataset-molecule+json
+    name: input
+  outputDescriptors:
+  - primaryType: org.squonk.dataset.Dataset
+    secondaryType: org.squonk.types.MoleculeObject
+    mediaType: application/x-squonk-dataset-molecule+json
+    name: output
+  optionDescriptors: []
+  executorClassName: org.squonk.execution.steps.impl.ThinDatasetDockerExecutorStep
+inputRoutes:
+- route: FILE
+outputRoutes:
+- route: FILE
+imageName: informaticsmatters/rdkit_pipelines
+command: >-
+  python -m pipelines.rdkit.rxn_smarts_filter -i ${PIN}input.data.gz -if json
+  -o ${POUT}output -of json --thin --meta

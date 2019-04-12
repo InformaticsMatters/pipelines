@@ -1,0 +1,122 @@
+---
+"@class": org.squonk.core.DockerServiceDescriptor
+serviceConfig:
+  id: pipelines.rdkit.conformer.basic
+  name: RDKitConformers
+  description: Generate 3D conformers using RDKit
+  tags:
+  - rdkit
+  - conformer
+  - 3d
+  - docker
+  resourceUrl:
+  icon: icons/molecule_generator.png
+  inputDescriptors:
+  - primaryType: org.squonk.dataset.Dataset
+    secondaryType: org.squonk.types.MoleculeObject
+    mediaType: application/x-squonk-dataset-molecule+json
+    name: input
+  outputDescriptors:
+  - primaryType: org.squonk.dataset.Dataset
+    secondaryType: org.squonk.types.MoleculeObject
+    mediaType: application/x-squonk-dataset-molecule+json
+    name: output
+  optionDescriptors:
+  - "@class": org.squonk.options.OptionDescriptor
+    modes:
+    - User
+    typeDescriptor:
+      type: java.lang.Integer
+      "@class": org.squonk.options.SimpleTypeDescriptor
+    editable: true
+    visible: true
+    description: Number of conformers to aim to generate
+    defaultValue: 1
+    label: Number of conformers
+    key: arg.num
+    minValues: 1
+    maxValues: 1
+  - modes:
+    - User
+    editable: true
+    visible: true
+    description: Number of attempts to generate conformers
+    label: Number of attempts
+    key: arg.attempts
+    minValues: 0
+    maxValues: 1
+    typeDescriptor:
+      type: java.lang.Integer
+      "@class": org.squonk.options.SimpleTypeDescriptor
+    "@class": org.squonk.options.OptionDescriptor
+  - modes:
+    - User
+    editable: true
+    visible: true
+    description: Prune RMSD threshold for removing similar conformers
+    label: Prune RMSD threshold
+    key: arg.prune
+    minValues: 0
+    maxValues: 1
+    typeDescriptor:
+      type: java.lang.Float
+      "@class": org.squonk.options.SimpleTypeDescriptor
+    "@class": org.squonk.options.OptionDescriptor
+  - modes:
+    - User
+    editable: true
+    visible: true
+    description: Cluster method (RMSD or TFD)
+    label: Cluster method
+    key: arg.method
+    values:
+    - RMSD
+    - TFD
+    defaultValue: RMSD
+    minValues: 1
+    maxValues: 1
+    typeDescriptor:
+      type: java.lang.String
+      "@class": org.squonk.options.SimpleTypeDescriptor
+    "@class": org.squonk.options.OptionDescriptor
+  - modes:
+    - User
+    editable: true
+    visible: true
+    description: Cluster threshold
+    label: Cluster threshold
+    key: arg.threshold
+    minValues: 0
+    maxValues: 1
+    typeDescriptor:
+      type: java.lang.Float
+      "@class": org.squonk.options.SimpleTypeDescriptor
+    "@class": org.squonk.options.OptionDescriptor
+  - modes:
+    - User
+    editable: true
+    visible: true
+    description: Number of energy minimization iterations
+    defaultValue: 0
+    label: Energy minimization iterations
+    key: arg.minimize
+    minValues: 1
+    maxValues: 1
+    typeDescriptor:
+      type: java.lang.Integer
+      "@class": org.squonk.options.SimpleTypeDescriptor
+    "@class": org.squonk.options.OptionDescriptor
+  executorClassName: org.squonk.execution.steps.impl.ThinDatasetDockerExecutorStep
+thinDescriptors:
+- input: input
+inputRoutes:
+- route: FILE
+outputRoutes:
+- route: FILE
+imageName: informaticsmatters/rdkit_pipelines
+command: >-
+  python -m pipelines.rdkit.conformers -i ${PIN}input.data.gz -if json -o ${POUT}output -of json -n $num -c $method
+  ${binding.variables.containsKey('attempts') ? ' -a ' + attempts : ''}
+  ${binding.variables.containsKey('prune') ? ' -r ' + prune : ''}
+  ${binding.variables.containsKey('threshold') ? ' -t ' + threshold : ''}
+  ${binding.variables.containsKey('minimize') ? ' -e ' + minimize : ''} --meta
