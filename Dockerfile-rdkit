@@ -1,4 +1,4 @@
-FROM informaticsmatters/rdkit-python-debian:Release_2018_09_1
+FROM informaticsmatters/rdkit-python3-debian:Release_2019_03_1
 LABEL maintainer="Tim Dudgeon<tdudgeon@informaticsmatters.com>"
 
 USER root
@@ -10,4 +10,5 @@ RUN apt-get -y update && apt-get -y install zip unzip procps
 COPY src/python /opt/python
 RUN pip install -e /opt/python
 # And the pip packages including pipeline-utilities and im-pipelines-utils-rdkit
-RUN pip install molvs standardiser matplotlib im-pipelines-utils==2.2.* im-pipelines-utils-rdkit==1.4.*
+RUN pip install molvs standardiser matplotlib \
+        im-pipelines-utils>=2.4.5 im-pipelines-utils-rdkit>=1.5.7

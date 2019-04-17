@@ -19,7 +19,7 @@ import argparse
 from rdkit import Chem, rdBase
 from rdkit.Chem import rdMolAlign
 
-import conformers
+from . import conformers
 from pipelines_utils import parameter_utils, utils
 from pipelines_utils_rdkit import rdkit_utils
 

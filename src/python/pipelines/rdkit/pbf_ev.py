@@ -8,6 +8,7 @@
 #  of the RDKit source tree.
 
 import argparse
+from builtins import range
 
 from rdkit.Chem.Scaffolds import MurckoScaffold
 from rdkit import Chem
@@ -80,7 +81,7 @@ def PBFev(mol):
         print('This mol is not 3D - all PBFev angles will be 0 degrees')
         return [0]
     pts = np.array([list(conf.GetAtomPosition(i))  # Get atom coordinates
-                    for i in xrange(murcko.GetNumAtoms())])
+                    for i in range(murcko.GetNumAtoms())])
     # GetBestFitPlane is in the RDKit Contrib directory as part of PBF
     # Plane is xyz vector with a c intercept adjustment
     plane = GetBestFitPlane(pts)

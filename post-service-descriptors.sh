@@ -10,17 +10,18 @@ POST=${1:-http://coreservices:8080/coreservices/rest/v1/services}
 BASE_D='docker://github.com/InformaticsMatters/pipelines'
 BASE_N='nextflow://github.com/InformaticsMatters/pipelines'
 CT_DJ="application/x-squonk-service-descriptor-docker+json"
+CT_DY="application/x-squonk-service-descriptor-docker+yaml"
 CT_MM="multipart/mixed"
 
 
 for d in 'src/python/pipelines/dmpk' 'src/python/pipelines/docking' 'src/python/pipelines/rdkit'
 do
-    for file in $d/*.dsd.json
+    for file in $d/*.dsd.yml
     do
 	    echo $file
 	    curl -X POST \
          -T $file\
-         -H "Content-Type: $CT_DJ"\
+         -H "Content-Type: $CT_DY"\
          -H "Base-URL: $BASE_D"\
          $POST
          echo ""

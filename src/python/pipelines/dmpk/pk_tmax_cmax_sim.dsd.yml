@@ -1,0 +1,94 @@
+---
+"@class": org.squonk.core.DockerServiceDescriptor
+serviceConfig:
+  id: pipelines.dmpk.sygnature.tmax_cmax_sim.1
+  name: TmaxCmaxSimulation
+  description: Simulation of Tmax and Cmax
+  tags:
+  - sygnature
+  - dmpk
+  - pk
+  - cmax
+  - tmax
+  - simulation
+  - prediction
+  - docker
+  resourceUrl:
+  icon: icons/program.png
+  outputDescriptors:
+  - primaryType: org.squonk.types.PngImageFile
+    mediaType: image/png
+    name: output
+  optionDescriptors:
+  - modes:
+    - User
+    editable: true
+    visible: true
+    description: Half life(elim)(hr)
+    label: Half life(elim)(hr)
+    key: arg.halfLife
+    minValues: 1
+    maxValues: 1
+    typeDescriptor:
+      type: java.lang.Float
+      "@class": org.squonk.options.SimpleTypeDescriptor
+    "@class": org.squonk.options.OptionDescriptor
+  - modes:
+    - User
+    editable: true
+    visible: true
+    description: Half life(abs)(hr)
+    label: Half life(abs)(hr)
+    key: arg.absorption
+    minValues: 1
+    maxValues: 1
+    typeDescriptor:
+      type: java.lang.Float
+      "@class": org.squonk.options.SimpleTypeDescriptor
+    "@class": org.squonk.options.OptionDescriptor
+  - modes:
+    - User
+    editable: true
+    visible: true
+    description: Dose(mg)
+    label: Dose(mg)
+    key: arg.dose
+    minValues: 1
+    maxValues: 1
+    typeDescriptor:
+      type: java.lang.Float
+      "@class": org.squonk.options.SimpleTypeDescriptor
+    "@class": org.squonk.options.OptionDescriptor
+  - modes:
+    - User
+    editable: true
+    visible: true
+    description: AUC(mg/L.hr)
+    label: AUC(mg/L.hr)
+    key: arg.auc
+    minValues: 1
+    maxValues: 1
+    typeDescriptor:
+      type: java.lang.Float
+      "@class": org.squonk.options.SimpleTypeDescriptor
+    "@class": org.squonk.options.OptionDescriptor
+  - modes:
+    - User
+    editable: true
+    visible: true
+    description: Simulation Time Length(hr)
+    label: Simulation Time Length(hr)
+    key: arg.time
+    minValues: 1
+    maxValues: 1
+    typeDescriptor:
+      type: java.lang.Float
+      "@class": org.squonk.options.SimpleTypeDescriptor
+    "@class": org.squonk.options.OptionDescriptor
+  executorClassName: org.squonk.execution.steps.impl.ThinDatasetDockerExecutorStep
+outputRoutes:
+- route: FILE
+imageName: informaticsmatters/rdkit_pipelines
+command: >-
+  python -m pipelines.dmpk.pk_tmax_cmax_sim -o ${POUT}output --half-life $halfLife
+  --absorption $absorption --dose $dose --auc $auc --time $time

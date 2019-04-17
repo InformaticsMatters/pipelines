@@ -1,0 +1,103 @@
+---
+"@class": org.squonk.core.DockerServiceDescriptor
+serviceConfig:
+  id: pipelines.xchem.sanify.enumerate.v1
+  name: MoleculeEnumerator
+  description: Enumerate stereoisomers and tautomers
+  tags:
+  - rdkit
+  - xchem
+  - docker
+  - sanify
+  - reaction
+  - molvs
+  - enumerate
+  - stereoisomer
+  - tautomer
+  resourceUrl:
+  icon: icons/molecule_generator.png
+  inputDescriptors:
+  - primaryType: org.squonk.dataset.Dataset
+    secondaryType: org.squonk.types.MoleculeObject
+    mediaType: application/x-squonk-dataset-molecule+json
+    name: input
+  outputDescriptors:
+  - primaryType: org.squonk.dataset.Dataset
+    secondaryType: org.squonk.types.MoleculeObject
+    mediaType: application/x-squonk-dataset-molecule+json
+    name: output
+  optionDescriptors:
+  - modes:
+    - User
+    editable: true
+    "@class": org.squonk.options.OptionDescriptor
+    typeDescriptor:
+      type: java.lang.String
+      "@class": org.squonk.options.SimpleTypeDescriptor
+    key: dockerImageVersion
+    label: RDKit version
+    description: Version of the RDKit Docker image to execute
+    values:
+    - latest
+    - Release_2017_03_1
+    - Release_2016_09_2
+    - Release_2016_03_1
+    - Release_2015_09_2
+    - Release_2015_09_1
+    defaultValue: latest
+    visible: true
+  - modes:
+    - User
+    editable: true
+    "@class": org.squonk.options.OptionDescriptor
+    typeDescriptor:
+      type: java.lang.Boolean
+      "@class": org.squonk.options.SimpleTypeDescriptor
+    key: arg.tautomers
+    label: Enumerate tautomers
+    description: Enumerate tautomers
+    defaultValue: true
+    visible: true
+  - modes:
+    - User
+    editable: true
+    "@class": org.squonk.options.OptionDescriptor
+    typeDescriptor:
+      type: java.lang.Boolean
+      "@class": org.squonk.options.SimpleTypeDescriptor
+    key: arg.stereoisomers
+    label: Enumerate stereoisomers
+    description: Enumerate stereoisomers
+    defaultValue: true
+    visible: true
+  - modes:
+    - User
+    editable: true
+    "@class": org.squonk.options.OptionDescriptor
+    typeDescriptor:
+      type: java.lang.String
+      "@class": org.squonk.options.SimpleTypeDescriptor
+    key: arg.molFormat
+    label: Molecule format
+    description: Output format for molecules
+    values:
+    - smiles
+    - mol_2d
+    - mol_3d
+    defaultValue: smiles
+    minValues: 1
+    maxValues: 1
+    visible: true
+  executorClassName: org.squonk.execution.steps.impl.ThinDatasetDockerExecutorStep
+thinDescriptors:
+- input: input
+inputRoutes:
+- route: FILE
+outputRoutes:
+- route: FILE
+imageName: informaticsmatters/rdkit_pipelines
+command: >-
+  python -m pipelines.rdkit.sanifier -i ${PIN}input.data.gz -if json -o ${POUT}output -of json -mf $molFormat
+  ${tautomers ? '-et' : ''}
+  ${stereoisomers ? '-es'' : ''}
+  --meta

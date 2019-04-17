@@ -1,0 +1,34 @@
+---
+"@class": org.squonk.core.DockerServiceDescriptor
+serviceConfig:
+  id: pipelines.xchem.pbf_ev.v1
+  name: PBF EV analyisis
+  description: 'PBF EV analysis '
+  tags:
+  - rdkit
+  - xchem
+  - docker
+  - pbfev
+  - icr
+  - joshuameyers
+  resourceUrl:
+  icon: icons/transform_molecule.png
+  inputDescriptors:
+  - primaryType: org.squonk.dataset.Dataset
+    secondaryType: org.squonk.types.MoleculeObject
+    mediaType: application/x-squonk-dataset-molecule+json
+    name: input
+  outputDescriptors:
+  - primaryType: org.squonk.dataset.Dataset
+    secondaryType: org.squonk.types.MoleculeObject
+    mediaType: application/x-squonk-dataset-molecule+json
+    name: output
+  optionDescriptors: []
+  executorClassName: org.squonk.execution.steps.impl.ThinDatasetDockerExecutorStep
+inputRoutes:
+- route: FILE
+outputRoutes:
+- route: FILE
+imageName: informaticsmatters/rdkit_pipelines
+command: >-
+  python -m pipelines.rdkit.pbf_ev -i ${PIN}input.data.gz -if json -o ${POUT}output -of json --meta

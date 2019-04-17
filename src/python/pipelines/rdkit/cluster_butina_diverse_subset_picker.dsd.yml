@@ -1,0 +1,190 @@
+---
+"@class": org.squonk.core.DockerServiceDescriptor
+serviceConfig:
+  id: pipelines.rdkit.cluster.subsetpicker.simple
+  name: RDKitDiverseSubsetPicker
+  description: Diverse subset picker using RDKit Butina clustering
+  tags:
+  - rdkit
+  - clustering
+  - similarity
+  - butina
+  - diverse
+  - subset
+  - docker
+  resourceUrl:
+  icon: icons/clustering.png
+  inputDescriptors:
+  - primaryType: org.squonk.dataset.Dataset
+    secondaryType: org.squonk.types.MoleculeObject
+    mediaType: application/x-squonk-dataset-molecule+json
+    name: input
+  outputDescriptors:
+  - primaryType: org.squonk.dataset.Dataset
+    secondaryType: org.squonk.types.MoleculeObject
+    mediaType: application/x-squonk-dataset-molecule+json
+    name: output
+  optionDescriptors:
+  - modes:
+    - User
+    "@class": org.squonk.options.OptionDescriptor
+    typeDescriptor:
+      type: java.lang.Float
+      "@class": org.squonk.options.SimpleTypeDescriptor
+    key: arg.threshold
+    label: Threshold
+    description: Similarity threshold
+    defaultValue:
+    - java.lang.Float
+    - 0.7
+    visible: true
+    editable: true
+    minValues: 1
+    maxValues: 1
+  - modes:
+    - User
+    "@class": org.squonk.options.OptionDescriptor
+    typeDescriptor:
+      type: java.lang.Float
+      "@class": org.squonk.options.SimpleTypeDescriptor
+    key: arg.diversity
+    label: Diversity
+    description: Diversity threshold
+    defaultValue:
+    - java.lang.Float
+    - 0.9
+    visible: true
+    editable: true
+    minValues: 0
+    maxValues: 1
+  - modes:
+    - User
+    "@class": org.squonk.options.OptionDescriptor
+    typeDescriptor:
+      type: java.lang.Integer
+      "@class": org.squonk.options.SimpleTypeDescriptor
+    key: arg.count
+    label: Count
+    description: Max number of molecules to pick
+    visible: true
+    editable: true
+    minValues: 0
+    maxValues: 1
+  - modes:
+    - User
+    "@class": org.squonk.options.OptionDescriptor
+    typeDescriptor:
+      "@class": org.squonk.options.DatasetFieldTypeDescriptor
+      typeFilters:
+      - java.lang.Number
+      type: java.lang.String
+    key: arg.field
+    label: Field to Optimise
+    description: Field name whose values are to be optimised
+    visible: true
+    editable: true
+    minValues: 0
+    maxValues: 1
+  - modes:
+    - User
+    "@class": org.squonk.options.OptionDescriptor
+    typeDescriptor:
+      type: java.lang.Boolean
+      "@class": org.squonk.options.SimpleTypeDescriptor
+    key: arg.maximise
+    label: Maximum field values
+    description: Prefer molecules with higher values for the specified field
+    defaultValue: false
+    visible: true
+    editable: true
+  - modes:
+    - User
+    editable: true
+    "@class": org.squonk.options.OptionDescriptor
+    typeDescriptor:
+      type: java.lang.String
+      "@class": org.squonk.options.SimpleTypeDescriptor
+    key: arg.fragment_method
+    label: Fragment method
+    description: Approach to use for picking biggest molecular fragment
+    values:
+    - hac
+    - mw
+    defaultValue: hac
+    visible: true
+  - modes:
+    - User
+    editable: true
+    "@class": org.squonk.options.OptionDescriptor
+    typeDescriptor:
+      type: java.lang.Boolean
+      "@class": org.squonk.options.SimpleTypeDescriptor
+    key: arg.output_fragment
+    label: Output biggest fragment
+    description: Output the biggest fragment rather than the whole molecule
+    defaultValue: false
+    visible: true
+  - modes:
+    - User
+    editable: true
+    "@class": org.squonk.options.OptionDescriptor
+    typeDescriptor:
+      type: java.lang.String
+      "@class": org.squonk.options.SimpleTypeDescriptor
+    key: arg.descriptor
+    label: Descriptor
+    description: Descriptor/fingerprint to use
+    values:
+    - maccs
+    - morgan2
+    - morgan3
+    - rdkit
+    defaultValue: rdkit
+    visible: true
+    minValues: 1
+    maxValues: 1
+  - modes:
+    - User
+    editable: true
+    "@class": org.squonk.options.OptionDescriptor
+    typeDescriptor:
+      type: java.lang.String
+      "@class": org.squonk.options.SimpleTypeDescriptor
+    key: arg.metric
+    label: Metric
+    description: Similarity metric to use
+    values:
+    - asymmetric
+    - braunblanquet
+    - cosine
+    - dice
+    - kulczynski
+    - mcconnaughey
+    - rogotgoldberg
+    - russel
+    - sokal
+    - tanimoto
+    defaultValue: tanimoto
+    visible: true
+    minValues: 1
+    maxValues: 1
+  executorClassName: org.squonk.execution.steps.impl.ThinDatasetDockerExecutorStep
+thinDescriptors:
+- input: input
+  output: output
+  preserve: false
+  filtering: true
+  fieldDescriptors:
+  - optionName: arg.field
+    fieldName: optimise
+inputRoutes:
+- route: FILE
+outputRoutes:
+- route: FILE
+imageName: informaticsmatters/rdkit_pipelines
+command: >-
+  python -m pipelines.rdkit.cluster_butina -i ${PIN}input.data.gz -if json
+   -o ${POUT}output -of json -t ${threshold} -d ${descriptor} -m ${metric} --num ${count}
+   --exclude ${diversity} --field optimise ${maximise ? '--max'' : '--min'}
+  ${binding.variables.containsKey('fragment_method') ? ' --fragment-method ' + fragment_method : ''}
+  ${binding.variables.containsKey('output_fragment') && output_fragment ? ' --output-fragment' : ''} --thin --meta

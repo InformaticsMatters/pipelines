@@ -15,7 +15,7 @@ def main():
     ### Define the reactions available
     poised_filter = True
     if poised_filter == True:
-        from poised_filter import Filter
+        from .poised_filter import Filter
         filter_to_use = Filter()
 
 
