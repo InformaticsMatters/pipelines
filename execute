@@ -1,8 +1,8 @@
 #!/usr/bin/bash
 
 echo
-echo "PIPELINES (RDKit)"
-echo "-----------------"
+echo "PIPELINES"
+echo "---------"
 echo "You have just run the built-in 'execute' command. Congratulations!"
 echo ""
 echo "In order to use this container productively you need to provide your own"
