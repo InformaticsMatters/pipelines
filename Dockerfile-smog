@@ -18,7 +18,6 @@ RUN wget https://sourceforge.net/projects/opengrowth/files/SMoG2016.tar.gz/downl
 ARG USERID=1001
 
 RUN useradd -u $USERID -g 0 -m smog
-USER $USERID
 
 # The CMD is simply to run 'execute' in the WORKDIR.
 # The user would normally mount a volume with their own execute
@@ -31,6 +30,9 @@ USER $USERID
 ARG pipeline=informaticsmatters/smog:latest
 ENV PIPELINE=$pipeline
 WORKDIR /home/smog
-COPY --chown=smog:0 execute ./
-RUN chmod +x ./execute
+COPY execute ./
+RUN chown $USERID:0 ./execute && \
+    chmod +x ./execute
 CMD ["./execute"]
+
+USER $USERID

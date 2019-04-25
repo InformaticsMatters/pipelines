@@ -13,8 +13,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends python-setuptoo
 # And the pip packages including pipeline-utilities and im-pipelines-utils-rdkit
 RUN pip install im-pipelines-utils==2.2.* im-pipelines-utils-rdkit==1.4.*
 
-USER obabel
-
 # The CMD is simply to run 'execute' in the WORKDIR.
 # The user would normally mount a volume with their own execute
 # script in it and then set the WORKDIR to the directory it's in.
@@ -25,7 +23,10 @@ USER obabel
 # which can be defined with the docker 'pipeline' build argument.
 ARG pipeline=informaticsmatters/pipelines-obabel:latest
 ENV PIPELINE=$pipeline
-WORKDIR /home/obable
-COPY --chown=obabel:0 execute ./
-RUN chmod +x ./execute
+WORKDIR /home/obabel
+COPY execute ./
+RUN chown obabel:0 ./execute && \
+    chmod +x ./execute
 CMD ["./execute"]
+
+USER obabel
