@@ -20,5 +20,17 @@ ARG USERID=1001
 RUN useradd -u $USERID -g 0 -m smog
 USER $USERID
 
-
+# The CMD is simply to run 'execute' in the WORKDIR.
+# The user would normally mount a volume with their own execute
+# script in it and then set the WORKDIR to the directory it's in.
+# In its absence we just run the built-in 'execute',
+# which is expected to echo some descriptive/helpful text.
+#
+# The default 'execute' relies on an ENV to name the pipeline it's in,
+# which can be defined with the docker 'pipeline' build argument.
+ARG pipeline=informaticsmatters/smog:latest
+ENV PIPELINE=$pipeline
 WORKDIR /home/smog
+COPY --chown=smog:0 execute ./
+RUN chmod +x ./execute
+CMD ["./execute"]

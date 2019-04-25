@@ -64,6 +64,7 @@ task buildPipelinesImage(type: DockerBuildImage) {
     dockerFile = file('Dockerfile-rdkit')
     inputDir = file('.')
     tag = "informaticsmatters/rdkit_${pipeline}:latest"
+    buildArgs = ['pipeline':"informaticsmatters/rdkit_${pipeline}:latest"]
 }
 
 task buildPliImage(type: DockerBuildImage) {
@@ -73,6 +74,7 @@ task buildPliImage(type: DockerBuildImage) {
     dockerFile = file('Dockerfile-pli')
     inputDir = file('.')
     tag = "informaticsmatters/pli:latest"
+    buildArgs = ['pipeline':"informaticsmatters/pli:latest"]
 }
 
 task buildSmogImage(type: DockerBuildImage) {
@@ -82,6 +84,7 @@ task buildSmogImage(type: DockerBuildImage) {
     dockerFile = file('Dockerfile-smog')
     inputDir = file('.')
     tag = "informaticsmatters/smog:latest"
+    buildArgs = ['pipeline':"informaticsmatters/smog:latest"]
 }
 
 task buildSdPosterImage(type: DockerBuildImage) {
@@ -99,6 +102,7 @@ task buildObabelImage(type: DockerBuildImage) {
     dockerFile = file('Dockerfile-obabel')
     inputDir = file('.')
     tag = "informaticsmatters/pipelines-obabel:latest"
+    buildArgs = ['pipeline':"informaticsmatters/pipelines-obabel:latest"]
 }
 
 task buildDockerImages() {

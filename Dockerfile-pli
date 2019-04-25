@@ -15,3 +15,17 @@ USER 1001
 
 WORKDIR /home/pli
 ENV PLI_DIR /usr/local/pli
+
+# The CMD is simply to run 'execute' in the WORKDIR.
+# The user would normally mount a volume with their own execute
+# script in it and then set the WORKDIR to the directory it's in.
+# In its absence we just run the built-in 'execute',
+# which is expected to echo some descriptive/helpful text.
+#
+# The default 'execute' relies on an ENV to name the pipeline it's in,
+# which can be defined with the docker 'pipeline' build argument.
+ARG pipeline=informaticsmatters/pli:latest
+ENV PIPELINE=$pipeline
+COPY --chown=1001:0 execute ./
+RUN chmod +x ./execute
+CMD ["./execute"]

@@ -11,4 +11,19 @@ COPY src/python /opt/python
 RUN pip install -e /opt/python
 # And the pip packages including pipeline-utilities and im-pipelines-utils-rdkit
 # NOTE: matplotlib is missing
-RUN pip install molvs standardiser im-pipelines-utils==2.2.* im-pipelines-utils-rdkit==1.4.*
+RUN pip install molvs standardiser im-pipelines-utils>=2.4.5 im-pipelines-utils-rdkit>=1.5.7
+
+# The CMD is simply to run 'execute' in the WORKDIR.
+# The user would normally mount a volume with their own execute
+# script in it and then set the WORKDIR to the directory it's in.
+# In its absence we just run the built-in 'execute',
+# which is expected to echo some descriptive/helpful text.
+#
+# The default 'execute' relies on an ENV to name the pipeline it's in,
+# which can be defined with the docker 'pipeline' build argument.
+ARG pipeline=informaticsmatters/rdkit_pipelines:latest
+ENV PIPELINE=$pipeline
+WORKDIR /home/rdkit
+COPY execute ./
+RUN chmod +x ./execute
+CMD ["./execute"]
