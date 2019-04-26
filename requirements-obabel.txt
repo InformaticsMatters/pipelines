@@ -1,0 +1,2 @@
+im-pipelines-utils==2.4.*
+im-pipelines-utils-rdkit==1.5.*

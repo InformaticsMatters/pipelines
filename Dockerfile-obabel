@@ -9,9 +9,15 @@ USER root
 
 # Copy the obabel pipeline implementation into the image
 COPY src/python /opt/python-obabel
-RUN apt-get update && apt-get install -y --no-install-recommends python-setuptools gzip python-pip && pip install -e /opt/python-obabel
-# And the pip packages including pipeline-utilities and im-pipelines-utils-rdkit
-RUN pip install im-pipelines-utils==2.2.* im-pipelines-utils-rdkit==1.4.*
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        python-setuptools \
+        gzip \
+        python-pip && \
+    pip install -e /opt/python-obabel
+# And the project pip requirements
+COPY requirements-obabel.txt /root/
+RUN pip install -r /root/requirements-obabel.txt
 
 # The CMD is simply to run 'execute' in the WORKDIR.
 # The user would normally mount a volume with their own execute

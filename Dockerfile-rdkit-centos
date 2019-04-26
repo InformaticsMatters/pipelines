@@ -8,10 +8,11 @@ RUN yum -y update && yum -y install zip unzip python-devel python2-pip python-se
 
 # Copy the pipeline implementation into the image
 COPY src/python /opt/python
+COPY requirements-rdkit.txt /root/
 RUN pip install -e /opt/python
-# And the pip packages including pipeline-utilities and im-pipelines-utils-rdkit
+# And the pip packages from the project requirements
 # NOTE: matplotlib is missing
-RUN pip install molvs standardiser im-pipelines-utils>=2.4.5 im-pipelines-utils-rdkit>=1.5.7
+RUN pip install -r /root/requirements-rdkit.txt
 
 # The CMD is simply to run 'execute' in the WORKDIR.
 # The user would normally mount a volume with their own execute
