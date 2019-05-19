@@ -29,11 +29,11 @@ from pipelines_utils_rdkit import rdkit_utils, mol_utils
 uncharger = rdMolStandardize.Uncharger()
 
 
-def standardize(mol, neutralise, fragment):
+def standardize(mol, neutralize, fragment):
     """
 
     :param mol: The molecule to standardize
-    :param neutralise: Boolean for whether to neutralise the molecule
+    :param neutralize: Boolean for whether to neutralize the molecule
     :param fragment: The approach for choosing the largest fragment. Either 'hac' or 'mw'. If not specified the whole
     molecule is used.
     :return: The standardized molecule
@@ -43,7 +43,7 @@ def standardize(mol, neutralise, fragment):
     # We use our own largest fragment picker as the RDKit one behaves slightly differently
     if fragment:
         mol = mol_utils.fragment(mol, fragment)
-    if neutralise:
+    if neutralize:
         mol = uncharger.uncharge(mol)
     return mol
 
@@ -56,7 +56,7 @@ def main():
 
     parser = argparse.ArgumentParser(description='RDKit Standardize')
     parser.add_argument('--fragment-method', choices=['hac', 'mw'], help='Approach to find biggest fragment if more than one (hac = biggest by heavy atom count, mw = biggest by mol weight)')
-    parser.add_argument('--neutralise', action='store_true', help='Neutralise the molecule')
+    parser.add_argument('--neutralize', action='store_true', help='Neutralize the molecule')
 
     parameter_utils.add_default_io_args(parser)
     parser.add_argument('-q', '--quiet', action='store_true', help='Quiet mode')
@@ -78,13 +78,15 @@ def main():
                                   thinOutput=False, valueClassMappings=clsMappings,
                                   datasetMetaProps=datasetMetaProps,
                                   fieldMetaProps=fieldMetaProps)
-    i = 0
+    count = 0
     total = 0
+    errors = 0
     for mol in suppl:
+        count += 1
         if mol is None:
-            i += 1
+            errors += 1
             continue
-        m = standardize(mol, args.neutralise, args.fragment_method)
+        m = standardize(mol, args.neutralize, args.fragment_method)
         writer.write(m)
         total += 1
 
@@ -94,7 +96,7 @@ def main():
     output.close()
 
     if args.meta:
-        utils.write_metrics(output_base, {'__InputCount__':i, '__OutputCount__':total, 'RDKitStandardize':i})
+        utils.write_metrics(output_base, {'__InputCount__':count, '__OutputCount__':total, '__ErrorCount__':errors, 'RDKitStandardize':total})
 
 if __name__ == "__main__":
     main()

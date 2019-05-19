@@ -1,0 +1,64 @@
+---
+"@class": org.squonk.core.DockerServiceDescriptor
+serviceConfig:
+  id: pipelines.rdkit.standardizer.v1
+  name: RDKitStandardizer
+  description: Standardize molecules
+  tags:
+  - rdkit
+  - docker
+  - standardise
+  - standardize
+  resourceUrl:
+  icon: icons/molecule_generator.png
+  inputDescriptors:
+  - primaryType: org.squonk.dataset.Dataset
+    secondaryType: org.squonk.types.MoleculeObject
+    mediaType: application/x-squonk-dataset-molecule+json
+    name: input
+  outputDescriptors:
+  - primaryType: org.squonk.dataset.Dataset
+    secondaryType: org.squonk.types.MoleculeObject
+    mediaType: application/x-squonk-dataset-molecule+json
+    name: output
+  optionDescriptors:
+  - modes:
+    - User
+    editable: true
+    "@class": org.squonk.options.OptionDescriptor
+    typeDescriptor:
+      type: java.lang.String
+      "@class": org.squonk.options.SimpleTypeDescriptor
+    key: arg.fragment_method
+    label: Fragment method
+    description: Approach to use for picking biggest molecular fragment
+    values:
+    - hac
+    - mw
+    defaultValue: hac
+    visible: true
+  - modes:
+    - User
+    editable: true
+    "@class": org.squonk.options.OptionDescriptor
+    typeDescriptor:
+      type: java.lang.Boolean
+      "@class": org.squonk.options.SimpleTypeDescriptor
+    key: arg.neutralize
+    label: Neutralize molecules
+    description: Convert charged groups to neutral form where possible
+    defaultValue: true
+    visible: true
+  executorClassName: org.squonk.execution.steps.impl.ThinDatasetDockerExecutorStep
+thinDescriptors:
+- input: input
+inputRoutes:
+- route: FILE
+outputRoutes:
+- route: FILE
+imageName: informaticsmatters/rdkit_pipelines
+command: >-
+  python -m pipelines.rdkit.standardize -i ${PIN}input.data.gz -if json -o ${POUT}output -of json
+  --fragment-method $fragment_method
+  ${neutralize ? '--neutralize' : ''}
+  --meta

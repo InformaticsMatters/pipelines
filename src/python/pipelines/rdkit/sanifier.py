@@ -49,7 +49,7 @@ def main():
 
     ### command line args defintions #########################################
 
-    parser = argparse.ArgumentParser(description='RDKit molecule standardiser / enumerator')
+    parser = argparse.ArgumentParser(description='RDKit molecule standardizer / enumerator')
     parameter_utils.add_default_io_args(parser)
     parser.add_argument('-et', '--enumerate_tauts', action='store_true', help='Enumerate all tautomers')
     parser.add_argument('-es', '--enumerate_stereo', action='store_true', help='Enumerate all stereoisomers')
@@ -62,10 +62,10 @@ def main():
     utils.log("Sanifier Args: ", args)
 
     if args.standardize and args.enumerate_tauts:
-        raise ValueError("Cannot Enumerate Tautomers and Standardise")
+        raise ValueError("Cannot Enumerate Tautomers and Standardize")
 
     if args.standardize and args.enumerate_stereo:
-        raise ValueError("Cannot Enumerate Stereo and Standardise")
+        raise ValueError("Cannot Enumerate Stereo and Standardize")
 
     if args.outformat == 'sdf' and args.mol_format == 'smiles':
         raise ValueError("Smiles cannot be used when outputting as SDF")
@@ -92,14 +92,14 @@ def main():
                     std.SetProp("uuid", oldUUID)
                 #utils.log("Standardized", i, inputCanSmiles, ">>", outputCanSmiles)
                 if inputCanSmiles == outputCanSmiles:
-                    std.SetProp("Standardised", "False")
+                    std.SetProp("Standardized", "False")
                 else:
-                    std.SetProp("Standardised", "True")
+                    std.SetProp("Standardized", "True")
             except:
                 errors += 1
                 utils.log("Error standardizing", sys.exc_info()[0])
                 std = mol
-                std.SetProp("Standardised", "Error")
+                std.SetProp("Standardized", "Error")
 
             count = write_out([std],count,writer,args.mol_format,args.outformat)
         else:
