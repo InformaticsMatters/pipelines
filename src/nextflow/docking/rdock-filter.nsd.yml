@@ -1,0 +1,87 @@
+---
+!<org.squonk.core.NextflowServiceDescriptor>
+serviceConfig:
+  id: pipelines.docking.rdock.filter.v1
+  "name": rDock filtering
+  "description": Dock ligands with rDock filtering poses relative to reference ligand
+  tags:
+  - rdock
+  - docking
+  - scoring
+  - 3d
+  - docker
+  - nextflow
+  resourceUrl: null
+  icon: icons/filter_molecules.png
+  inputDescriptors:
+  - name: receptor
+    mediaType: chemical/x-mol2
+    primaryType: org.squonk.types.Mol2File
+  - name: refmol
+    mediaType: chemical/x-mdl-molfile
+    primaryType: org.squonk.types.MolFile
+  - name: ligands
+    mediaType: application/x-squonk-dataset-molecule+json
+    primaryType: org.squonk.dataset.Dataset
+    secondaryType: org.squonk.types.MoleculeObject
+  outputDescriptors:
+  - name: output
+    mediaType: application/x-squonk-dataset-molecule+json
+    primaryType: org.squonk.dataset.Dataset
+    secondaryType: org.squonk.types.MoleculeObject
+  optionDescriptors:
+  - !<org.squonk.options.OptionDescriptor>
+    typeDescriptor: !<org.squonk.options.SimpleTypeDescriptor>
+      type: java.lang.Integer
+    key: arg.num_dockings
+    label: Number of dockings
+    description: Execute this many docking runs
+    defaultValue: 10
+    minValues: 1
+    maxValues: 1
+    visible: true
+    editable: true
+    modes:
+    - User
+  - !<org.squonk.options.OptionDescriptor>
+    typeDescriptor: !<org.squonk.options.SimpleTypeDescriptor>
+      type: java.lang.Integer
+    key: arg.top
+    label: Top scoring poses
+    description: Keep this many top scoring poses
+    defaultValue: 1
+    minValues: 1
+    maxValues: 1
+    visible: true
+    editable: true
+    modes:
+    - User
+  - !<org.squonk.options.OptionDescriptor>
+    typeDescriptor: !<org.squonk.options.SimpleTypeDescriptor>
+      type: java.lang.Float
+    key: arg.threshold
+    label: Score threshold
+    description: Filter out poses with relative scores above this value compared to reference
+    defaultValue: 0.0
+    minValues: 1
+    maxValues: 1
+    visible: true
+    editable: true
+    modes:
+    - User
+  executorClassName: org.squonk.execution.steps.impl.ThinDatasetNextflowInDockerExecutorStep
+thinDescriptors:
+  - input: ligands
+inputRoutes:
+- route: FILE
+- route: FILE
+- route: FILE
+outputRoutes:
+- route: FILE
+nextflowParams: |
+  params.receptor = 'receptor.mol2.gz'
+  params.refmol = 'refmol.mol'
+  params.ligands = 'ligands.data.gz'
+  ${binding.variables.containsKey('num_dockings') ? 'params.num_dockings = ' + num_dockings : ''}
+  ${binding.variables.containsKey('top') ? 'params.top = ' + top : ''}
+  ${binding.variables.containsKey('threshold') ? 'params.threshold = ' + threshold : ''}

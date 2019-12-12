@@ -4,25 +4,25 @@
 * reference ligand.
 *
 * To test this manually run something like this:
-* nextflow -c src/nextflow/nextflow-docker.config run src/nextflow/docking/rdock-filter.nsd.nf --ligands data/nudt7/ligands.data.gz --ligand data/nudt7/ligand.mol --receptor data/nudt7/receptor.mol2 --num_dockings 5 -with-docker informaticsmatters/rdkit_pipelines
+* nextflow -c src/nextflow/nextflow-docker.config run src/nextflow/docking/rdock-filter.nsd.nf --ligands data/nudt7/ligands.data.gz --refmol data/nudt7/refmol.mol --receptor data/nudt7/receptor.mol2 --num_dockings 5
 */
 
-params.ligand = "$baseDir/ligand.mol"
+params.refmol = "$baseDir/refmol.mol"
 params.ligands = "$baseDir/ligands.data.gz"
-params.receptor = "$baseDir/receptor.mol2"
+params.receptor = "$baseDir/receptor.mol2.gz"
 params.chunk = 25
 params.num_dockings = 25
 params.top = 1
-params.score = null
-params.nscore = null
 params.limit = 0
 params.digits = 4
 params.threshold = 0.0
 params.field = 'SCORE.norm'
 
-ligand = file(params.ligand)
+refmol = file(params.refmol)
 ligands = file(params.ligands)
 receptor = file(params.receptor)
+
+expl2 = Channel.value( "Hello there $receptor" )
 
 process create_cavity {
 
@@ -30,7 +30,7 @@ process create_cavity {
     beforeScript 'chmod g+w .'
 
     input:
-    file ligand
+    file refmol
     file receptor
 
     output:
@@ -38,13 +38,14 @@ process create_cavity {
     file 'receptor.as' into asfile
 
     """
+    gunzip -c $receptor > receptor.mol2
     cat << EOF > receptor.prm
 RBT_PARAMETER_FILE_V1.00
-RECEPTOR_FILE $receptor
+RECEPTOR_FILE receptor.mol2
 RECEPTOR_FLEX 3.0
 SECTION MAPPER
     SITE_MAPPER RbtLigandSiteMapper
-    REF_MOL $ligand
+    REF_MOL $refmol
     RADIUS 3.0
     SMALL_SPHERE 1.0
     MIN_VOLUME 100
@@ -75,13 +76,14 @@ process dock_reference_ligand {
     file receptor
     file 'receptor.as' from asfile
     file 'receptor.prm' from prmfile
-    file ligand
+    file 'refmol.mol' from refmol
 
     output:
     file 'best_ligand.sdf' into best_ligand
 
     """
-    rbdock -i ligand.mol -r receptor.prm -p dock.prm -n $params.num_dockings -o docked_ligand > docked_ligand_out.log
+    gunzip -c $receptor > receptor.mol2
+    rbdock -i refmol.mol -r receptor.prm -p dock.prm -n $params.num_dockings -o docked_ligand > docked_ligand_out.log
     sdsort -n -s -fSCORE docked_ligand.sd | sdfilter -f'\$_COUNT <= 1' > best_ligand.sdf
     """
 }
@@ -124,13 +126,14 @@ process dock_ligands {
     file 'docked_part*.sd' into docked_parts
 
     """
+    gunzip -c $receptor > receptor.mol2
     rbdock -i $part -r receptor.prm -p dock.prm -n $params.num_dockings -o ${part.name.replace('ligands', 'docked')[0..-5]} > docked_out.log
     """
 }
 
 /* Filter, combine and publish the results.
 * Poses are only included if they are within ${params.threshold} of the best score obtained from docking the
-* target ligand into the same receptor (output of the dock_ligand process).
+* reference ligand into the same receptor (output of the dock_ligand process).
 */
 process combine_and_filter {
 

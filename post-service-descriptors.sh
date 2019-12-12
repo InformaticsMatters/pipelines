@@ -14,7 +14,7 @@ CT_DY="application/x-squonk-service-descriptor-docker+yaml"
 CT_MM="multipart/mixed"
 
 
-for d in 'src/python/pipelines/dmpk' 'src/python/pipelines/docking' 'src/python/pipelines/rdkit'
+for d in 'src/python/pipelines/dmpk' 'src/python/pipelines/docking' 'src/python/pipelines/rdkit' 'src/python/pipelines/dimorphite'
 do
     for file in $d/*.dsd.yml
     do

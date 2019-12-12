@@ -1,0 +1,81 @@
+---
+"@class": org.squonk.core.DockerServiceDescriptor
+serviceConfig:
+  id: pipelines.dimorphite.enumerate_charges.v1
+  name: EnumerateCharges
+  description: Generate charge forms using Dimporphite_DL
+  tags:
+  - rdkit
+  - dimorphite
+  - charges
+  - enumerate
+  - docker
+  resourceUrl:
+  icon: icons/molecule_generator.png
+  inputDescriptors:
+  - primaryType: org.squonk.dataset.Dataset
+    secondaryType: org.squonk.types.MoleculeObject
+    mediaType: application/x-squonk-dataset-molecule+json
+    name: input
+  outputDescriptors:
+  - primaryType: org.squonk.dataset.Dataset
+    secondaryType: org.squonk.types.MoleculeObject
+    mediaType: application/x-squonk-dataset-molecule+json
+    name: output
+  optionDescriptors:
+  - "@class": org.squonk.options.OptionDescriptor
+    modes:
+    - User
+    typeDescriptor:
+      type: java.lang.Float
+      "@class": org.squonk.options.SimpleTypeDescriptor
+    editable: true
+    visible: true
+    description: Minimum pH
+    defaultValue: 5.0
+    label: Minimum pH value
+    key: arg.min_ph
+    minValues: 1
+    maxValues: 1
+  - "@class": org.squonk.options.OptionDescriptor
+    modes:
+      - User
+    typeDescriptor:
+      type: java.lang.Float
+      "@class": org.squonk.options.SimpleTypeDescriptor
+    editable: true
+    visible: true
+    description: Maximum pH
+    defaultValue: 9.0
+    label: Maximum pH value
+    key: arg.max_ph
+    minValues: 1
+    maxValues: 1
+  - modes:
+      - User
+    editable: true
+    "@class": org.squonk.options.OptionDescriptor
+    typeDescriptor:
+      type: java.lang.String
+      "@class": org.squonk.options.SimpleTypeDescriptor
+    key: arg.fragment_method
+    label: Fragment method
+    description: Approach to use for picking biggest molecular fragment
+    values:
+      - hac
+      - mw
+    defaultValue: hac
+    visible: true
+  executorClassName: org.squonk.execution.steps.impl.ThinDatasetDockerExecutorStep
+thinDescriptors:
+- input: input
+inputRoutes:
+- route: FILE
+outputRoutes:
+- route: FILE
+imageName: informaticsmatters/rdkit_pipelines
+command: >-
+  python -m pipelines.dimorphite.enumerate_charges -i ${PIN}input.data.gz -if json -o ${POUT}output -of json
+  ${binding.variables.containsKey('min_ph') ? ' --min-ph ' + min_ph : ''}
+  ${binding.variables.containsKey('max_ph') ? ' --max-ph ' + max_ph : ''}
+  ${binding.variables.containsKey('fragment_method') ? ' --fragment-method ' + fragment_method : ''}
