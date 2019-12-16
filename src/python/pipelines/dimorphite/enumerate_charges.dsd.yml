@@ -75,7 +75,7 @@ outputRoutes:
 - route: FILE
 imageName: informaticsmatters/rdkit_pipelines
 command: >-
-  python -m pipelines.dimorphite.enumerate_charges -i ${PIN}input.data.gz -if json -o ${POUT}output -of json
+  python -m pipelines.dimorphite.enumerate_charges -i ${PIN}input.data.gz -if json -o ${POUT}output -of json --meta
   ${binding.variables.containsKey('min_ph') ? ' --min-ph ' + min_ph : ''}
   ${binding.variables.containsKey('max_ph') ? ' --max-ph ' + max_ph : ''}
   ${binding.variables.containsKey('fragment_method') ? ' --fragment-method ' + fragment_method : ''}

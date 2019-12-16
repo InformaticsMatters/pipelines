@@ -32,25 +32,6 @@ serviceConfig:
     editable: true
     "@class": org.squonk.options.OptionDescriptor
     typeDescriptor:
-      type: java.lang.String
-      "@class": org.squonk.options.SimpleTypeDescriptor
-    key: dockerImageVersion
-    label: RDKit version
-    description: Version of the RDKit Docker image to execute
-    values:
-    - latest
-    - Release_2017_03_1
-    - Release_2016_09_2
-    - Release_2016_03_1
-    - Release_2015_09_2
-    - Release_2015_09_1
-    defaultValue: latest
-    visible: true
-  - modes:
-    - User
-    editable: true
-    "@class": org.squonk.options.OptionDescriptor
-    typeDescriptor:
       type: java.lang.Boolean
       "@class": org.squonk.options.SimpleTypeDescriptor
     key: arg.tautomers
@@ -99,5 +80,5 @@ imageName: informaticsmatters/rdkit_pipelines
 command: >-
   python -m pipelines.rdkit.sanifier -i ${PIN}input.data.gz -if json -o ${POUT}output -of json -mf $molFormat
   ${tautomers ? '-et' : ''}
-  ${stereoisomers ? '-es'' : ''}
+  ${stereoisomers ? '-es' : ''}
   --meta
