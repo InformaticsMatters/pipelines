@@ -47,9 +47,9 @@ def writeEnumeratedMols(src_mol, enum_mols, writer, index):
 
 def add_src_mol_ref(src_mol, target_mol, index):
     """
-    Add the ID of the source molecule to the enumerated molecule as the field named EnumChargeSrcMol.
-    The ID is taken form the uuid field if it exists, if not form the _Name field if it exists and finally
-    from the index parameter (the index of the source molecule in the input) if neither of those fields are found.
+    Add the ID of the source molecule to the enumerated molecule as the field named EnumChargesSrcMolUUID.
+    The ID is taken form the uuid field if it exists, if not form the _Name field if it exists.
+    The EnumChargesSrcMolIdx field is always set with the index of the source molecule in the input..
     :param src_mol:
     :param target_mol:
     :param index:
@@ -59,11 +59,11 @@ def add_src_mol_ref(src_mol, target_mol, index):
         parent = src_mol.GetProp('uuid')
     elif src_mol.HasProp('_name_'):
         parent = src_mol.GetProp('_Name')
-    else:
-        parent = str(index)
 
     if parent:
-        target_mol.SetProp('EnumChargeSrcMol', parent)
+        target_mol.SetProp('EnumChargesSrcMolUUID', parent)
+
+    target_mol.SetIntProp('EnumChargesSrcMolIdx', index)
 
 ### start main execution #########################################
 
@@ -88,9 +88,12 @@ def main():
     source = "enumerate_charges.py"
     datasetMetaProps = {"source":source, "description": "Enumerate charges using Dimorphite-dl"}
     clsMappings = {
-        "EnumChargeSrcMol": "java.lang.String"}
+        "EnumChargesSrcMolUUID": "java.lang.String",
+        "EnumChargesSrcMolIdx": "java.lang.Integer"
+    }
     fieldMetaProps = [
-        {"fieldName":"EnumChargeSrcMol",   "values": {"source":source, "description":"ID of source molecule"}}
+        {"fieldName":"EnumChargesSrcMolUUID", "values": {"source":source, "description":"UUID of source molecule"}},
+        {"fieldName":"EnumChargesSrcMolIdx", "values": {"source":source, "description":"Index of source molecule"}}
     ]
 
     oformat = utils.determine_output_format(args.outformat)

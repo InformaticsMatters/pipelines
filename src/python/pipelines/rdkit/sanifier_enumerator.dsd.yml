@@ -69,9 +69,7 @@ serviceConfig:
     minValues: 1
     maxValues: 1
     visible: true
-  executorClassName: org.squonk.execution.steps.impl.ThinDatasetDockerExecutorStep
-thinDescriptors:
-- input: input
+  executorClassName: org.squonk.execution.steps.impl.DefaultDockerExecutorStep
 inputRoutes:
 - route: FILE
 outputRoutes:

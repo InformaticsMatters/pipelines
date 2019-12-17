@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright 2017 Informatics Matters Ltd.
+# Copyright 2019 Informatics Matters Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-### Use MolVS to do tautomer enumeration, sterochemistry enumeration, charge neutralisation.
+### Use MolVS to do tautomer enumeration, stereochemistry enumeration, charge neutralisation.
 
 import sys, argparse
 
@@ -73,7 +73,28 @@ def main():
     if args.standardize:
         getStandardMolecule = STANDARD_MOL_METHODS[args.standardize_method]
 
-    input ,output ,suppl ,writer ,output_base = rdkit_utils.default_open_input_output(args.input, args.informat, args.output, 'sanify', args.outformat)
+    # handle metadata
+    source = "sanifier.py"
+    datasetMetaProps = {"source":source, "description": "Enumerate tautomers and stereoisomers"}
+    clsMappings = {
+        "EnumTautIsoSourceMolUUID": "java.lang.String",
+        "EnumTautIsoSourceMolIdx": "java.lang.Integer"
+    }
+    fieldMetaProps = [
+        {"fieldName":"EnumTautIsoSourceMolUUID", "values": {"source":source, "description":"UUID of source molecule"}},
+        {"fieldName":"EnumTautIsoSourceMolIdx", "values": {"source":source, "description":"Index of source molecule"}}
+    ]
+
+    oformat = utils.determine_output_format(args.outformat)
+
+    input,output,suppl,writer,output_base = rdkit_utils. \
+        default_open_input_output(args.input, args.informat, args.output,
+                                  'sanifier', args.outformat,
+                                  thinOutput=False, valueClassMappings=clsMappings,
+                                  datasetMetaProps=datasetMetaProps,
+                                  fieldMetaProps=fieldMetaProps)
+
+
     i=0
     count=0
     errors=0
@@ -110,11 +131,13 @@ def main():
                 parentUuid = None
 
             results = []
-            results.append(mol)
+
 
             if args.enumerate_tauts:
                 utils.log("Enumerating tautomers")
                 results = enumerateTautomers(mol)
+            else:
+                results.append(mol)
 
             if args.enumerate_stereo:
                 utils.log("Enumerating steroisomers")
@@ -125,10 +148,14 @@ def main():
                     results.extend(enumerated)
 
             for m in results:
+                # copy the src mol props
+                for name in mol.GetPropNames():
+                    m.SetProp(name, mol.GetProp(name))
+                # add our new props
                 m.ClearProp("uuid")
-                m.SetIntProp("SourceMolNum", i)
+                m.SetIntProp("EnumTautIsoSourceMolIdx", i)
                 if parentUuid:
-                    m.SetProp("SourceMolUUID", parentUuid)
+                    m.SetProp("EnumTautIsoSourceMolUUID", parentUuid)
 
             count = write_out(results,count,writer,args.mol_format,args.outformat)
 
@@ -138,6 +165,11 @@ def main():
     writer.close()
     input.close()
     output.close()
+
+    # re-write the metadata as we now know the size
+    if oformat == 'json':
+        utils.write_squonk_datasetmetadata(output_base, False, clsMappings, datasetMetaProps, fieldMetaProps, size=count)
+
 
     if args.meta:
         utils.write_metrics(output_base, {'__InputCount__':i, '__OutputCount__':count, '__ErrorCount__':errors , 'RDKitSanify':count })

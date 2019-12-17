@@ -66,9 +66,9 @@ serviceConfig:
       - mw
     defaultValue: hac
     visible: true
-  executorClassName: org.squonk.execution.steps.impl.ThinDatasetDockerExecutorStep
-thinDescriptors:
-- input: input
+  executorClassName: org.squonk.execution.steps.impl.DefaultDockerExecutorStep
+#thinDescriptors:
+#- input: input
 inputRoutes:
 - route: FILE
 outputRoutes:
