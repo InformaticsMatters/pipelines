@@ -1,0 +1,1716 @@
+MolPort-000-927-215
+  rDOCK(R)          3D
+libRbt.so/2013.1/901 2013/11/27
+ 15 16  0  0  0  0  0  0  0  0999 V2000
+   29.6758  -47.1761   70.0059 N   0  0  0  0  0  0
+   29.9241  -46.5201   71.0538 C   0  0  0  0  0  0
+   30.2234  -45.7294   72.3170 C   0  0  0  0  0  0
+   31.7027  -45.7142   72.6179 C   0  0  0  0  0  0
+   32.2644  -46.6335   73.5108 C   0  0  0  0  0  0
+   33.6211  -46.5553   73.8569 C   0  0  0  0  0  0
+   34.4641  -45.5633   73.3250 C   0  0  0  0  0  0
+   33.8879  -44.6723   72.4015 C   0  0  0  0  0  0
+   32.5308  -44.7353   72.0608 C   0  0  0  0  0  0
+   35.8818  -45.4304   73.7496 C   0  0  0  0  0  0
+   36.7154  -44.4084   73.2588 C   0  0  0  0  0  0
+   38.0614  -44.3165   73.6344 C   0  0  0  0  0  0
+   38.6031  -45.2373   74.5247 C   0  0  0  0  0  0
+   37.8024  -46.2508   75.0367 C   0  0  0  0  0  0
+   36.4622  -46.3480   74.6479 C   0  0  0  0  0  0
+  1  2  3  0  0  0
+  2  3  1  0  0  0
+  3  4  1  0  0  0
+  4  5  2  0  0  0
+  4  9  1  0  0  0
+  5  6  1  0  0  0
+  6  7  2  0  0  0
+  7  8  1  0  0  0
+  7 10  1  0  0  0
+  8  9  2  0  0  0
+ 10 11  2  0  0  0
+ 10 15  1  0  0  0
+ 11 12  1  0  0  0
+ 12 13  2  0  0  0
+ 13 14  1  0  0  0
+ 14 15  2  0  0  0
+M  END
+>  <CHROM.1>
+-95.78758235,-177.54080415,34.10184873,-45.69137063,73.05515311,-3.00040825
+0.36959168,2.41832159
+
+>  <Name>
+MolPort-000-927-215
+
+>  <RI>
+0
+
+>  <Rbt.Current_Directory>
+/home/timbo/github/im/docking-validation/targets/nudt7/expts/vscreening/NUDT7A-x0129/work/94/3883032ea0e243c22b1a7b7b149ac4
+
+>  <Rbt.Executable>
+rbdock ($Id: //depot/dev/client3/rdock/2013.1/src/exe/rbdock.cxx#4 $)
+
+>  <Rbt.Library>
+libRbt.so (2013.1, Build901 2013/11/27)
+
+>  <Rbt.Parameter_File>
+/rDock_2013.1/data/scripts/dock.prm
+
+>  <Rbt.Receptor>
+docking.prm
+
+>  <SCORE>
+-8.2005
+
+>  <SCORE.INTER>
+-7.84381
+
+>  <SCORE.INTER.CONST>
+1
+
+>  <SCORE.INTER.POLAR>
+0
+
+>  <SCORE.INTER.REPUL>
+0
+
+>  <SCORE.INTER.ROT>
+2
+
+>  <SCORE.INTER.VDW>
+-15.2438
+
+>  <SCORE.INTER.norm>
+-0.522921
+
+>  <SCORE.INTRA>
+-0.356688
+
+>  <SCORE.INTRA.DIHEDRAL>
+-1.54515
+
+>  <SCORE.INTRA.DIHEDRAL.0>
+2.21355
+
+>  <SCORE.INTRA.POLAR>
+0
+
+>  <SCORE.INTRA.POLAR.0>
+0
+
+>  <SCORE.INTRA.REPUL>
+0
+
+>  <SCORE.INTRA.REPUL.0>
+0
+
+>  <SCORE.INTRA.VDW>
+0.415886
+
+>  <SCORE.INTRA.VDW.0>
+-0.532707
+
+>  <SCORE.INTRA.norm>
+-0.0237792
+
+>  <SCORE.RESTR>
+0
+
+>  <SCORE.RESTR.CAVITY>
+0
+
+>  <SCORE.RESTR.norm>
+0
+
+>  <SCORE.SYSTEM>
+0
+
+>  <SCORE.SYSTEM.CONST>
+0
+
+>  <SCORE.SYSTEM.DIHEDRAL>
+0
+
+>  <SCORE.SYSTEM.norm>
+0
+
+>  <SCORE.heavy>
+15
+
+>  <SCORE.norm>
+-0.5467
+
+$$$$
+MolPort-000-927-215
+  rDOCK(R)          3D
+libRbt.so/2013.1/901 2013/11/27
+ 15 16  0  0  0  0  0  0  0  0999 V2000
+   30.0904  -47.5895   70.0055 N   0  0  0  0  0  0
+   30.1593  -46.8118   70.9957 C   0  0  0  0  0  0
+   30.2423  -45.8743   72.1893 C   0  0  0  0  0  0
+   31.6665  -45.7136   72.6635 C   0  0  0  0  0  0
+   32.4981  -44.7276   72.1212 C   0  0  0  0  0  0
+   33.8461  -44.6434   72.4986 C   0  0  0  0  0  0
+   34.4105  -45.5341   73.4290 C   0  0  0  0  0  0
+   33.5482  -46.4940   73.9893 C   0  0  0  0  0  0
+   32.2042  -46.5932   73.6077 C   0  0  0  0  0  0
+   35.8559  -45.4965   73.7715 C   0  0  0  0  0  0
+   36.7159  -44.5013   73.2714 C   0  0  0  0  0  0
+   38.0847  -44.4986   73.5677 C   0  0  0  0  0  0
+   38.6245  -45.4845   74.3867 C   0  0  0  0  0  0
+   37.7990  -46.4738   74.9062 C   0  0  0  0  0  0
+   36.4350  -46.4816   74.5961 C   0  0  0  0  0  0
+  1  2  3  0  0  0
+  2  3  1  0  0  0
+  3  4  1  0  0  0
+  4  5  2  0  0  0
+  4  9  1  0  0  0
+  5  6  1  0  0  0
+  6  7  2  0  0  0
+  7  8  1  0  0  0
+  7 10  1  0  0  0
+  8  9  2  0  0  0
+ 10 11  2  0  0  0
+ 10 15  1  0  0  0
+ 11 12  1  0  0  0
+ 12 13  2  0  0  0
+ 13 14  1  0  0  0
+ 14 15  2  0  0  0
+M  END
+>  <CHROM.1>
+88.25790791,5.38661508,34.12770899,-45.80215303,73.05375921,3.04465402,-0.38105301
+-0.62091979
+
+>  <Name>
+MolPort-000-927-215
+
+>  <RI>
+0
+
+>  <Rbt.Current_Directory>
+/home/timbo/github/im/docking-validation/targets/nudt7/expts/vscreening/NUDT7A-x0129/work/94/3883032ea0e243c22b1a7b7b149ac4
+
+>  <Rbt.Executable>
+rbdock ($Id: //depot/dev/client3/rdock/2013.1/src/exe/rbdock.cxx#4 $)
+
+>  <Rbt.Library>
+libRbt.so (2013.1, Build901 2013/11/27)
+
+>  <Rbt.Parameter_File>
+/rDock_2013.1/data/scripts/dock.prm
+
+>  <Rbt.Receptor>
+docking.prm
+
+>  <SCORE>
+-8.17806
+
+>  <SCORE.INTER>
+-7.86931
+
+>  <SCORE.INTER.CONST>
+1
+
+>  <SCORE.INTER.POLAR>
+0
+
+>  <SCORE.INTER.REPUL>
+0
+
+>  <SCORE.INTER.ROT>
+2
+
+>  <SCORE.INTER.VDW>
+-15.2693
+
+>  <SCORE.INTER.norm>
+-0.52462
+
+>  <SCORE.INTRA>
+-0.308749
+
+>  <SCORE.INTRA.DIHEDRAL>
+-1.39287
+
+>  <SCORE.INTRA.DIHEDRAL.0>
+2.21355
+
+>  <SCORE.INTRA.POLAR>
+0
+
+>  <SCORE.INTRA.POLAR.0>
+0
+
+>  <SCORE.INTRA.REPUL>
+0
+
+>  <SCORE.INTRA.REPUL.0>
+0
+
+>  <SCORE.INTRA.VDW>
+0.387686
+
+>  <SCORE.INTRA.VDW.0>
+-0.532707
+
+>  <SCORE.INTRA.norm>
+-0.0205832
+
+>  <SCORE.RESTR>
+0
+
+>  <SCORE.RESTR.CAVITY>
+0
+
+>  <SCORE.RESTR.norm>
+0
+
+>  <SCORE.SYSTEM>
+0
+
+>  <SCORE.SYSTEM.CONST>
+0
+
+>  <SCORE.SYSTEM.DIHEDRAL>
+0
+
+>  <SCORE.SYSTEM.norm>
+0
+
+>  <SCORE.heavy>
+15
+
+>  <SCORE.norm>
+-0.545204
+
+$$$$
+MolPort-000-927-215
+  rDOCK(R)          3D
+libRbt.so/2013.1/901 2013/11/27
+ 15 16  0  0  0  0  0  0  0  0999 V2000
+   30.0025  -47.4347   70.0268 N   0  0  0  0  0  0
+   30.0920  -46.6928   71.0425 C   0  0  0  0  0  0
+   30.1997  -45.7983   72.2668 C   0  0  0  0  0  0
+   31.6343  -45.6473   72.7122 C   0  0  0  0  0  0
+   32.4839  -44.7203   72.0985 C   0  0  0  0  0  0
+   33.8388  -44.6495   72.4531 C   0  0  0  0  0  0
+   34.3926  -45.4954   73.4306 C   0  0  0  0  0  0
+   33.5132  -46.3943   74.0609 C   0  0  0  0  0  0
+   32.1618  -46.4805   73.7031 C   0  0  0  0  0  0
+   35.8432  -45.4760   73.7520 C   0  0  0  0  0  0
+   36.7186  -44.5257   73.1945 C   0  0  0  0  0  0
+   38.0912  -44.5415   73.4725 C   0  0  0  0  0  0
+   38.6197  -45.5006   74.3296 C   0  0  0  0  0  0
+   37.7792  -46.4450   74.9057 C   0  0  0  0  0  0
+   36.4111  -46.4350   74.6142 C   0  0  0  0  0  0
+  1  2  3  0  0  0
+  2  3  1  0  0  0
+  3  4  1  0  0  0
+  4  5  2  0  0  0
+  4  9  1  0  0  0
+  5  6  1  0  0  0
+  6  7  2  0  0  0
+  7  8  1  0  0  0
+  7 10  1  0  0  0
+  8  9  2  0  0  0
+ 10 11  2  0  0  0
+ 10 15  1  0  0  0
+ 11 12  1  0  0  0
+ 12 13  2  0  0  0
+ 13 14  1  0  0  0
+ 14 15  2  0  0  0
+M  END
+>  <CHROM.1>
+82.27852268,6.33055238,34.10083896,-45.75636024,73.05814548,-2.97889012,0.34017650
+2.34671573
+
+>  <Name>
+MolPort-000-927-215
+
+>  <RI>
+0
+
+>  <Rbt.Current_Directory>
+/home/timbo/github/im/docking-validation/targets/nudt7/expts/vscreening/NUDT7A-x0129/work/94/3883032ea0e243c22b1a7b7b149ac4
+
+>  <Rbt.Executable>
+rbdock ($Id: //depot/dev/client3/rdock/2013.1/src/exe/rbdock.cxx#4 $)
+
+>  <Rbt.Library>
+libRbt.so (2013.1, Build901 2013/11/27)
+
+>  <Rbt.Parameter_File>
+/rDock_2013.1/data/scripts/dock.prm
+
+>  <Rbt.Receptor>
+docking.prm
+
+>  <SCORE>
+-8.12557
+
+>  <SCORE.INTER>
+-7.82214
+
+>  <SCORE.INTER.CONST>
+1
+
+>  <SCORE.INTER.POLAR>
+0
+
+>  <SCORE.INTER.REPUL>
+0
+
+>  <SCORE.INTER.ROT>
+2
+
+>  <SCORE.INTER.VDW>
+-15.2221
+
+>  <SCORE.INTER.norm>
+-0.521476
+
+>  <SCORE.INTRA>
+-0.303432
+
+>  <SCORE.INTRA.DIHEDRAL>
+-1.38094
+
+>  <SCORE.INTRA.DIHEDRAL.0>
+2.21355
+
+>  <SCORE.INTRA.POLAR>
+0
+
+>  <SCORE.INTRA.POLAR.0>
+0
+
+>  <SCORE.INTRA.REPUL>
+0
+
+>  <SCORE.INTRA.REPUL.0>
+0
+
+>  <SCORE.INTRA.VDW>
+0.387037
+
+>  <SCORE.INTRA.VDW.0>
+-0.532707
+
+>  <SCORE.INTRA.norm>
+-0.0202288
+
+>  <SCORE.RESTR>
+0
+
+>  <SCORE.RESTR.CAVITY>
+0
+
+>  <SCORE.RESTR.norm>
+0
+
+>  <SCORE.SYSTEM>
+0
+
+>  <SCORE.SYSTEM.CONST>
+0
+
+>  <SCORE.SYSTEM.DIHEDRAL>
+0
+
+>  <SCORE.SYSTEM.norm>
+0
+
+>  <SCORE.heavy>
+15
+
+>  <SCORE.norm>
+-0.541705
+
+$$$$
+MolPort-000-927-215
+  rDOCK(R)          3D
+libRbt.so/2013.1/901 2013/11/27
+ 15 16  0  0  0  0  0  0  0  0999 V2000
+   29.6899  -47.1216   70.0540 N   0  0  0  0  0  0
+   29.9533  -46.4523   71.0896 C   0  0  0  0  0  0
+   30.2709  -45.6454   72.3381 C   0  0  0  0  0  0
+   31.7482  -45.6717   72.6481 C   0  0  0  0  0  0
+   32.2849  -46.6335   73.5109 C   0  0  0  0  0  0
+   33.6406  -46.5960   73.8675 C   0  0  0  0  0  0
+   34.5073  -45.6034   73.3763 C   0  0  0  0  0  0
+   33.9557  -44.6684   72.4817 C   0  0  0  0  0  0
+   32.5998  -44.6910   72.1310 C   0  0  0  0  0  0
+   35.9246  -45.5152   73.8137 C   0  0  0  0  0  0
+   36.7888  -44.5078   73.3462 C   0  0  0  0  0  0
+   38.1338  -44.4578   73.7334 C   0  0  0  0  0  0
+   38.6438  -45.4072   74.6123 C   0  0  0  0  0  0
+   37.8126  -46.4073   75.1012 C   0  0  0  0  0  0
+   36.4734  -46.4625   74.7008 C   0  0  0  0  0  0
+  1  2  3  0  0  0
+  2  3  1  0  0  0
+  3  4  1  0  0  0
+  4  5  2  0  0  0
+  4  9  1  0  0  0
+  5  6  1  0  0  0
+  6  7  2  0  0  0
+  7  8  1  0  0  0
+  7 10  1  0  0  0
+  8  9  2  0  0  0
+ 10 11  2  0  0  0
+ 10 15  1  0  0  0
+ 11 12  1  0  0  0
+ 12 13  2  0  0  0
+ 13 14  1  0  0  0
+ 14 15  2  0  0  0
+M  END
+>  <CHROM.1>
+-92.49156456,-178.68029514,34.14222376,-45.72765373,73.10866108,-2.99486051
+0.36431116,2.46643818
+
+>  <Name>
+MolPort-000-927-215
+
+>  <RI>
+0
+
+>  <Rbt.Current_Directory>
+/home/timbo/github/im/docking-validation/targets/nudt7/expts/vscreening/NUDT7A-x0129/work/94/3883032ea0e243c22b1a7b7b149ac4
+
+>  <Rbt.Executable>
+rbdock ($Id: //depot/dev/client3/rdock/2013.1/src/exe/rbdock.cxx#4 $)
+
+>  <Rbt.Library>
+libRbt.so (2013.1, Build901 2013/11/27)
+
+>  <Rbt.Parameter_File>
+/rDock_2013.1/data/scripts/dock.prm
+
+>  <Rbt.Receptor>
+docking.prm
+
+>  <SCORE>
+-8.10432
+
+>  <SCORE.INTER>
+-7.74416
+
+>  <SCORE.INTER.CONST>
+1
+
+>  <SCORE.INTER.POLAR>
+0
+
+>  <SCORE.INTER.REPUL>
+0
+
+>  <SCORE.INTER.ROT>
+2
+
+>  <SCORE.INTER.VDW>
+-15.1442
+
+>  <SCORE.INTER.norm>
+-0.516278
+
+>  <SCORE.INTRA>
+-0.360156
+
+>  <SCORE.INTRA.DIHEDRAL>
+-1.55158
+
+>  <SCORE.INTRA.DIHEDRAL.0>
+2.21355
+
+>  <SCORE.INTRA.POLAR>
+0
+
+>  <SCORE.INTRA.POLAR.0>
+0
+
+>  <SCORE.INTRA.REPUL>
+0
+
+>  <SCORE.INTRA.REPUL.0>
+0
+
+>  <SCORE.INTRA.VDW>
+0.415636
+
+>  <SCORE.INTRA.VDW.0>
+-0.532707
+
+>  <SCORE.INTRA.norm>
+-0.0240104
+
+>  <SCORE.RESTR>
+0
+
+>  <SCORE.RESTR.CAVITY>
+0
+
+>  <SCORE.RESTR.norm>
+0
+
+>  <SCORE.SYSTEM>
+0
+
+>  <SCORE.SYSTEM.CONST>
+0
+
+>  <SCORE.SYSTEM.DIHEDRAL>
+0
+
+>  <SCORE.SYSTEM.norm>
+0
+
+>  <SCORE.heavy>
+15
+
+>  <SCORE.norm>
+-0.540288
+
+$$$$
+MolPort-000-927-215
+  rDOCK(R)          3D
+libRbt.so/2013.1/901 2013/11/27
+ 15 16  0  0  0  0  0  0  0  0999 V2000
+   29.6799  -47.2302   69.9993 N   0  0  0  0  0  0
+   29.9233  -46.5444   71.0291 C   0  0  0  0  0  0
+   30.2166  -45.7177   72.2705 C   0  0  0  0  0  0
+   31.6927  -45.7074   72.5873 C   0  0  0  0  0  0
+   32.2433  -46.6346   73.4788 C   0  0  0  0  0  0
+   33.5964  -46.5615   73.8400 C   0  0  0  0  0  0
+   34.4465  -45.5666   73.3250 C   0  0  0  0  0  0
+   33.8817  -44.6674   72.4024 C   0  0  0  0  0  0
+   32.5282  -44.7255   72.0468 C   0  0  0  0  0  0
+   35.8599  -45.4394   73.7657 C   0  0  0  0  0  0
+   36.4290  -46.3142   74.7096 C   0  0  0  0  0  0
+   37.7501  -46.1605   75.1484 C   0  0  0  0  0  0
+   38.5405  -45.1353   74.6403 C   0  0  0  0  0  0
+   38.0112  -44.2625   73.6978 C   0  0  0  0  0  0
+   36.6868  -44.4104   73.2728 C   0  0  0  0  0  0
+  1  2  3  0  0  0
+  2  3  1  0  0  0
+  3  4  1  0  0  0
+  4  5  2  0  0  0
+  4  9  1  0  0  0
+  5  6  1  0  0  0
+  6  7  2  0  0  0
+  7  8  1  0  0  0
+  7 10  1  0  0  0
+  8  9  2  0  0  0
+ 10 11  2  0  0  0
+ 10 15  1  0  0  0
+ 11 12  1  0  0  0
+ 12 13  2  0  0  0
+ 13 14  1  0  0  0
+ 14 15  2  0  0  0
+M  END
+>  <CHROM.1>
+-93.51093021,0.71421936,34.07957606,-45.67706382,73.06937076,-2.99933710
+0.38715996,2.41856376
+
+>  <Name>
+MolPort-000-927-215
+
+>  <RI>
+0
+
+>  <Rbt.Current_Directory>
+/home/timbo/github/im/docking-validation/targets/nudt7/expts/vscreening/NUDT7A-x0129/work/94/3883032ea0e243c22b1a7b7b149ac4
+
+>  <Rbt.Executable>
+rbdock ($Id: //depot/dev/client3/rdock/2013.1/src/exe/rbdock.cxx#4 $)
+
+>  <Rbt.Library>
+libRbt.so (2013.1, Build901 2013/11/27)
+
+>  <Rbt.Parameter_File>
+/rDock_2013.1/data/scripts/dock.prm
+
+>  <Rbt.Receptor>
+docking.prm
+
+>  <SCORE>
+-8.08563
+
+>  <SCORE.INTER>
+-7.72897
+
+>  <SCORE.INTER.CONST>
+1
+
+>  <SCORE.INTER.POLAR>
+0
+
+>  <SCORE.INTER.REPUL>
+0
+
+>  <SCORE.INTER.ROT>
+2
+
+>  <SCORE.INTER.VDW>
+-15.129
+
+>  <SCORE.INTER.norm>
+-0.515265
+
+>  <SCORE.INTRA>
+-0.356665
+
+>  <SCORE.INTRA.DIHEDRAL>
+-1.55249
+
+>  <SCORE.INTRA.DIHEDRAL.0>
+2.21355
+
+>  <SCORE.INTRA.POLAR>
+0
+
+>  <SCORE.INTRA.POLAR.0>
+0
+
+>  <SCORE.INTRA.REPUL>
+0
+
+>  <SCORE.INTRA.REPUL.0>
+0
+
+>  <SCORE.INTRA.VDW>
+0.419579
+
+>  <SCORE.INTRA.VDW.0>
+-0.532707
+
+>  <SCORE.INTRA.norm>
+-0.0237776
+
+>  <SCORE.RESTR>
+0
+
+>  <SCORE.RESTR.CAVITY>
+0
+
+>  <SCORE.RESTR.norm>
+0
+
+>  <SCORE.SYSTEM>
+0
+
+>  <SCORE.SYSTEM.CONST>
+0
+
+>  <SCORE.SYSTEM.DIHEDRAL>
+0
+
+>  <SCORE.SYSTEM.norm>
+0
+
+>  <SCORE.heavy>
+15
+
+>  <SCORE.norm>
+-0.539042
+
+$$$$
+MolPort-000-927-215
+  rDOCK(R)          3D
+libRbt.so/2013.1/901 2013/11/27
+ 15 16  0  0  0  0  0  0  0  0999 V2000
+   29.6638  -47.2280   70.0495 N   0  0  0  0  0  0
+   29.9154  -46.5422   71.0773 C   0  0  0  0  0  0
+   30.2186  -45.7153   72.3162 C   0  0  0  0  0  0
+   31.6967  -45.7078   72.6233 C   0  0  0  0  0  0
+   32.2488  -46.6258   73.5234 C   0  0  0  0  0  0
+   33.6046  -46.5544   73.8748 C   0  0  0  0  0  0
+   34.4559  -45.5704   73.3413 C   0  0  0  0  0  0
+   33.8892  -44.6807   72.4107 C   0  0  0  0  0  0
+   32.5332  -44.7370   72.0646 C   0  0  0  0  0  0
+   35.8727  -45.4441   73.7712 C   0  0  0  0  0  0
+   36.4616  -46.3469   74.6757 C   0  0  0  0  0  0
+   37.7858  -46.1951   75.1056 C   0  0  0  0  0  0
+   38.5596  -45.1432   74.6275 C   0  0  0  0  0  0
+   38.0106  -44.2420   73.7237 C   0  0  0  0  0  0
+   36.6831  -44.3886   73.3078 C   0  0  0  0  0  0
+  1  2  3  0  0  0
+  2  3  1  0  0  0
+  3  4  1  0  0  0
+  4  5  2  0  0  0
+  4  9  1  0  0  0
+  5  6  1  0  0  0
+  6  7  2  0  0  0
+  7  8  1  0  0  0
+  7 10  1  0  0  0
+  8  9  2  0  0  0
+ 10 11  2  0  0  0
+ 10 15  1  0  0  0
+ 11 12  1  0  0  0
+ 12 13  2  0  0  0
+ 13 14  1  0  0  0
+ 14 15  2  0  0  0
+M  END
+>  <CHROM.1>
+-94.24165153,3.73155612,34.08704244,-45.67996860,73.08809671,-3.01138010
+0.38366490,2.44109602
+
+>  <Name>
+MolPort-000-927-215
+
+>  <RI>
+0
+
+>  <Rbt.Current_Directory>
+/home/timbo/github/im/docking-validation/targets/nudt7/expts/vscreening/NUDT7A-x0129/work/94/3883032ea0e243c22b1a7b7b149ac4
+
+>  <Rbt.Executable>
+rbdock ($Id: //depot/dev/client3/rdock/2013.1/src/exe/rbdock.cxx#4 $)
+
+>  <Rbt.Library>
+libRbt.so (2013.1, Build901 2013/11/27)
+
+>  <Rbt.Parameter_File>
+/rDock_2013.1/data/scripts/dock.prm
+
+>  <Rbt.Receptor>
+docking.prm
+
+>  <SCORE>
+-8.06618
+
+>  <SCORE.INTER>
+-7.71308
+
+>  <SCORE.INTER.CONST>
+1
+
+>  <SCORE.INTER.POLAR>
+0
+
+>  <SCORE.INTER.REPUL>
+0
+
+>  <SCORE.INTER.ROT>
+2
+
+>  <SCORE.INTER.VDW>
+-15.1131
+
+>  <SCORE.INTER.norm>
+-0.514205
+
+>  <SCORE.INTRA>
+-0.353105
+
+>  <SCORE.INTRA.DIHEDRAL>
+-1.53592
+
+>  <SCORE.INTRA.DIHEDRAL.0>
+2.21355
+
+>  <SCORE.INTRA.POLAR>
+0
+
+>  <SCORE.INTRA.POLAR.0>
+0
+
+>  <SCORE.INTRA.REPUL>
+0
+
+>  <SCORE.INTRA.REPUL.0>
+0
+
+>  <SCORE.INTRA.VDW>
+0.414856
+
+>  <SCORE.INTRA.VDW.0>
+-0.532707
+
+>  <SCORE.INTRA.norm>
+-0.0235403
+
+>  <SCORE.RESTR>
+0
+
+>  <SCORE.RESTR.CAVITY>
+0
+
+>  <SCORE.RESTR.norm>
+0
+
+>  <SCORE.SYSTEM>
+0
+
+>  <SCORE.SYSTEM.CONST>
+0
+
+>  <SCORE.SYSTEM.DIHEDRAL>
+0
+
+>  <SCORE.SYSTEM.norm>
+0
+
+>  <SCORE.heavy>
+15
+
+>  <SCORE.norm>
+-0.537745
+
+$$$$
+MolPort-000-927-215
+  rDOCK(R)          3D
+libRbt.so/2013.1/901 2013/11/27
+ 15 16  0  0  0  0  0  0  0  0999 V2000
+   29.9873  -47.4189   70.0617 N   0  0  0  0  0  0
+   30.0915  -46.6883   71.0841 C   0  0  0  0  0  0
+   30.2171  -45.8075   72.3166 C   0  0  0  0  0  0
+   31.6572  -45.6675   72.7473 C   0  0  0  0  0  0
+   32.4954  -44.7159   72.1559 C   0  0  0  0  0  0
+   33.8549  -44.6532   72.4941 C   0  0  0  0  0  0
+   34.4248  -45.5318   73.4326 C   0  0  0  0  0  0
+   33.5570  -46.4561   74.0420 C   0  0  0  0  0  0
+   32.2010  -46.5341   73.7000 C   0  0  0  0  0  0
+   35.8797  -45.5188   73.7345 C   0  0  0  0  0  0
+   36.4718  -46.4610   74.5957 C   0  0  0  0  0  0
+   37.8369  -46.4150   74.9054 C   0  0  0  0  0  0
+   38.6475  -45.4328   74.3469 C   0  0  0  0  0  0
+   38.0950  -44.4955   73.4829 C   0  0  0  0  0  0
+   36.7283  -44.5358   73.1875 C   0  0  0  0  0  0
+  1  2  3  0  0  0
+  2  3  1  0  0  0
+  3  4  1  0  0  0
+  4  5  2  0  0  0
+  4  9  1  0  0  0
+  5  6  1  0  0  0
+  6  7  2  0  0  0
+  7  8  1  0  0  0
+  7 10  1  0  0  0
+  8  9  2  0  0  0
+ 10 11  2  0  0  0
+ 10 15  1  0  0  0
+ 11 12  1  0  0  0
+ 12 13  2  0  0  0
+ 13 14  1  0  0  0
+ 14 15  2  0  0  0
+M  END
+>  <CHROM.1>
+83.81238191,-175.08963843,34.12488342,-45.76225502,73.07335814,-2.99764525
+0.34370402,2.38421582
+
+>  <Name>
+MolPort-000-927-215
+
+>  <RI>
+0
+
+>  <Rbt.Current_Directory>
+/home/timbo/github/im/docking-validation/targets/nudt7/expts/vscreening/NUDT7A-x0129/work/94/3883032ea0e243c22b1a7b7b149ac4
+
+>  <Rbt.Executable>
+rbdock ($Id: //depot/dev/client3/rdock/2013.1/src/exe/rbdock.cxx#4 $)
+
+>  <Rbt.Library>
+libRbt.so (2013.1, Build901 2013/11/27)
+
+>  <Rbt.Parameter_File>
+/rDock_2013.1/data/scripts/dock.prm
+
+>  <Rbt.Receptor>
+docking.prm
+
+>  <SCORE>
+-7.98832
+
+>  <SCORE.INTER>
+-7.67618
+
+>  <SCORE.INTER.CONST>
+1
+
+>  <SCORE.INTER.POLAR>
+0
+
+>  <SCORE.INTER.REPUL>
+0
+
+>  <SCORE.INTER.ROT>
+2
+
+>  <SCORE.INTER.VDW>
+-15.0762
+
+>  <SCORE.INTER.norm>
+-0.511746
+
+>  <SCORE.INTRA>
+-0.312136
+
+>  <SCORE.INTRA.DIHEDRAL>
+-1.40122
+
+>  <SCORE.INTRA.DIHEDRAL.0>
+2.21355
+
+>  <SCORE.INTRA.POLAR>
+0
+
+>  <SCORE.INTRA.POLAR.0>
+0
+
+>  <SCORE.INTRA.REPUL>
+0
+
+>  <SCORE.INTRA.REPUL.0>
+0
+
+>  <SCORE.INTRA.VDW>
+0.388476
+
+>  <SCORE.INTRA.VDW.0>
+-0.532707
+
+>  <SCORE.INTRA.norm>
+-0.0208091
+
+>  <SCORE.RESTR>
+0
+
+>  <SCORE.RESTR.CAVITY>
+0
+
+>  <SCORE.RESTR.norm>
+0
+
+>  <SCORE.SYSTEM>
+0
+
+>  <SCORE.SYSTEM.CONST>
+0
+
+>  <SCORE.SYSTEM.DIHEDRAL>
+0
+
+>  <SCORE.SYSTEM.norm>
+0
+
+>  <SCORE.heavy>
+15
+
+>  <SCORE.norm>
+-0.532555
+
+$$$$
+MolPort-000-927-215
+  rDOCK(R)          3D
+libRbt.so/2013.1/901 2013/11/27
+ 15 16  0  0  0  0  0  0  0  0999 V2000
+   29.9987  -47.5053   70.0070 N   0  0  0  0  0  0
+   30.0816  -46.7588   71.0199 C   0  0  0  0  0  0
+   30.1815  -45.8590   72.2409 C   0  0  0  0  0  0
+   31.6146  -45.6945   72.6862 C   0  0  0  0  0  0
+   32.4366  -44.7154   72.1173 C   0  0  0  0  0  0
+   33.7915  -44.6285   72.4682 C   0  0  0  0  0  0
+   34.3728  -45.5094   73.3975 C   0  0  0  0  0  0
+   33.5205  -46.4621   73.9846 C   0  0  0  0  0  0
+   32.1694  -46.5642   73.6297 C   0  0  0  0  0  0
+   35.8245  -45.4695   73.7121 C   0  0  0  0  0  0
+   36.4266  -46.4013   74.5778 C   0  0  0  0  0  0
+   37.7878  -46.3300   74.8995 C   0  0  0  0  0  0
+   38.5848  -45.3323   74.3488 C   0  0  0  0  0  0
+   38.0224  -44.4047   73.4808 C   0  0  0  0  0  0
+   36.6593  -44.4703   73.1733 C   0  0  0  0  0  0
+  1  2  3  0  0  0
+  2  3  1  0  0  0
+  3  4  1  0  0  0
+  4  5  2  0  0  0
+  4  9  1  0  0  0
+  5  6  1  0  0  0
+  6  7  2  0  0  0
+  7  8  1  0  0  0
+  7 10  1  0  0  0
+  8  9  2  0  0  0
+ 10 11  2  0  0  0
+ 10 15  1  0  0  0
+ 11 12  1  0  0  0
+ 12 13  2  0  0  0
+ 13 14  1  0  0  0
+ 14 15  2  0  0  0
+M  END
+>  <CHROM.1>
+85.64117560,-175.97702033,34.08024426,-45.74754150,73.03701053,-3.01988392
+0.36723830,2.42218425
+
+>  <Name>
+MolPort-000-927-215
+
+>  <RI>
+0
+
+>  <Rbt.Current_Directory>
+/home/timbo/github/im/docking-validation/targets/nudt7/expts/vscreening/NUDT7A-x0129/work/94/3883032ea0e243c22b1a7b7b149ac4
+
+>  <Rbt.Executable>
+rbdock ($Id: //depot/dev/client3/rdock/2013.1/src/exe/rbdock.cxx#4 $)
+
+>  <Rbt.Library>
+libRbt.so (2013.1, Build901 2013/11/27)
+
+>  <Rbt.Parameter_File>
+/rDock_2013.1/data/scripts/dock.prm
+
+>  <Rbt.Receptor>
+docking.prm
+
+>  <SCORE>
+-7.98583
+
+>  <SCORE.INTER>
+-7.67085
+
+>  <SCORE.INTER.CONST>
+1
+
+>  <SCORE.INTER.POLAR>
+0
+
+>  <SCORE.INTER.REPUL>
+0
+
+>  <SCORE.INTER.ROT>
+2
+
+>  <SCORE.INTER.VDW>
+-15.0708
+
+>  <SCORE.INTER.norm>
+-0.51139
+
+>  <SCORE.INTRA>
+-0.31498
+
+>  <SCORE.INTRA.DIHEDRAL>
+-1.41068
+
+>  <SCORE.INTRA.DIHEDRAL.0>
+2.21355
+
+>  <SCORE.INTRA.POLAR>
+0
+
+>  <SCORE.INTRA.POLAR.0>
+0
+
+>  <SCORE.INTRA.REPUL>
+0
+
+>  <SCORE.INTRA.REPUL.0>
+0
+
+>  <SCORE.INTRA.VDW>
+0.390362
+
+>  <SCORE.INTRA.VDW.0>
+-0.532707
+
+>  <SCORE.INTRA.norm>
+-0.0209987
+
+>  <SCORE.RESTR>
+0
+
+>  <SCORE.RESTR.CAVITY>
+0
+
+>  <SCORE.RESTR.norm>
+0
+
+>  <SCORE.SYSTEM>
+0
+
+>  <SCORE.SYSTEM.CONST>
+0
+
+>  <SCORE.SYSTEM.DIHEDRAL>
+0
+
+>  <SCORE.SYSTEM.norm>
+0
+
+>  <SCORE.heavy>
+15
+
+>  <SCORE.norm>
+-0.532389
+
+$$$$
+MolPort-000-927-215
+  rDOCK(R)          3D
+libRbt.so/2013.1/901 2013/11/27
+ 15 16  0  0  0  0  0  0  0  0999 V2000
+   41.1385  -43.6414   75.4187 N   0  0  0  0  0  0
+   40.1409  -44.0891   76.0467 C   0  0  0  0  0  0
+   38.9385  -44.6289   76.8038 C   0  0  0  0  0  0
+   37.7508  -44.8118   75.8899 C   0  0  0  0  0  0
+   36.9004  -43.7411   75.5930 C   0  0  0  0  0  0
+   35.7476  -43.9382   74.8191 C   0  0  0  0  0  0
+   35.4041  -45.2045   74.3130 C   0  0  0  0  0  0
+   36.2919  -46.2593   74.5924 C   0  0  0  0  0  0
+   37.4381  -46.0736   75.3757 C   0  0  0  0  0  0
+   34.1436  -45.4310   73.5596 C   0  0  0  0  0  0
+   33.2384  -46.4504   73.9082 C   0  0  0  0  0  0
+   32.0731  -46.6812   73.1665 C   0  0  0  0  0  0
+   31.7764  -45.8856   72.0652 C   0  0  0  0  0  0
+   32.6442  -44.8629   71.7029 C   0  0  0  0  0  0
+   33.8145  -44.6447   72.4374 C   0  0  0  0  0  0
+  1  2  3  0  0  0
+  2  3  1  0  0  0
+  3  4  1  0  0  0
+  4  5  2  0  0  0
+  4  9  1  0  0  0
+  5  6  1  0  0  0
+  6  7  2  0  0  0
+  7  8  1  0  0  0
+  7 10  1  0  0  0
+  8  9  2  0  0  0
+ 10 11  2  0  0  0
+ 10 15  1  0  0  0
+ 11 12  1  0  0  0
+ 12 13  2  0  0  0
+ 13 14  1  0  0  0
+ 14 15  2  0  0  0
+M  END
+>  <CHROM.1>
+-83.99431206,-127.71673463,35.85124754,-45.08407245,74.38547512,-0.10512391
+-0.47612693,-0.64431925
+
+>  <Name>
+MolPort-000-927-215
+
+>  <RI>
+0
+
+>  <Rbt.Current_Directory>
+/home/timbo/github/im/docking-validation/targets/nudt7/expts/vscreening/NUDT7A-x0129/work/94/3883032ea0e243c22b1a7b7b149ac4
+
+>  <Rbt.Executable>
+rbdock ($Id: //depot/dev/client3/rdock/2013.1/src/exe/rbdock.cxx#4 $)
+
+>  <Rbt.Library>
+libRbt.so (2013.1, Build901 2013/11/27)
+
+>  <Rbt.Parameter_File>
+/rDock_2013.1/data/scripts/dock.prm
+
+>  <Rbt.Receptor>
+docking.prm
+
+>  <SCORE>
+-7.48319
+
+>  <SCORE.INTER>
+-7.8931
+
+>  <SCORE.INTER.CONST>
+1
+
+>  <SCORE.INTER.POLAR>
+0
+
+>  <SCORE.INTER.REPUL>
+0
+
+>  <SCORE.INTER.ROT>
+2
+
+>  <SCORE.INTER.VDW>
+-15.2931
+
+>  <SCORE.INTER.norm>
+-0.526206
+
+>  <SCORE.INTRA>
+0.409909
+
+>  <SCORE.INTRA.DIHEDRAL>
+1.42237
+
+>  <SCORE.INTRA.DIHEDRAL.0>
+2.21355
+
+>  <SCORE.INTRA.POLAR>
+0
+
+>  <SCORE.INTRA.POLAR.0>
+0
+
+>  <SCORE.INTRA.REPUL>
+0
+
+>  <SCORE.INTRA.REPUL.0>
+0
+
+>  <SCORE.INTRA.VDW>
+-0.301277
+
+>  <SCORE.INTRA.VDW.0>
+-0.532707
+
+>  <SCORE.INTRA.norm>
+0.0273273
+
+>  <SCORE.RESTR>
+0
+
+>  <SCORE.RESTR.CAVITY>
+0
+
+>  <SCORE.RESTR.norm>
+0
+
+>  <SCORE.SYSTEM>
+0
+
+>  <SCORE.SYSTEM.CONST>
+0
+
+>  <SCORE.SYSTEM.DIHEDRAL>
+0
+
+>  <SCORE.SYSTEM.norm>
+0
+
+>  <SCORE.heavy>
+15
+
+>  <SCORE.norm>
+-0.498879
+
+$$$$
+MolPort-000-927-215
+  rDOCK(R)          3D
+libRbt.so/2013.1/901 2013/11/27
+ 15 16  0  0  0  0  0  0  0  0999 V2000
+   30.8495  -46.7474   70.6628 N   0  0  0  0  0  0
+   30.9404  -46.2320   71.8101 C   0  0  0  0  0  0
+   31.0498  -45.6106   73.1930 C   0  0  0  0  0  0
+   32.4861  -45.5448   73.6534 C   0  0  0  0  0  0
+   32.9993  -44.3851   74.2445 C   0  0  0  0  0  0
+   34.3569  -44.2979   74.5851 C   0  0  0  0  0  0
+   35.2476  -45.3610   74.3521 C   0  0  0  0  0  0
+   34.7035  -46.5306   73.7911 C   0  0  0  0  0  0
+   33.3516  -46.6208   73.4358 C   0  0  0  0  0  0
+   36.7005  -45.2424   74.6397 C   0  0  0  0  0  0
+   37.2621  -44.0686   75.1752 C   0  0  0  0  0  0
+   38.6389  -43.9530   75.4045 C   0  0  0  0  0  0
+   39.4869  -45.0173   75.1181 C   0  0  0  0  0  0
+   38.9611  -46.1944   74.6001 C   0  0  0  0  0  0
+   37.5874  -46.3008   74.3587 C   0  0  0  0  0  0
+  1  2  3  0  0  0
+  2  3  1  0  0  0
+  3  4  1  0  0  0
+  4  5  2  0  0  0
+  4  9  1  0  0  0
+  5  6  1  0  0  0
+  6  7  2  0  0  0
+  7  8  1  0  0  0
+  7 10  1  0  0  0
+  8  9  2  0  0  0
+ 10 11  2  0  0  0
+ 10 15  1  0  0  0
+ 11 12  1  0  0  0
+ 12 13  2  0  0  0
+ 13 14  1  0  0  0
+ 14 15  2  0  0  0
+M  END
+>  <CHROM.1>
+134.75399310,0.79239559,34.95681964,-45.47847650,73.92104340,-2.81927798
+-0.21232492,0.64357280
+
+>  <Name>
+MolPort-000-927-215
+
+>  <RI>
+0
+
+>  <Rbt.Current_Directory>
+/home/timbo/github/im/docking-validation/targets/nudt7/expts/vscreening/NUDT7A-x0129/work/94/3883032ea0e243c22b1a7b7b149ac4
+
+>  <Rbt.Executable>
+rbdock ($Id: //depot/dev/client3/rdock/2013.1/src/exe/rbdock.cxx#4 $)
+
+>  <Rbt.Library>
+libRbt.so (2013.1, Build901 2013/11/27)
+
+>  <Rbt.Parameter_File>
+/rDock_2013.1/data/scripts/dock.prm
+
+>  <Rbt.Receptor>
+docking.prm
+
+>  <SCORE>
+-7.41388
+
+>  <SCORE.INTER>
+-7.36274
+
+>  <SCORE.INTER.CONST>
+1
+
+>  <SCORE.INTER.POLAR>
+0
+
+>  <SCORE.INTER.REPUL>
+0
+
+>  <SCORE.INTER.ROT>
+2
+
+>  <SCORE.INTER.VDW>
+-14.7627
+
+>  <SCORE.INTER.norm>
+-0.490849
+
+>  <SCORE.INTRA>
+-0.0511431
+
+>  <SCORE.INTRA.DIHEDRAL>
+-1.53768
+
+>  <SCORE.INTRA.DIHEDRAL.0>
+2.21355
+
+>  <SCORE.INTRA.POLAR>
+0
+
+>  <SCORE.INTRA.POLAR.0>
+0
+
+>  <SCORE.INTRA.REPUL>
+0
+
+>  <SCORE.INTRA.REPUL.0>
+0
+
+>  <SCORE.INTRA.VDW>
+0.717698
+
+>  <SCORE.INTRA.VDW.0>
+-0.532707
+
+>  <SCORE.INTRA.norm>
+-0.00340954
+
+>  <SCORE.RESTR>
+0
+
+>  <SCORE.RESTR.CAVITY>
+0
+
+>  <SCORE.RESTR.norm>
+0
+
+>  <SCORE.SYSTEM>
+0
+
+>  <SCORE.SYSTEM.CONST>
+0
+
+>  <SCORE.SYSTEM.DIHEDRAL>
+0
+
+>  <SCORE.SYSTEM.norm>
+0
+
+>  <SCORE.heavy>
+15
+
+>  <SCORE.norm>
+-0.494259
+
+$$$$
+CSC011685652
+  rDOCK(R)          3D
+libRbt.so/2013.1/901 2013/11/27
+ 15 16  0  0  0  0  0  0  0  0999 V2000
+   41.0005  -43.4002   75.2849 N   0  0  0  0  0  0
+   40.3092  -44.3253   75.3746 C   0  0  0  0  0  0
+   39.4718  -45.5049   75.4727 N   0  0  0  0  0  0
+   38.1853  -45.4830   74.8941 C   0  0  0  0  0  0
+   37.3188  -46.5583   75.1135 C   0  0  0  0  0  0
+   36.0219  -46.5653   74.5798 C   0  0  0  0  0  0
+   35.5185  -45.4793   73.8444 C   0  0  0  0  0  0
+   36.3777  -44.3787   73.6846 C   0  0  0  0  0  0
+   37.6842  -44.3784   74.1997 C   0  0  0  0  0  0
+   34.1546  -45.5040   73.2553 C   0  0  0  0  0  0
+   33.2018  -46.4702   73.6329 C   0  0  0  0  0  0
+   31.9362  -46.5271   73.0374 C   0  0  0  0  0  0
+   31.5826  -45.6037   72.0601 C   0  0  0  0  0  0
+   32.4921  -44.6220   71.6831 C   0  0  0  0  0  0
+   33.7618  -44.5773   72.2706 C   0  0  0  0  0  0
+  1  2  3  0  0  0
+  2  3  1  0  0  0
+  3  4  1  0  0  0
+  4  5  2  0  0  0
+  4  9  1  0  0  0
+  5  6  1  0  0  0
+  6  7  2  0  0  0
+  7  8  1  0  0  0
+  7 10  1  0  0  0
+  8  9  2  0  0  0
+ 10 11  2  0  0  0
+ 10 15  1  0  0  0
+ 11 12  1  0  0  0
+ 12 13  2  0  0  0
+ 13 14  1  0  0  0
+ 14 15  2  0  0  0
+M  END
+>  <CHROM.1>
+-172.88926773,13.80017733,35.95534274,-45.28522817,73.89833199,-0.06535205
+-0.37409549,-0.54025418
+
+>  <Name>
+CSC011685652
+
+>  <RI>
+0
+
+>  <Rbt.Current_Directory>
+/home/timbo/github/im/docking-validation/targets/nudt7/expts/vscreening/NUDT7A-x0129/work/94/3883032ea0e243c22b1a7b7b149ac4
+
+>  <Rbt.Executable>
+rbdock ($Id: //depot/dev/client3/rdock/2013.1/src/exe/rbdock.cxx#4 $)
+
+>  <Rbt.Library>
+libRbt.so (2013.1, Build901 2013/11/27)
+
+>  <Rbt.Parameter_File>
+/rDock_2013.1/data/scripts/dock.prm
+
+>  <Rbt.Receptor>
+docking.prm
+
+>  <SCORE>
+-8.80307
+
+>  <SCORE.INTER>
+-8.04645
+
+>  <SCORE.INTER.CONST>
+1
+
+>  <SCORE.INTER.POLAR>
+0
+
+>  <SCORE.INTER.REPUL>
+0.0246173
+
+>  <SCORE.INTER.ROT>
+2
+
+>  <SCORE.INTER.VDW>
+-15.5695
+
+>  <SCORE.INTER.norm>
+-0.53643
+
+>  <SCORE.INTRA>
+-0.756889
+
+>  <SCORE.INTRA.DIHEDRAL>
+-2.40523
+
+>  <SCORE.INTRA.DIHEDRAL.0>
+2.74233
+
+>  <SCORE.INTRA.POLAR>
+0
+
+>  <SCORE.INTRA.POLAR.0>
+0
+
+>  <SCORE.INTRA.REPUL>
+0
+
+>  <SCORE.INTRA.REPUL.0>
+0
+
+>  <SCORE.INTRA.VDW>
+0.445724
+
+>  <SCORE.INTRA.VDW.0>
+-0.185247
+
+>  <SCORE.INTRA.norm>
+-0.0504593
+
+>  <SCORE.RESTR>
+0.000265474
+
+>  <SCORE.RESTR.CAVITY>
+0.000265474
+
+>  <SCORE.RESTR.norm>
+1.76983e-05
+
+>  <SCORE.SYSTEM>
+0
+
+>  <SCORE.SYSTEM.CONST>
+0
+
+>  <SCORE.SYSTEM.DIHEDRAL>
+0
+
+>  <SCORE.SYSTEM.norm>
+0
+
+>  <SCORE.heavy>
+15
+
+>  <SCORE.norm>
+-0.586872
+
+$$$$
+CSC011685652
+  rDOCK(R)          3D
+libRbt.so/2013.1/901 2013/11/27
+ 15 16  0  0  0  0  0  0  0  0999 V2000
+   41.0840  -43.4878   75.1790 N   0  0  0  0  0  0
+   40.1670  -43.9703   75.6970 C   0  0  0  0  0  0
+   39.0414  -44.6036   76.3557 N   0  0  0  0  0  0
+   37.8432  -44.7936   75.6355 C   0  0  0  0  0  0
+   36.6981  -45.2213   76.3145 C   0  0  0  0  0  0
+   35.4796  -45.3971   75.6427 C   0  0  0  0  0  0
+   35.3405  -45.1084   74.2749 C   0  0  0  0  0  0
+   36.4829  -44.6197   73.6183 C   0  0  0  0  0  0
+   37.7096  -44.4634   74.2841 C   0  0  0  0  0  0
+   34.0556  -45.3249   73.5608 C   0  0  0  0  0  0
+   33.1022  -46.2559   74.0169 C   0  0  0  0  0  0
+   31.9167  -46.4994   73.3133 C   0  0  0  0  0  0
+   31.6443  -45.8012   72.1423 C   0  0  0  0  0  0
+   32.5541  -44.8576   71.6791 C   0  0  0  0  0  0
+   33.7450  -44.6273   72.3777 C   0  0  0  0  0  0
+  1  2  3  0  0  0
+  2  3  1  0  0  0
+  3  4  1  0  0  0
+  4  5  2  0  0  0
+  4  9  1  0  0  0
+  5  6  1  0  0  0
+  6  7  2  0  0  0
+  7  8  1  0  0  0
+  7 10  1  0  0  0
+  8  9  2  0  0  0
+ 10 11  2  0  0  0
+ 10 15  1  0  0  0
+ 11 12  1  0  0  0
+ 12 13  2  0  0  0
+ 13 14  1  0  0  0
+ 14 15  2  0  0  0
+M  END
+>  <CHROM.1>
+-170.72841236,-24.45999731,35.81250309,-44.99655616,74.27723058,-0.27431999
+-0.34297858,-1.16449866
+
+>  <Name>
+CSC011685652
+
+>  <RI>
+0
+
+>  <Rbt.Current_Directory>
+/home/timbo/github/im/docking-validation/targets/nudt7/expts/vscreening/NUDT7A-x0129/work/94/3883032ea0e243c22b1a7b7b149ac4
+
+>  <Rbt.Executable>
+rbdock ($Id: //depot/dev/client3/rdock/2013.1/src/exe/rbdock.cxx#4 $)
+
+>  <Rbt.Library>
+libRbt.so (2013.1, Build901 2013/11/27)
+
+>  <Rbt.Parameter_File>
+/rDock_2013.1/data/scripts/dock.prm
+
+>  <Rbt.Receptor>
+docking.prm
+
+>  <SCORE>
+-7.75363
+
+>  <SCORE.INTER>
+-7.12911
+
+>  <SCORE.INTER.CONST>
+1
+
+>  <SCORE.INTER.POLAR>
+0
+
+>  <SCORE.INTER.REPUL>
+0
+
+>  <SCORE.INTER.ROT>
+2
+
+>  <SCORE.INTER.VDW>
+-14.5291
+
+>  <SCORE.INTER.norm>
+-0.475274
+
+>  <SCORE.INTRA>
+-0.624518
+
+>  <SCORE.INTRA.DIHEDRAL>
+-1.84313
+
+>  <SCORE.INTRA.DIHEDRAL.0>
+2.74233
+
+>  <SCORE.INTRA.POLAR>
+0
+
+>  <SCORE.INTRA.POLAR.0>
+0
+
+>  <SCORE.INTRA.REPUL>
+0
+
+>  <SCORE.INTRA.REPUL.0>
+0
+
+>  <SCORE.INTRA.VDW>
+0.297048
+
+>  <SCORE.INTRA.VDW.0>
+-0.185247
+
+>  <SCORE.INTRA.norm>
+-0.0416345
+
+>  <SCORE.RESTR>
+0
+
+>  <SCORE.RESTR.CAVITY>
+0
+
+>  <SCORE.RESTR.norm>
+0
+
+>  <SCORE.SYSTEM>
+0
+
+>  <SCORE.SYSTEM.CONST>
+0
+
+>  <SCORE.SYSTEM.DIHEDRAL>
+0
+
+>  <SCORE.SYSTEM.norm>
+0
+
+>  <SCORE.heavy>
+15
+
+>  <SCORE.norm>
+-0.516909
+
+$$$$

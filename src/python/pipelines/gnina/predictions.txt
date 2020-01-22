@@ -1,0 +1,9 @@
+0.686216 | 0 work/proteins/protein_0.gninatypes work/ligands/ligand_9.gninatypes
+0.967347 | 0 work/proteins/protein_0.gninatypes work/ligands/ligand_7.gninatypes
+0.862537 | 0 work/proteins/protein_0.gninatypes work/ligands/ligand_1.gninatypes
+0.850710 | 0 work/proteins/protein_0.gninatypes work/ligands/ligand_3.gninatypes
+0.868238 | 0 work/proteins/protein_0.gninatypes work/ligands/ligand_5.gninatypes
+0.829291 | 0 work/proteins/protein_0.gninatypes work/ligands/ligand_8.gninatypes
+0.877563 | 0 work/proteins/protein_0.gninatypes work/ligands/ligand_6.gninatypes
+0.639129 | 0 work/proteins/protein_0.gninatypes work/ligands/ligand_0.gninatypes
+0.715293 | 0 work/proteins/protein_0.gninatypes work/ligands/ligand_10.gninatypes
