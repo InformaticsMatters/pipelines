@@ -21,7 +21,7 @@ from rdkit.Chem import AllChem
 from rdkit.Chem import MACCSkeys
 from rdkit.Chem.Fingerprints import FingerprintMols
 
-from pipelines_utils_rdkit import filter, rdkit_utils
+from pipelines_utils_rdkit import filter, rdkit_utils, mol_utils
 from pipelines_utils import parameter_utils, utils
 
 ### start field name defintions #########################################
@@ -131,7 +131,7 @@ def main():
         i +=1
         if mol is None: continue
         if args.fragment:
-            mol = filter.fragment(mol, args.fragment, quiet=args.quiet)
+            mol = mol_utils.fragment(mol, args.fragment, quiet=args.quiet)
         if not filter.filter(mol, minHac=args.hacmin, maxHac=args.hacmax, minMw=args.mwmin, maxMw=args.mwmax, quiet=args.quiet):
             continue
         targetFp = descriptor(mol)

@@ -55,6 +55,7 @@ def add_src_mol_ref(src_mol, target_mol, index):
     :param index:
     :return:
     """
+    parent = None
     if src_mol.HasProp('uuid'):
         parent = src_mol.GetProp('uuid')
     elif src_mol.HasProp('_name_'):

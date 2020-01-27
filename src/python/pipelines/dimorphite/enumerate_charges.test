@@ -5,7 +5,7 @@
     version = 1,
 
     // Testing cluster_butina.py reading from STDIN and writing to STDOUT
-    test_raw_cluster_butina_from_sdf_to_default = [
+    test_dimorphite_simple = [
 
         command: '''gunzip -c ${PIN}Kinase_inhibs.sdf.gz |
                  python -m pipelines.dimorphite.enumerate_charges -if sdf''',

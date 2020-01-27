@@ -203,6 +203,34 @@ playbooks.
     `Posting Squonk pipelines` section of Squonk's OpenShift Ansible
     [README](https://github.com/InformaticsMatters/squonk/blob/master/openshift/ansible/README.md).
 
+## Running tests
+
+The test running is in the pipelines-utils repo and tests are run from there.
+For full details consult that repo.
+
+But as a quick start you should be able to run the the tests in a conda environment like this:
+
+Create a conda environment containing RDKit:
+```
+conda env create -f environment-rdkit.yml
+```
+
+Move into the `pipelines-utils` repo (this should be alongside `pipelines` and `pipelines-utils-rdkit`):
+```
+cd ../pipleines-utils
+```
+
+Set your `PYTHONPATH` environment variable to include the `pipelines-utils` and `pipelines-utils-rdkit` sources
+(adjusting `/path/to/` to whatever is needed):
+```
+export PYTHONPATH=/path/to/pipelines-utils/src/python:/path/to/pipelines-utils-rdkit/src/python
+``` 
+
+Run tests:
+```
+./gradlew runPipelineTester -Pptargs=-opipelines
+```
+
 ## Contact
 
 Any questions contact: 
