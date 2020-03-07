@@ -5,6 +5,8 @@ dependencies:
     - python=3.6
     - pip=20.0.2
     - rdkit=2019.09.2
+    - pandas=1.0.1
+    - scikit-learn=0.22.1
     - pip:
         - matplotlib==2.2.*
         - molvs==0.1.1

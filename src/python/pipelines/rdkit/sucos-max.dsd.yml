@@ -2,8 +2,8 @@
 "@class": org.squonk.core.DockerServiceDescriptor
 serviceConfig:
   id: pipelines.rdkit.sucos.basic
-  name: RDKitSuCOS
-  description: Generate 3D overlay using SuCOS in RDKit
+  name: RDKitSuCOSMax
+  description: Generate 3D overlays using SuCOSMax in RDKit
   tags:
   - rdkit
   - alignment
@@ -40,6 +40,19 @@ serviceConfig:
       type: java.lang.Integer
       "@class": org.squonk.options.SimpleTypeDescriptor
     "@class": org.squonk.options.OptionDescriptor
+  - modes:
+    - User
+    editable: true
+    visible: true
+    description: Name field in targets
+    label: Target name field
+    key: arg.name
+    minValues: 0
+    maxValues: 1
+    typeDescriptor:
+      type: java.lang.String
+      "@class": org.squonk.options.SimpleTypeDescriptor
+    "@class": org.squonk.options.OptionDescriptor
   executorClassName: org.squonk.execution.steps.impl.ThinDatasetDockerExecutorStep
 thinDescriptors:
 - input: input
@@ -52,4 +65,5 @@ imageName: informaticsmatters/rdkit_pipelines
 command: >-
   python -m pipelines.rdkit.sucos --target-molecule ${PIN}target.data.gz -i ${PIN}input.data.gz -o ${POUT}output -of json
   ${binding.variables.containsKey('targetidx') ? '--target-index ' + targetidx : ''}
+  ${binding.variables.containsKey('name') ? '--name-field ' + name : ''}
   --meta

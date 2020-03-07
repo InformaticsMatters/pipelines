@@ -1,0 +1,20 @@
+// Automated pipeline test specification.
+
+[
+
+    version = 1,
+
+    // Testing sucos_max.py reading from file and writing to file
+    test_sucos_max = [
+
+        command: '''python -m pipelines.rdkit.sucos_max
+                 --target-molecules ${PIN}/sucos/hits.sdf
+                 -i ${PIN}/sucos/poses.sdf -if sdf
+                 -o ${POUT}output -of sdf''',
+
+        stderr: [ 'Completed 305 comparisons' ],
+
+        creates: [ 'output.sdf.gz' ]
+
+    ]
+]

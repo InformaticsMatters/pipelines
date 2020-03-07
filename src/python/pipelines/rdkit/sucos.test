@@ -12,7 +12,7 @@
                  -i ${PIN}/sucos/benzene.sdf -if sdf
                  -o ${POUT}output -of sdf''',
 
-        stderr: [ 'Score: 0.843' ],
+        stderr: [ 'Scores: 0.843' ],
 
         creates: [ 'output.sdf.gz' ],
 
@@ -26,7 +26,7 @@
                           -i ${PIN}/sucos/mols.sdf -if sdf
                           -o ${POUT}output -of sdf''',
 
-                 stderr: [ 'Score: 0.843' ],
+                 stderr: [ 'Scores: 0.843' ],
 
                  creates: [ 'output.sdf.gz' ],
 
@@ -40,7 +40,7 @@
                      -i ${PIN}/sucos/mols.sdf -if sdf
                      -o ${POUT}output -of sdf''',
 
-            stderr: [ 'Score: 1.0' ],
+            stderr: [ 'Scores: 1.0 1.0 1.0' ],
 
             creates: [ 'output.sdf.gz' ],
 
