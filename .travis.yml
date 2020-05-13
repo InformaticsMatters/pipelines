@@ -11,9 +11,7 @@
 # DOCKER_USERNAME       If PUBLISH_IMAGES is 'yes'
 # DOCKER_PASSWORD       If PUBLISH_IMAGES is 'yes'
 
-language: groovy
-jdk:
-- openjdk8
+os: linux
 services:
 - docker
 
