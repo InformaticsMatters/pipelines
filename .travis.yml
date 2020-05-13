@@ -20,6 +20,10 @@ stages:
   if: |
     branch = master \
     AND env(PUBLISH_IMAGES) = yes
+- name: test latest
+  if: |
+    branch = master \
+    AND env(PUBLISH_IMAGES) = yes
 - name: publish tag
   if: |
     tag IS present \
@@ -43,13 +47,24 @@ jobs:
   # and also result in a 'stable' image tag.
 
   - stage: publish latest
-    name: Test and Latest Image
+    name: Latest Image
     script:
     # Build and push the pipelines-rdkit image and its sd-poster
     - docker build -t informaticsmatters/rdkit_pipelines:latest -f Dockerfile-rdkit .
     - docker push informaticsmatters/rdkit_pipelines:latest
     - docker build -t squonk/rdkit-pipelines-sdposter:latest -f Dockerfile-sdposter .
     - docker push squonk/rdkit-pipelines-sdposter:latest
+
+  - stage: test latest
+    name: Test Latest Image
+    script:
+    # Pull the latest pipelines-rdkit image
+    # then clone the utils rep (containing the test engine)
+    # and then run the tests
+    - docker pull informaticsmatters/rdkit_pipelines:latest
+    - git clone https://github.com/InformaticsMatters/pipelines-utils.git
+    - cd pipelines-utils/src/groovy
+    - groovy PipelineTester.groovy -indocker
 
   - stage: publish tag
     name: Tagged Image
