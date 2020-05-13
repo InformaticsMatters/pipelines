@@ -12,6 +12,8 @@
 # DOCKER_PASSWORD       If PUBLISH_IMAGES is 'yes'
 
 language: groovy
+jdk:
+- openjdk8
 services:
 - docker
 
