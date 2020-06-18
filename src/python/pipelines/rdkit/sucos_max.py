@@ -52,8 +52,7 @@ field_SuCOSCum_FMScore = "SuCOS_Cum_FeatureMap_Score"
 field_SuCOSCum_ProtrudeScore = "SuCOS_Cum_Protrude_Score"
 
 
-def process(inputs_supplr, targets_supplr, writer, field_name):
-
+def process(inputs_supplr, targets_supplr, writer, field_name, filter_value, filter_field):
     cluster = []
     mol_ids = []
     i = 0
@@ -72,6 +71,7 @@ def process(inputs_supplr, targets_supplr, writer, field_name):
             cluster.append((mol, features))
         except:
             utils.log("WARNING: failed to generate features for molecule", i, sys.exc_info())
+    utils.log("Generated features for", len(cluster), "molecules")
 
     comparisons = 0
     mol_num = 0
@@ -90,51 +90,53 @@ def process(inputs_supplr, targets_supplr, writer, field_name):
             errors += 1
             continue
 
-        max_scores = [0, 0, 0]
-        cum_scores = [0, 0, 0]
-        best_id = None
+        scores_max = [0, 0, 0]
+        scores_cum = [0, 0, 0]
 
         index = 0
         for entry in cluster:
             hit = entry[0]
             ref_features = entry[1]
-
             comparisons += 1
             sucos_score, fm_score, vol_score = sucos.get_SucosScore(hit, mol,
-                tani=False, ref_features=ref_features, query_features=query_features)
+                                                                        tani=False, ref_features=ref_features,
+                                                                        query_features=query_features)
 
-            if sucos_score > max_scores[0]:
-                max_scores[0] = sucos_score
-                max_scores[1] = fm_score
-                max_scores[2] = vol_score
+            if sucos_score > scores_max[0]:
+                scores_max[0] = sucos_score
+                scores_max[1] = fm_score
+                scores_max[2] = vol_score
                 cluster_index = index
                 best_id = mol_ids[index]
 
-            cum_scores[0] += sucos_score
-            cum_scores[1] += fm_score
-            cum_scores[2] += vol_score
+            scores_cum[0] += sucos_score
+            scores_cum[1] += fm_score
+            scores_cum[2] += vol_score
 
             index += 1
 
-        if max_scores[0] > 0:
+        # utils.log("Max SuCOS:", scores[0], "FM:", scores[1], "P:", scores[2],"File:", cluster_file_name_only, "Index:", cluster_index)
+        mol.SetDoubleProp(field_SuCOSMax_Score, scores_max[0] if scores_max[0] > 0 else 0)
+        mol.SetDoubleProp(field_SuCOSMax_FMScore, scores_max[1] if scores_max[1] > 0 else 0)
+        mol.SetDoubleProp(field_SuCOSMax_ProtrudeScore, scores_max[2] if scores_max[2] > 0 else 0)
 
-            # cluster_file_name_only = cluster_name.split(os.sep)[-1]
-            #utils.log("Max SuCOS:", scores[0], "FM:", scores[1], "P:", scores[2],"File:", cluster_file_name_only, "Index:", cluster_index)
-            mol.SetDoubleProp(field_SuCOSMax_Score, max_scores[0])
-            mol.SetDoubleProp(field_SuCOSMax_FMScore, max_scores[1])
-            mol.SetDoubleProp(field_SuCOSMax_ProtrudeScore, max_scores[2])
+        if best_id:
+            mol.SetProp(field_SuCOSMax_Target, best_id)
             mol.SetIntProp(field_SuCOSMax_Index, cluster_index)
-            if best_id:
-                mol.SetProp(field_SuCOSMax_Target, best_id)
 
-        if cum_scores[0] > 0:
-            #utils.log("Cum SuCOS:", scores[0], "FM:", scores[1], "P:", scores[2])
-            mol.SetDoubleProp(field_SuCOSCum_Score, cum_scores[0])
-            mol.SetDoubleProp(field_SuCOSCum_FMScore, cum_scores[1])
-            mol.SetDoubleProp(field_SuCOSCum_ProtrudeScore, cum_scores[2])
+        # utils.log("Cum SuCOS:", scores[0], "FM:", scores[1], "P:", scores[2])
+        mol.SetDoubleProp(field_SuCOSCum_Score, scores_cum[0] if scores_cum[0] > 0 else 0)
+        mol.SetDoubleProp(field_SuCOSCum_FMScore, scores_cum[1] if scores_cum[1] > 0 else 0)
+        mol.SetDoubleProp(field_SuCOSCum_ProtrudeScore, scores_cum[2] if scores_cum[2] > 0 else 0)
 
-        writer.write(mol)
 
+        if filter_value and filter_field:
+            if mol.HasProp(filter_field):
+                val = mol.GetDoubleProp(filter_field)
+                if val > filter_value:
+                    writer.write(mol)
+        else:
+            writer.write(mol)
 
     utils.log("Completed", comparisons, "comparisons")
     return mol_num, comparisons, errors
@@ -148,12 +150,15 @@ def main():
     parser.add_argument('-tm', '--target-molecules', help='Target molecules to compare against')
     parser.add_argument('-tf', '--targets-format', help='Target molecules format')
     parser.add_argument('-n', '--name-field', help='Name of field with molecule name')
+    parser.add_argument('--no-gzip', action='store_true', help='Do not compress the output (STDOUT is never compressed')
+    parser.add_argument('--filter-value', type=float, help='Filter out values with scores less than this.')
+    parser.add_argument('--filter-field', help='Field to use to filter values.')
 
     args = parser.parse_args()
     utils.log("Max SuCOSMax Args: ", args)
 
     source = "sucos_max.py"
-    datasetMetaProps = {"source":source, "description": "SuCOSMax using RDKit " + rdBase.rdkitVersion}
+    datasetMetaProps = {"source": source, "description": "SuCOSMax using RDKit " + rdBase.rdkitVersion}
     clsMappings = {}
     fieldMetaProps = []
 
@@ -165,29 +170,37 @@ def main():
     clsMappings[field_SuCOSCum_FMScore] = "java.lang.Float"
     clsMappings[field_SuCOSCum_ProtrudeScore] = "java.lang.Float"
 
-    fieldMetaProps.append({"fieldName":field_SuCOSMax_Score,   "values": {"source":source, "description":"SuCOS Max score"}})
-    fieldMetaProps.append({"fieldName":field_SuCOSMax_FMScore,   "values": {"source":source, "description":"SuCOS Max Feature Map score"}})
-    fieldMetaProps.append({"fieldName":field_SuCOSMax_ProtrudeScore,   "values": {"source":source, "description":"SuCOS Max Protrude score"}})
-    fieldMetaProps.append({"fieldName":field_SuCOSMax_Index,   "values": {"source":source, "description":"SuCOS Max target index"}})
-    fieldMetaProps.append({"fieldName":field_SuCOSCum_Score,   "values": {"source":source, "description":"SuCOS Cumulative score"}})
-    fieldMetaProps.append({"fieldName":field_SuCOSCum_FMScore,   "values": {"source":source, "description":"SuCOS Cumulative Feature Map score"}})
-    fieldMetaProps.append({"fieldName":field_SuCOSCum_ProtrudeScore,   "values": {"source":source, "description":"SuCOS Cumulative Protrude score"}})
+    fieldMetaProps.append(
+        {"fieldName": field_SuCOSMax_Score, "values": {"source": source, "description": "SuCOS Max score"}})
+    fieldMetaProps.append({"fieldName": field_SuCOSMax_FMScore,
+                           "values": {"source": source, "description": "SuCOS Max Feature Map score"}})
+    fieldMetaProps.append({"fieldName": field_SuCOSMax_ProtrudeScore,
+                           "values": {"source": source, "description": "SuCOS Max Protrude score"}})
+    fieldMetaProps.append(
+        {"fieldName": field_SuCOSMax_Index, "values": {"source": source, "description": "SuCOS Max target index"}})
+    fieldMetaProps.append(
+        {"fieldName": field_SuCOSCum_Score, "values": {"source": source, "description": "SuCOS Cumulative score"}})
+    fieldMetaProps.append({"fieldName": field_SuCOSCum_FMScore,
+                           "values": {"source": source, "description": "SuCOS Cumulative Feature Map score"}})
+    fieldMetaProps.append({"fieldName": field_SuCOSCum_ProtrudeScore,
+                           "values": {"source": source, "description": "SuCOS Cumulative Protrude score"}})
 
     if args.name_field:
         clsMappings[field_SuCOSMax_Target] = "java.lang.String"
-        fieldMetaProps.append({"fieldName":field_SuCOSMax_Target,   "values": {"source":source, "description":"SuCOS Max target name"}})
+        fieldMetaProps.append(
+            {"fieldName": field_SuCOSMax_Target, "values": {"source": source, "description": "SuCOS Max target name"}})
 
-
-    inputs_file,output,inputs_supplr,writer,output_base = rdkit_utils. \
-        default_open_input_output(args.input, args.informat, args.output,
-                                  'sucos-max', args.outformat,
-                                  valueClassMappings=clsMappings,
-                                  datasetMetaProps=datasetMetaProps,
-                                  fieldMetaProps=fieldMetaProps)
+    inputs_file, inputs_supplr = rdkit_utils.default_open_input(args.input, args.informat)
+    output, writer, output_base = rdkit_utils.default_open_output(args.output,
+                                                                  'sucos-max', args.outformat,
+                                                                  valueClassMappings=clsMappings,
+                                                                  datasetMetaProps=datasetMetaProps,
+                                                                  fieldMetaProps=fieldMetaProps,
+                                                                  compress=not args.no_gzip)
 
     targets_file, targets_supplr = rdkit_utils.default_open_input(args.target_molecules, args.targets_format)
 
-    count, total, errors = process(inputs_supplr, targets_supplr, writer, args.name_field)
+    count, total, errors = process(inputs_supplr, targets_supplr, writer, args.name_field, args.filter_value, args.filter_field)
 
     inputs_file.close()
     targets_file.close()
@@ -196,7 +209,8 @@ def main():
     output.close()
 
     if args.meta:
-        utils.write_metrics(output_base, {'__InputCount__':count, '__OutputCount__':total, '__ErrorCount__':errors, 'RDKitSuCOS':total})
+        utils.write_metrics(output_base, {'__InputCount__': count, '__OutputCount__': total, '__ErrorCount__': errors,
+                                          'RDKitSuCOS': total})
 
 
 if __name__ == "__main__":

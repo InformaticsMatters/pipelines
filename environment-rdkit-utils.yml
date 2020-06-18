@@ -1,4 +1,4 @@
-name: pipelines
+name: pipelines-utils
 channels:
     - conda-forge
 dependencies:
@@ -11,3 +11,5 @@ dependencies:
         - matplotlib==2.2.*
         - molvs==0.1.1
         - standardiser==0.1.9
+        - im-pipelines-utils
+        - im-pipelines-utils-rdkit

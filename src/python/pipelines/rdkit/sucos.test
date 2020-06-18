@@ -12,23 +12,23 @@
                  -i ${PIN}/sucos/benzene.sdf -if sdf
                  -o ${POUT}output -of sdf''',
 
-        stderr: [ 'Scores: 0.843' ],
+        stderr: [ 'Scores: 0.8' ],
 
         creates: [ 'output.sdf.gz' ],
 
     ],
 
-         test_raw_sucos_sdf_pick_target_1 = [
+    test_raw_sucos_sdf_pick_target_1 = [
 
-                 command: '''python -m pipelines.rdkit.sucos
-                          --target ${PIN}/sucos/mols.sdf
-                          --targetidx 1
-                          -i ${PIN}/sucos/mols.sdf -if sdf
-                          -o ${POUT}output -of sdf''',
+        command: '''python -m pipelines.rdkit.sucos
+            --target ${PIN}/sucos/mols.sdf
+            --targetidx 1
+            -i ${PIN}/sucos/mols.sdf -if sdf
+            -o ${POUT}output -of sdf''',
 
-                 stderr: [ 'Scores: 0.843' ],
+        stderr: [ 'Scores: 0.8' ],
 
-                 creates: [ 'output.sdf.gz' ],
+        creates: [ 'output.sdf.gz' ],
 
     ],
 

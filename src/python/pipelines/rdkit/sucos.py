@@ -99,7 +99,7 @@ def get_SucosScore(ref_mol, query_mol, tani=False, ref_features=None, query_feat
     to recalculate them. Use the getRawFeatures function to pre-calculate the features.
 
     :param ref_mol: The reference molecule to compare to
-    :param query_mol: The molecule to align to the reference
+    :param query_mol: The molecule to compare to the reference
     :param tani: Whether to calculate Tanimoto distances
     :param ref_features: An optional feature map for the reference molecule, avoiding the need to re-calculate it.
     :param query_features: An optional feature map for the query molecule, avoiding the need to re-calculate it.
@@ -115,17 +115,21 @@ def get_SucosScore(ref_mol, query_mol, tani=False, ref_features=None, query_feat
     fm_score = get_FeatureMapScore(ref_features, query_features, tani, score_mode)
     fm_score = np.clip(fm_score, 0, 1)
 
-    if tani:
-        tani_sim = 1 - float(rdShapeHelpers.ShapeTanimotoDist(ref_mol, query_mol))
-        tani_sim = np.clip(tani_sim, 0, 1)
-        SuCOS_score = 0.5*fm_score + 0.5*tani_sim
-        return SuCOS_score, fm_score, tani_sim
-    else:
-        protrude_dist = rdShapeHelpers.ShapeProtrudeDist(ref_mol, query_mol, allowReordering=False)
-        protrude_dist = np.clip(protrude_dist, 0, 1)
-        protrude_val = 1.0 - protrude_dist
-        SuCOS_score = 0.5 * fm_score + 0.5 * protrude_val
-        return SuCOS_score, fm_score, protrude_val
+    try :
+        if tani:
+            tani_sim = 1 - float(rdShapeHelpers.ShapeTanimotoDist(ref_mol, query_mol))
+            tani_sim = np.clip(tani_sim, 0, 1)
+            SuCOS_score = 0.5*fm_score + 0.5*tani_sim
+            return SuCOS_score, fm_score, tani_sim
+        else:
+            protrude_dist = rdShapeHelpers.ShapeProtrudeDist(ref_mol, query_mol, allowReordering=False)
+            protrude_dist = np.clip(protrude_dist, 0, 1)
+            protrude_val = 1.0 - protrude_dist
+            SuCOS_score = 0.5 * fm_score + 0.5 * protrude_val
+            return SuCOS_score, fm_score, protrude_val
+    except:
+        utils.log("Failed to calculate SuCOS scores. Returning 0,0,0")
+        return 0, 0, 0
 
 def process(target_mol, inputs_supplr, writer, tani=False, score_mode=FeatMaps.FeatMapScoreMode.All):
 

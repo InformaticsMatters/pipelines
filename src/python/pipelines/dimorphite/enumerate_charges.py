@@ -69,7 +69,6 @@ def add_src_mol_ref(src_mol, target_mol, index):
 ### start main execution #########################################
 
 def main():
-
     ### command line args definitions #########################################
 
     parser = argparse.ArgumentParser(description='Enumerate charges')
@@ -87,14 +86,14 @@ def main():
 
     # handle metadata
     source = "enumerate_charges.py"
-    datasetMetaProps = {"source":source, "description": "Enumerate charges using Dimorphite-dl"}
+    datasetMetaProps = {"source": source, "description": "Enumerate charges using Dimorphite-dl"}
     clsMappings = {
         "EnumChargesSrcMolUUID": "java.lang.String",
         "EnumChargesSrcMolIdx": "java.lang.Integer"
     }
     fieldMetaProps = [
-        {"fieldName":"EnumChargesSrcMolUUID", "values": {"source":source, "description":"UUID of source molecule"}},
-        {"fieldName":"EnumChargesSrcMolIdx", "values": {"source":source, "description":"Index of source molecule"}}
+        {"fieldName": "EnumChargesSrcMolUUID", "values": {"source": source, "description": "UUID of source molecule"}},
+        {"fieldName": "EnumChargesSrcMolIdx", "values": {"source": source, "description": "Index of source molecule"}}
     ]
 
     oformat = utils.determine_output_format(args.outformat)
@@ -121,6 +120,8 @@ def main():
     dimorphite_sys_argv.append(str(max_ph))
     fragment = args.fragment_method
     for mol in suppl:
+        if mol is None:
+            continue
         count += 1
         orig_sys_argv = sys.argv[:]
         sys.argv = dimorphite_sys_argv
@@ -132,7 +133,8 @@ def main():
 
     utils.log(count, total, errors)
 
-    input.close()
+    if input:
+        input.close()
     writer.flush()
     writer.close()
     output.close()
@@ -142,7 +144,9 @@ def main():
         utils.write_squonk_datasetmetadata(output_base, False, clsMappings, datasetMetaProps, fieldMetaProps, size=total)
 
     if args.meta:
-        utils.write_metrics(output_base, {'__InputCount__':count, '__OutputCount__':total, '__ErrorCount__':errors, 'EnumerateChargesDimporphite':total})
+        utils.write_metrics(output_base, {'__InputCount__': count, '__OutputCount__': total, '__ErrorCount__': errors,
+                                          'EnumerateChargesDimporphite': total})
+
 
 if __name__ == "__main__":
     main()

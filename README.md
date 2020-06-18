@@ -215,18 +215,24 @@ But as a quick start you should be able to run the the tests in a conda environm
 
 Create a conda environment containing RDKit:
 ```
-conda env create -f environment-rdkit.yml
+conda env create -f environment-rdkit-utils.yml
+```
+Now activate that environment:
+```
+conda activate pipelines-utils
+```
+
+Note: this environment includes pipeline-utils and pipeline-utils-rdkit from PyPi.
+If you need to use changes from these repos you will need to create a conda environment that does not contain these and
+instead set your `PYTHONPATH` environment variable to include the `pipelines-utils` and `pipelines-utils-rdkit` sources
+(adjusting `/path/to/` to whatever is needed):
+```
+export PYTHONPATH=/path/to/pipelines-utils/src/python:/path/to/pipelines-utils-rdkit/src/python
 ```
 
 Move into the `pipelines-utils` repo (this should be alongside `pipelines` and `pipelines-utils-rdkit`):
 ```
-cd ../pipleines-utils
-```
-
-Set your `PYTHONPATH` environment variable to include the `pipelines-utils` and `pipelines-utils-rdkit` sources
-(adjusting `/path/to/` to whatever is needed):
-```
-export PYTHONPATH=/path/to/pipelines-utils/src/python:/path/to/pipelines-utils-rdkit/src/python
+cd ../pipelines-utils
 ```
 
 Run tests:
