@@ -121,8 +121,6 @@ def main():
 
     if args.meta:
         utils.write_metrics(output_base, {'__InputCount__':i, '__OutputCount__':count, 'RDKitScreen':i})
-
-    return count
     
 if __name__ == "__main__":
     main()
