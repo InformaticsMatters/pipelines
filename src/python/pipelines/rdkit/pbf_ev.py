@@ -129,16 +129,20 @@ def main():
     for mol in suppl:
         i +=1
         AllChem.EmbedMolecule(mol)
-        if mol is None: continue
+        if mol is None:
+            errors += 1
+            continue
         out_vector = PBFev(mol)
-        if out_vector is None: continue
+        if out_vector is None:
+            errors += 1
+            continue
         rd = PBFRD(mol)
-        mol.SetDoubleProp("distance",rd)
+        mol.SetDoubleProp("distance", rd)
         for j,angle in enumerate(out_vector):
-            mol.SetDoubleProp("angle"+"_"+str(j), angle)
+            mol.SetDoubleProp("angle" + "_" + str(j), angle)
         out_results.append(mol)
-    count = write_out(out_results,count,writer,args.outformat)
-    utils.log("Handled "+str(i)+" molecules, resulting in "+str(count)+" outputs")
+    count = write_out(out_results, count, writer, args.outformat)
+    utils.log("Handled " + str(i) + " molecules, resulting in "+ str(count)+ " outputs and " + str(errors) + ' errors')
     writer.flush()
     writer.close()
     input.close()
