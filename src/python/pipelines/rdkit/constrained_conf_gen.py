@@ -62,7 +62,7 @@ def generate_conformers(molIdx, my_mol, NumOfConf, ref_mol, outputfile, coreSubs
     return count, errors
 
 
-if __name__ == '__main__':
+def main():
     parser = argparse.ArgumentParser(description='RDKit constrained conformer generator')
     parameter_utils.add_default_io_args(parser)
     parser.add_argument('-n', '--num', type=int, default=10, help='number of conformers to generate')
@@ -122,3 +122,7 @@ if __name__ == '__main__':
         if totalErrors > 0:
             metrics['__ErrorCount__'] = totalErrors
         utils.write_metrics(output_base, metrics)
+
+
+if __name__ == "__main__":
+    main()
