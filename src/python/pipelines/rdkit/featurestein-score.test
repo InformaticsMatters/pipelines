@@ -1,0 +1,21 @@
+// Automated pipeline test specification.
+
+[
+
+    version = 1,
+
+    // Testing featurestein-score.py
+    // reading from STDIN and writing to STDOUT
+    test_featurestein_score = [
+
+        command: '''python -m pipelines.rdkit.featurestein-score
+                 -i ${PIN}/mpro/poses.sdf.gz
+                 -f ${PIN}/mpro/featurestein.p
+                 -o ${POUT}fstein''',
+
+        stderr: [ 'FeatureMap has 69 features' ],
+
+        creates: [ 'fstein.sdf.gz' ]
+    ]
+
+]

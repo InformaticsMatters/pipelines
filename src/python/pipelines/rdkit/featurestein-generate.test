@@ -1,0 +1,20 @@
+// Automated pipeline test specification.
+
+[
+
+    version = 1,
+
+    // Testing featurestein-generate.py
+    // reading from STDIN and writing to STDOUT
+    test_featurestein_generate = [
+
+        command: '''python -m pipelines.rdkit.featurestein-generate
+                 -i ${PIN}/mpro/hits-17.sdf.gz
+                 -f ${POUT}featurestein.p''',
+
+        stderr: [ 'Wrote merged feature map with 69 features as pickle to' ],
+
+        creates: [ 'featurestein.p' ]
+    ]
+
+]

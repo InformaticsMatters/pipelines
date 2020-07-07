@@ -1,0 +1,21 @@
+// Automated pipeline test specification.
+
+[
+
+    version = 1,
+
+    // Testing xcos.py
+    // reading from STDIN and writing to STDOUT
+    test_xcos = [
+
+        command: '''python -m pipelines.rdkit.xcos
+                 -i ${PIN}/mpro/poses.sdf.gz
+                 -f ${PIN}/mpro/hits-17.sdf.gz
+                 -o ${POUT}xcos''',
+
+        stderr: [ 'No output format specified - using sdf' ],
+
+        creates: [ 'xcos.sdf.gz' ]
+    ]
+
+]
