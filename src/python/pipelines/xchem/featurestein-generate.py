@@ -150,6 +150,9 @@ def process(inputs, fname):
 
 def main():
 
+    # Example usage:
+    # python -m pipelines.xchem.featurestein-generate -i ../../data/mpro/hits-17.sdf.gz -f mpro-fstein.p
+
     global fmaps
 
     parser = argparse.ArgumentParser(description='FeatureStein generation with RDKit')

@@ -8,7 +8,7 @@
     // reading from STDIN and writing to STDOUT
     test_featurestein_score = [
 
-        command: '''python -m pipelines.rdkit.featurestein-score
+        command: '''python -m pipelines.xchem.featurestein-score
                  -i ${PIN}/mpro/poses.sdf.gz
                  -f ${PIN}/mpro/featurestein.p
                  -o ${POUT}fstein''',

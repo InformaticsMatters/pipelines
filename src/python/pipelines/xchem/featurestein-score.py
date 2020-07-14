@@ -95,11 +95,15 @@ def process(inputs, writer):
 
 def main():
 
+    # Example usage
+    # python -m pipelines.xchem.featurestein-score -i ../../data/mpro/poses.sdf.gz -f mpro-fstein.p -o fstein
+
     global fmaps
 
     parser = argparse.ArgumentParser(description='FeatureStein scoring with RDKit')
     parameter_utils.add_default_io_args(parser)
     parser.add_argument('-f', '--feat-map', help='Feature Map pickle to score with')
+    parser.add_argument('--no-gzip', action='store_true', help='Do not compress the output (STDOUT is never compressed')
     parser.add_argument('--metrics', action='store_true', help='Write metrics')
 
 
@@ -118,12 +122,13 @@ def main():
     fmaps = pickle.load(pkl_file)
     utils.log('FeatureMap has', fmaps.GetNumFeatures(), "features")
 
-    inputs_file,output,inputs_supplr,writer,output_base = rdkit_utils. \
-        default_open_input_output(args.input, args.informat, args.output,
-                                  'featurestein', args.outformat,
-                                  valueClassMappings=clsMappings,
-                                  datasetMetaProps=datasetMetaProps,
-                                  fieldMetaProps=fieldMetaProps)
+    inputs_file, inputs_supplr = rdkit_utils.default_open_input(args.input, args.informat)
+    output, writer, output_base = rdkit_utils.default_open_output(args.output,
+                        'featurestein', args.outformat,
+                        valueClassMappings=clsMappings,
+                        datasetMetaProps=datasetMetaProps,
+                        fieldMetaProps=fieldMetaProps,
+                        compress=not args.no_gzip)
 
     # this does the processing
     total, success, errors = process(inputs_supplr, writer)

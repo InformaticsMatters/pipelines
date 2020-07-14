@@ -1,7 +1,7 @@
 #!/usr/bin/env nextflow
 
-params.inputs = "data/mpro/poses.sdf"
-params.fragments = "data/mpro/hits-17.sdf"
+params.inputs = 'data/mpro/poses.sdf.gz'
+params.fragments = 'data/mpro/hits-17.sdf.gz'
 params.chunk = 500
 params.limit = 0
 params.digits = 4
@@ -36,7 +36,7 @@ process xcos {
     file 'scored_part*.sdf' into scored_parts
 
     """
-    python -m pipelines.rdkit.xcos -i '$part' -f '$fragments' -o '${part.name.replace('inputs', 'scored')[0..-8]}' -of sdf --no-gzip
+    python -m pipelines.xchem.xcos -i '$part' -f '$fragments' -o '${part.name.replace('inputs', 'scored')[0..-8]}' -of sdf --no-gzip
     """
 }
 
@@ -53,6 +53,6 @@ process joiner {
 	file 'xcos_scored.sdf.gz'
 
 	"""
-	cat '$parts' | gzip > xcos_scored.sdf.gz
+	cat $parts | gzip > xcos_scored.sdf.gz
 	"""
 }

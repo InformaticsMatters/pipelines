@@ -8,7 +8,7 @@
     // reading from STDIN and writing to STDOUT
     test_xcos = [
 
-        command: '''python -m pipelines.rdkit.xcos
+        command: '''python -m pipelines.xchem.xcos
                  -i ${PIN}/mpro/poses.sdf.gz
                  -f ${PIN}/mpro/hits-17.sdf.gz
                  -o ${POUT}xcos''',

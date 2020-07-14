@@ -368,6 +368,9 @@ def process(molecules, fragments, writer):
 
 def main():
 
+    # Example usage:
+    #  python -m pipelines.xchem.xcos -f ../../data/mpro/hits-17.sdf.gz -i ../../data/mpro/poses.sdf.gz  -o xcos
+
     global fmaps
 
     parser = argparse.ArgumentParser(description='XCos scoring with RDKit')
