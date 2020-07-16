@@ -18,7 +18,7 @@
 Ligand pose scoring using 'FeatureStein'.
 FeatureStein is a merged RDKit feature map that estimates the overlap of a ligand with a set of ligands (e.g. fragment
 screening hits) based on the RDKit feature maps.
-See featurestein-generate.py for how to generate the merged feature maps.
+See featurestein_generate.py for how to generate the merged feature maps.
 """
 
 from __future__ import print_function
@@ -96,7 +96,7 @@ def process(inputs, writer):
 def main():
 
     # Example usage
-    # python -m pipelines.xchem.featurestein-score -i ../../data/mpro/poses.sdf.gz -f mpro-fstein.p -o fstein
+    # python -m pipelines.xchem.featurestein_score -i ../../data/mpro/poses.sdf.gz -f mpro-fstein.p -o fstein
 
     global fmaps
 
@@ -110,7 +110,7 @@ def main():
     args = parser.parse_args()
     utils.log("FeatureStein Args: ", args)
 
-    source = "featurestein-score.py"
+    source = "featurestein_score.py"
     datasetMetaProps = {"source":source, "description": "FeatureStein scoring using RDKit " + rdBase.rdkitVersion}
 
     clsMappings = {}

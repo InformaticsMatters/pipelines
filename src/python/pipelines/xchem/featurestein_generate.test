@@ -4,11 +4,11 @@
 
     version = 1,
 
-    // Testing featurestein-generate.py
+    // Testing featurestein_generate.py
     // reading from STDIN and writing to STDOUT
     test_featurestein_generate = [
 
-        command: '''python -m pipelines.rdkit.featurestein-generate
+        command: '''python -m pipelines.xchem.featurestein_generate
                  -i ${PIN}/mpro/hits-17.sdf.gz
                  -f ${POUT}featurestein.p''',
 

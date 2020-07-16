@@ -20,7 +20,7 @@ process generate_feat_maps {
     file 'featurestein.p' into fmaps
 
     """
-    python -m pipelines.xchem.featurestein-generate -i '$fragments' -f featurestein.p
+    python -m pipelines.xchem.featurestein_generate -i '$fragments' -f featurestein.p
     """
 }
 
@@ -51,7 +51,7 @@ process score {
     file 'scored_part*.sdf' into scored_parts
 
     """
-    python -m pipelines.xchem.featurestein-score -i '$part' -f '$fmaps' -o '${part.name.replace('inputs', 'scored')[0..-8]}' -of sdf --no-gzip
+    python -m pipelines.xchem.featurestein_score -i '$part' -f '$fmaps' -o '${part.name.replace('inputs', 'scored')[0..-8]}' -of sdf --no-gzip
     """
 }
 

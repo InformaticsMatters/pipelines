@@ -17,7 +17,7 @@
 """
 Ligand pose scoring using 'FeatureStein'.
 This module generates a merged feature map from a set of 3D ligands.
-The output is a pickle of the merged feature map that can be read by the featurestein-score.py module to
+The output is a pickle of the merged feature map that can be read by the featurestein_score.py module to
 generate scores.
 """
 
@@ -82,12 +82,13 @@ def build_feat_data(mols):
 
 def find_closest(scores):
     #print('Find closest for', len(scores), len(scores[0]))
-    best_score = 0
+    best_score = -1.0
     for i in range(len(scores)):
         for j in range(len(scores)):
             if i == j:
                 continue
             score = scores[i][j]
+            utils.log('Score:', score)
             if score > best_score:
                 best_score = score
                 best_row = i
@@ -151,7 +152,7 @@ def process(inputs, fname):
 def main():
 
     # Example usage:
-    # python -m pipelines.xchem.featurestein-generate -i ../../data/mpro/hits-17.sdf.gz -f mpro-fstein.p
+    # python -m pipelines.xchem.featurestein_generate -i ../../data/mpro/hits-17.sdf.gz -f mpro-fstein.p
 
     global fmaps
 

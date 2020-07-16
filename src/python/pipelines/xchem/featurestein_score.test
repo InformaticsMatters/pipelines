@@ -4,11 +4,11 @@
 
     version = 1,
 
-    // Testing featurestein-score.py
+    // Testing featurestein_score.py
     // reading from STDIN and writing to STDOUT
     test_featurestein_score = [
 
-        command: '''python -m pipelines.xchem.featurestein-score
+        command: '''python -m pipelines.xchem.featurestein_score
                  -i ${PIN}/mpro/poses.sdf.gz
                  -f ${PIN}/mpro/featurestein.p
                  -o ${POUT}fstein''',
