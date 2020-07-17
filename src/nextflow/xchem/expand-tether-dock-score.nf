@@ -1,7 +1,7 @@
 #!/usr/bin/env nextflow
 
 // expand params
-params.hits = 'data/mpro/hits-17.sdf.gz'
+params.hits = 'data/mpro/hits-5.sdf.gz'
 params.chunk_size_expand = 200
 params.limit = 0
 params.digits = 4
@@ -26,12 +26,14 @@ params.asfile = 'data/mpro/docking-tethered.as'
 params.num_dockings = 5
 
 // featurestein
+params.fragments = 'data/mpro/hits-5.sdf.gz'
 
 // files
 hits = file(params.hits)
 protein = file(params.protein)
 prmfile = file(params.prmfile)
 asfile = file(params.asfile)
+fragments = file(params.fragments)
 
 process fragnet_expand {
 
@@ -125,13 +127,13 @@ process gen_feat_maps {
     container 'informaticsmatters/rdkit_pipelines:latest'
 
     input:
-    file hits
+    file fragments
 
     output:
     file 'featurestein.p' into fmaps
 
     """
-    python -m pipelines.xchem.featurestein_generate -i '$hits' -f featurestein.p
+    python -m pipelines.xchem.featurestein_generate -i '$fragments' -f featurestein.p
     """
 }
 
