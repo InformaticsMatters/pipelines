@@ -141,6 +141,6 @@ process xcos {
     file 'XC_*.sdf'
 
     """
-    python -m pipelines.xchem.xcos -i '$part' -if sdf -f '$hits' -o 'XC_${part.name[0..-5]}' -of sdf --no-gzip
+    python -m pipelines.xchem.xcos -i '$part' -if sdf -f '$fragments' -o 'XC_${part.name[0..-5]}' -of sdf --no-gzip
     """
 }
