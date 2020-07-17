@@ -32,7 +32,8 @@ from pipelines_utils_rdkit import rdkit_utils
 
 ### start function definitions #########################################
 
-field_FeatureSteinScore = "FeatureStein_Score"
+field_FeatureSteinQualityScore = "FeatureStein_Qual"
+field_FeatureSteinQuantityScore = "FeatureStein_Quant"
 
 # Setting up the features to use in FeatureMap
 ffact = AllChem.BuildFeatureFactory(os.path.join(RDConfig.RDDataDir, 'BaseFeatures.fdef'))
@@ -54,18 +55,18 @@ def create_feature_map(mol):
     return FeatMaps.FeatMap(feats=feats, weights=[1]*len(feats),params=fmaps.params)
 
 def score_featmaps(fm1):
-    "Generate the score for 2 feature maps"
+    """Generate the score for 2 feature maps"""
     if fm1.GetNumFeatures() == 0:
-        return 0
+        return 0, 0
     else:
         score = fm1.ScoreFeats(fmaps.GetFeatures())
         #utils.log(score, fm1.GetNumFeatures())
-        return score / fm1.GetNumFeatures()
+        return score, score / fm1.GetNumFeatures()
 
-def get_fmap_score(mol):
+def get_fmap_scores(mol):
     featMap = create_feature_map(mol)
-    score = score_featmaps(featMap)
-    return score
+    quantScore, qualScore = score_featmaps(featMap)
+    return quantScore, qualScore
 
 def process(inputs, writer):
     total = 0
@@ -77,11 +78,12 @@ def process(inputs, writer):
             errors += 1
             continue
         try:
-            score = get_fmap_score(mol)
+            quantScore, qualScore = get_fmap_scores(mol)
             # utils.log('Score:', score)
             if total % 1000 == 0:
                 utils.log('Processed molecule', total, '...')
-            mol.SetDoubleProp(field_FeatureSteinScore, score)
+            mol.SetDoubleProp(field_FeatureSteinQualityScore, qualScore)
+            mol.SetDoubleProp(field_FeatureSteinQuantityScore, quantScore)
             writer.write(mol)
             success += 1
         except:
@@ -115,8 +117,10 @@ def main():
 
     clsMappings = {}
     fieldMetaProps = []
-    clsMappings[field_FeatureSteinScore] = "java.lang.Float"
-    fieldMetaProps.append({"fieldName":field_FeatureSteinScore,   "values": {"source":source, "description":"FeatureStein score"}})
+    clsMappings[field_FeatureSteinQualityScore] = "java.lang.Float"
+    clsMappings[field_FeatureSteinQuantityScore] = "java.lang.Float"
+    fieldMetaProps.append({"fieldName":field_FeatureSteinQualityScore,   "values": {"source":source, "description":"FeatureStein quality score"},
+                           "fieldName":field_FeatureSteinQuantityScore,   "values": {"source":source, "description":"FeatureStein quantity score"}})
 
     pkl_file = open(args.feat_map, 'rb')
     fmaps = pickle.load(pkl_file)
