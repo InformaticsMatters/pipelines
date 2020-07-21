@@ -131,16 +131,16 @@ process xcos {
 
     container 'informaticsmatters/rdkit_pipelines:latest'
 
-    publishDir ".", mode: 'move'
+    publishDir ".", mode: 'link'
 
 	input:
     file part from featurestein_parts
     file fragments
 
     output:
-    file 'XC_*.sdf'
+    file 'XC_*.sdf.gz'
 
     """
-    python -m pipelines.xchem.xcos -i '$part' -if sdf -f '$fragments' -o 'XC_${part.name[0..-5]}' -of sdf --no-gzip
+    python -m pipelines.xchem.xcos -i '$part' -if sdf -f '$fragments' -o 'XC_${part.name[0..-5]}' -of sdf
     """
 }

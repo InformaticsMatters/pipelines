@@ -240,7 +240,6 @@ def multi_constrained_embed(mol, target, mcsQuery, getForceField=UFFGetMoleculeF
 
         mols_to_embed = enumerate_undefined_chirals(mol, free_counts)
 
-        timout_embed_secs = 5
         for new_mol in mols_to_embed:
             # print('  Target match:', targetMatch)
             # print('  Candid match:', molMatch)
@@ -262,7 +261,6 @@ def multi_constrained_embed(mol, target, mcsQuery, getForceField=UFFGetMoleculeF
                     print('  WARNING: Could not embed molecule.')
                     embedding_failures += 1
                 else:
-                    print('conf id', ci, 'num_confs', new_mol.GetNumConformers())
                     # rotate the embedded conformation onto the core:
                     rms = AlignMol(new_mol, target, atomMap=algMap)
 
@@ -363,6 +361,7 @@ def minimize_mol(mol, target, molMatch, targetMatch, algMap, getForceField):
     rms = AlignMol(mol, target, atomMap=algMap)
     mol.SetDoubleProp('EmbedRMS', rms)
 
+
 def execute(smi, hit_molfile, outfile_base, min_ph=None, max_ph=None, max_inputs=0, max_outputs=0, modulus=0, timout_embed_secs=5):
 
     global write_count
@@ -411,9 +410,9 @@ def execute(smi, hit_molfile, outfile_base, min_ph=None, max_ph=None, max_inputs
                 else:
                     enumerated_mols = [mol]
 
-                mcs0 = rdFMCS.FindMCS([hit, mol], completeRingsOnly=True, matchValences=False, ringMatchesRingOnly=True,
-                                      atomCompare=rdFMCS.AtomCompare.CompareAny, bondCompare=rdFMCS.BondCompare.CompareAny)
-                #mcs0 = rdFMCS.FindMCS([hit, mol], completeRingsOnly=True, matchValences=False, ringMatchesRingOnly=False)
+                # mcs0 = rdFMCS.FindMCS([hit, mol], completeRingsOnly=True, matchValences=False, ringMatchesRingOnly=True,
+                #                       atomCompare=rdFMCS.AtomCompare.CompareAny, bondCompare=rdFMCS.BondCompare.CompareAny)
+                mcs0 = rdFMCS.FindMCS([hit, mol], completeRingsOnly=True, ringMatchesRingOnly=True)
                 mcsQuery = Chem.MolFromSmarts(mcs0.smartsString)
 
                 count = 0
@@ -459,7 +458,7 @@ def execute(smi, hit_molfile, outfile_base, min_ph=None, max_ph=None, max_inputs
 def main():
     """
     Example usage:
-    python scripts/transfs/prepare-tether-v3.py --smi Mpro-x0072_0.smi --mol Mpro-x0072_0.mol -o TETHERED --max-inputs 500 --chunk-size 1000
+    python -m pipelines.xchem.prepare_tether --smi ../../data/mpro/Mpro-x0387_0.smi --mol ../../data/mpro/Mpro-x0387_0.mol -o TETHERED --max-inputs 500 --chunk-size 100
 
     :return:
     """

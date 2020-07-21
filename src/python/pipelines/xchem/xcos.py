@@ -376,7 +376,7 @@ def main():
     parser = argparse.ArgumentParser(description='XCos scoring with RDKit')
     parameter_utils.add_default_io_args(parser)
     parser.add_argument('-f', '--fragments', required=True, help='Fragments to compare')
-    parser.add_argument('--fragments-format', help='Fragments format')
+    parser.add_argument('-ff', '--fragments-format', help='Fragments format')
     parser.add_argument('--no-gzip', action='store_true', help='Do not compress the output (STDOUT is never compressed')
     parser.add_argument('--metrics', action='store_true', help='Write metrics')
 
