@@ -89,7 +89,7 @@ process rdock {
 	file 'docking.as' from asfile
 
     output:
-    file 'Docked_*.sd' into docked_parts
+    file 'Docked_*.sd' optional true into docked_parts
 
     """
     rbdock -r $prmfile -p dock.prm -n $params.num_dockings -i $part -o ${part.name.replace('Tethered', 'Docked')[0..-5]} > docked_out.log
