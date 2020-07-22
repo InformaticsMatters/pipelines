@@ -275,7 +275,8 @@ def getReverseScores(clustered_df, mols, frags, no_clustered_feats, rad_threshol
                 # NB reverse SuCOS scoring
                 fm_score = getFeatureMapScore(bit, frag_mol)
                 fm_score = np.clip(fm_score, 0, 1)
-                protrude_dist = rdShapeHelpers.ShapeProtrudeDist(bit, frag_mol, allowReordering=False)
+                # Change van der Waals radius scale for stricter overlay
+                protrude_dist = rdShapeHelpers.ShapeProtrudeDist(bit, frag_mol, allowReordering=False, vdwScale=0.2)
                 protrude_dist = np.clip(protrude_dist, 0, 1)
 
                 reverse_SuCOS_score = 0.5 * fm_score + 0.5 * (1 - protrude_dist)
