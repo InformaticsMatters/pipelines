@@ -59,7 +59,7 @@ process joiner {
 
     container 'informaticsmatters/rdkit_pipelines:latest'
 
-    publishDir ".", mode: 'move'
+    publishDir ".", mode: 'link'
 
     input:
 	file parts from scored_parts.collect()

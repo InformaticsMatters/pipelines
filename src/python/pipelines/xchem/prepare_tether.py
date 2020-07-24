@@ -59,9 +59,9 @@ def get_writer(outfile_base):
     global file_count
 
     if not writer:
-        writer = Chem.SDWriter(outfile_base + '_' + f'{file_count:03}' + '.sdf')
+        writer = Chem.SDWriter(outfile_base + '_' + f'{file_count:04}' + '.sdf')
 
-    if write_count <= chunk_size:
+    if write_count < chunk_size:
         # print('  Using existing writer for', id, writer)
         return writer
 
@@ -73,7 +73,7 @@ def get_writer(outfile_base):
     writer.close()
     file_count += 1
 
-    writer = Chem.SDWriter(outfile_base + '_' + f'{file_count:03}' + '.sdf')
+    writer = Chem.SDWriter(outfile_base + '_' + f'{file_count:04}' + '.sdf')
     #print('  Using new writer for', id, writer)
     return writer
 
@@ -366,8 +366,6 @@ def execute(smi, hit_molfile, outfile_base, min_ph=None, max_ph=None, max_inputs
 
     global write_count
 
-    GetFF=lambda x,confId=-1:AllChem.MMFFGetMoleculeForceField(x,AllChem.MMFFGetMoleculeProperties(x),confId=confId)
-
     hit = Chem.MolFromMolFile(hit_molfile)
 
     num_mols = 0
@@ -397,8 +395,6 @@ def execute(smi, hit_molfile, outfile_base, min_ph=None, max_ph=None, max_inputs
             num_processed += 1
             num_added = 0
 
-            w = get_writer(outfile_base)
-
             print('Processing', num_mols, num_processed, smiles, Chem.MolToSmiles(hit))
 
             try:
@@ -418,7 +414,6 @@ def execute(smi, hit_molfile, outfile_base, min_ph=None, max_ph=None, max_inputs
                 count = 0
                 for ligand in enumerated_mols:
                     molh = Chem.AddHs(ligand)
-                    # mol_match_tuple = MultiConstrainedEmbed(molh, queryMol, getForceField=GetFF)
                     mol_match_tuple = multi_constrained_embed(molh, hit, mcsQuery, timout_embed_secs=timout_embed_secs)
                     print(' ', len(mol_match_tuple), 'mols tethered')
 
@@ -434,8 +429,10 @@ def execute(smi, hit_molfile, outfile_base, min_ph=None, max_ph=None, max_inputs
                         t_mol.SetProp('TETHERED ATOMS', tethers)
                         # print(' Tethers: ', tethers)
 
+                        w = get_writer(outfile_base)
                         w.write(t_mol)
                         write_count += 1
+                        print('  Write count =', write_count)
                         num_outputs += 1
                         num_added += 1
 
