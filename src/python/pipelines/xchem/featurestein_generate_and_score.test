@@ -1,0 +1,21 @@
+// Automated pipeline test specification.
+
+[
+
+    version = 1,
+
+    // Testing featurestein_generate_and_score.py
+    // reading from STDIN and writing to STDOUT
+    test_featurestein_generate_and_score = [
+
+        command: '''python -m pipelines.xchem.featurestein_generate_and_score
+                 -f ${PIN}/mpro/hits-17.sdf.gz
+                 -i ${PIN}/mpro/poses.sdf.gz
+                 -o ${POUT}FSOUT''',
+
+        stderr: [ 'Scored 14 molecules. 0 errors.' ],
+
+        creates: [ 'FSOUT.sdf.gz' ]
+    ]
+
+]
