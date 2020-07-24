@@ -119,6 +119,13 @@ def getReverseScores(mols, frags, COS_threshold, writer):
 
             for frag_mol in frags:
 
+                # NB reverse SuCOS scoring
+                fm_score = getFeatureMapScore(bit, frag_mol)
+                fm_score = np.clip(fm_score, 0, 1)
+                # Change van der Waals radius scale for stricter overlay
+                protrude_dist = rdShapeHelpers.ShapeProtrudeDist(bit, frag_mol, allowReordering=False, vdwScale=0.2)
+                protrude_dist = np.clip(protrude_dist, 0, 1)
+
                 # Get frag name for linking to score
                 frag_name = frag_mol.GetProp('_Name').strip('Mpro-')
                 
