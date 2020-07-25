@@ -69,7 +69,7 @@ process tether {
 
     """
     python -m pipelines.xchem.prepare_tether --smi '$smiles' --mol '$mol'\
-      --chunk-size $params.chunk_size_tether
+      --chunk-size $params.chunk_size_tether\
       ${params.ph_min != null ? '--min-ph ' + params.ph_min : ''}\
       ${params.ph_max != null ? '--max-ph ' + params.ph_max : ''}\
       ${params.timeout_embed != null ? '--timeout-embed ' + params.timeout_embed : ''}\
