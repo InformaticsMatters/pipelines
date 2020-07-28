@@ -21,14 +21,22 @@ be coming soon, including some from the Java ecosystem.
 * See [here](src/python/pipelines/rdkit/README.md) for more info on the RDKit components.
 * See [here](src/nextflow/README.md) for more info on running these in Nextflow.
 
-Note: this is experimental, subject to change, and there are no guarantees that things work as expected!
-That said, its already proved to be highly useful in the Squonk Computational Notebook, and if you are interested let us know, and join the fun.
+Note: this is experimental, subject to change, and there are no guarantees
+that things work as expected! That said, its already proved to be highly useful
+in the Squonk Computational Notebook, and if you are interested let us know,
+and join the fun.
 
 The code is licensed under the Apache 2.0 license.
 
 ## Pipeline Utils
 
-In Jan 2018 some of the core functionality from this repository was broken out into the [pipeline-utils](https://github.com/InformaticsMatters/pipeline-utils) repository. This included utility Python modules, as well as creation of a test framework that makes it easier to create and test new modules. This change also makes it easier to create additonal pipeline-like projects. See the [Readme](https://github.com/InformaticsMatters/pipelines-utils/blob/master/README.md) in the pipeline-utils repo for more details.
+In Jan 2018 some of the core functionality from this repository was broken out
+into the [pipeline-utils](https://github.com/InformaticsMatters/pipeline-utils)
+repository. This included utility Python modules, as well as creation of a test
+framework that makes it easier to create and test new modules. This change also
+makes it easier to create additonal pipeline-like projects. See the
+[Readme](https://github.com/InformaticsMatters/pipelines-utils/blob/master/README.md)
+in the pipeline-utils repo for more details.
 
 ## General principles
 
@@ -223,9 +231,10 @@ conda activate pipelines-utils
 ```
 
 Note: this environment includes pipeline-utils and pipeline-utils-rdkit from PyPi.
-If you need to use changes from these repos you will need to create a conda environment that does not contain these and
-instead set your `PYTHONPATH` environment variable to include the `pipelines-utils` and `pipelines-utils-rdkit` sources
-(adjusting `/path/to/` to whatever is needed):
+If you need to use changes from these repos you will need to create a conda
+environment that does not contain these and instead set your `PYTHONPATH`
+environment variable to include the `pipelines-utils` and `pipelines-utils-rdkit`
+sources (adjusting `/path/to/` to whatever is needed):
 ```
 export PYTHONPATH=/path/to/pipelines-utils/src/python:/path/to/pipelines-utils-rdkit/src/python
 ```
