@@ -361,6 +361,82 @@ def minimize_mol(mol, target, molMatch, targetMatch, algMap, getForceField):
     rms = AlignMol(mol, target, atomMap=algMap)
     mol.SetDoubleProp('EmbedRMS', rms)
 
+def find_best_mcs(hit, mol):
+    best_score = 0
+    mcs = rdFMCS.FindMCS([hit, mol], completeRingsOnly=True, ringMatchesRingOnly=True,
+                          atomCompare=rdFMCS.AtomCompare.CompareElements, bondCompare=rdFMCS.BondCompare.CompareOrder)
+    score = score_mcs(hit, mol, mcs)
+    if score > best_score:
+        best_score = score
+        best_mcs = mcs
+        best_index = 1
+    mcs = rdFMCS.FindMCS([hit, mol], completeRingsOnly=True, ringMatchesRingOnly=False,
+                          atomCompare=rdFMCS.AtomCompare.CompareElements, bondCompare=rdFMCS.BondCompare.CompareOrder)
+    score = score_mcs(hit, mol, mcs)
+    if score > best_score:
+        best_score = score
+        best_mcs = mcs
+        best_index = 2
+    mcs = rdFMCS.FindMCS([hit, mol], completeRingsOnly=False, ringMatchesRingOnly=True,
+                          atomCompare=rdFMCS.AtomCompare.CompareElements, bondCompare=rdFMCS.BondCompare.CompareOrder)
+    score = score_mcs(hit, mol, mcs)
+    if score > best_score:
+        best_score = score
+        best_mcs = mcs
+        best_index = 3
+    mcs = rdFMCS.FindMCS([hit, mol], completeRingsOnly=False, ringMatchesRingOnly=False,
+                          atomCompare=rdFMCS.AtomCompare.CompareElements, bondCompare=rdFMCS.BondCompare.CompareOrder)
+    score = score_mcs(hit, mol, mcs)
+    if score > best_score:
+        best_score = score
+        best_mcs = mcs
+        best_index = 4
+
+    mcs = rdFMCS.FindMCS([hit, mol], completeRingsOnly=True, ringMatchesRingOnly=True,
+                          atomCompare=rdFMCS.AtomCompare.CompareAny, bondCompare=rdFMCS.BondCompare.CompareAny)
+    score = score_mcs(hit, mol, mcs)
+    if score > best_score:
+        best_score = score
+        best_mcs = mcs
+        best_index = 5
+    mcs = rdFMCS.FindMCS([hit, mol], completeRingsOnly=True, ringMatchesRingOnly=False,
+                          atomCompare=rdFMCS.AtomCompare.CompareAny, bondCompare=rdFMCS.BondCompare.CompareAny)
+    score = score_mcs(hit, mol, mcs)
+    if score > best_score:
+        best_score = score
+        best_mcs = mcs
+        best_index = 6
+    mcs = rdFMCS.FindMCS([hit, mol], completeRingsOnly=False, ringMatchesRingOnly=True,
+                          atomCompare=rdFMCS.AtomCompare.CompareAny, bondCompare=rdFMCS.BondCompare.CompareAny)
+    score = score_mcs(hit, mol, mcs)
+    if score > best_score:
+        best_score = score
+        best_mcs = mcs
+        best_index = 7
+    mcs = rdFMCS.FindMCS([hit, mol], completeRingsOnly=False, ringMatchesRingOnly=False,
+                          atomCompare=rdFMCS.AtomCompare.CompareAny, bondCompare=rdFMCS.BondCompare.CompareAny)
+    score = score_mcs(hit, mol, mcs)
+    if score > best_score:
+        best_score = score
+        best_mcs = mcs
+        best_index = 8
+    print("  Best MCS is", best_index, 'with score', best_score)
+    return best_mcs
+
+def score_mcs(hit, mol, mcs):
+    smartsMol = Chem.MolFromSmarts(mcs.smartsString)
+    hitMatches = hit.GetSubstructMatch(smartsMol)
+    molMatches = mol.GetSubstructMatch(smartsMol)
+    # print('  Matches:', hitMatches, molMatches)
+    score = 0
+    for hitMatch, molMatch in zip(hitMatches, molMatches):
+        score += 1
+        if hit.GetAtomWithIdx(hitMatch).GetAtomicNum() == mol.GetAtomWithIdx(molMatch).GetAtomicNum():
+            score += 1
+    if mol.GetAtomWithIdx(molMatch).IsInRing():
+        score += 1
+    print('  Score:', score)
+    return score
 
 def execute(smi, hit_molfile, outfile_base, min_ph=None, max_ph=None, max_inputs=0, max_outputs=0, modulus=0, timout_embed_secs=5):
 
@@ -410,9 +486,13 @@ def execute(smi, hit_molfile, outfile_base, min_ph=None, max_ph=None, max_inputs
                 else:
                     enumerated_mols = [mol]
 
-                # mcs0 = rdFMCS.FindMCS([hit, mol], completeRingsOnly=True, matchValences=False, ringMatchesRingOnly=True,
-                #                       atomCompare=rdFMCS.AtomCompare.CompareAny, bondCompare=rdFMCS.BondCompare.CompareAny)
-                mcs0 = rdFMCS.FindMCS([hit, mol], completeRingsOnly=True, ringMatchesRingOnly=True)
+                mcs0 = rdFMCS.FindMCS([hit, mol], completeRingsOnly=False, ringMatchesRingOnly=False,
+                                      atomCompare=rdFMCS.AtomCompare.CompareAny, bondCompare=rdFMCS.BondCompare.CompareAny)
+                # mcs0 = rdFMCS.FindMCS([hit, mol], completeRingsOnly=False, ringMatchesRingOnly=False)
+                # score_mcs(hit, mol, mcs0)
+
+                # mcs0 = find_best_mcs(hit, mol)
+
                 mcsQuery = Chem.MolFromSmarts(mcs0.smartsString)
 
                 count = 0
@@ -458,7 +538,7 @@ def execute(smi, hit_molfile, outfile_base, min_ph=None, max_ph=None, max_inputs
 def main():
     """
     Example usage:
-    python -m pipelines.xchem.prepare_tether --smi ../../data/mpro/Mpro-x0387_0.smi --mol ../../data/mpro/Mpro-x0387_0.mol -o TETHERED --max-inputs 500 --chunk-size 100
+    python -m pipelines.xchem.prepare_tether_2 --smi ../../data/mpro/Mpro-x0387_0.smi --mol ../../data/mpro/Mpro-x0387_0.mol -o TETHERED --max-inputs 500 --chunk-size 100
 
     :return:
     """

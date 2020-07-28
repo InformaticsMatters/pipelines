@@ -11,7 +11,7 @@ params.molfiles = '*.mol'
 params.ph_min = null
 params.ph_max = null
 params.timeout_embed = null
-params.chunk_size_tether =  null
+params.chunk_size_tether =  500
 
 // docking params
 params.protein = 'data/mpro/Mpro-x0387_0.mol2'
@@ -69,6 +69,7 @@ process tether {
 
     """
     python -m pipelines.xchem.prepare_tether --smi '$smiles' --mol '$mol'\
+      --chunk-size $params.chunk_size_tether\
       ${params.ph_min != null ? '--min-ph ' + params.ph_min : ''}\
       ${params.ph_max != null ? '--max-ph ' + params.ph_max : ''}\
       ${params.timeout_embed != null ? '--timeout-embed ' + params.timeout_embed : ''}\

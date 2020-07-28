@@ -42,7 +42,7 @@ for k in ffact.GetFeatureFamilies():
     fparams = FeatMaps.FeatMapParams()
     fmParams[k] = fparams
 
-exclude = ()
+exclude = []
 
 def filterFeature(f):
     if f.GetFamily() in exclude:
@@ -88,7 +88,7 @@ def find_closest(scores):
             if i == j:
                 continue
             score = scores[i][j]
-            utils.log('Score:', score)
+            #utils.log('Score:', score)
             if score > best_score:
                 best_score = score
                 best_row = i
