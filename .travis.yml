@@ -28,18 +28,21 @@ stages:
   if: |
     branch = master \
     AND env(PUBLISH_IMAGES) = yes \
-    AND env(DOCKER_PASSWORD) IS present
+    AND env(DOCKER_PASSWORD) IS present \
+    AND env(DOCKER_PASSWORD) =~ ^\S+$
 - name: publish tag
   if: |
     tag IS present \
     AND env(PUBLISH_IMAGES) = yes \
-    AND env(DOCKER_PASSWORD) IS present
+    AND env(DOCKER_PASSWORD) IS present \
+    AND env(DOCKER_PASSWORD) =~ ^\S+$
 - name: publish stable
   if: |
     tag IS present \
     AND tag =~ ^([0-9]+\.){1,2}[0-9]+$ \
     AND env(PUBLISH_IMAGES) = yes \
-    AND env(DOCKER_PASSWORD) IS present
+    AND env(DOCKER_PASSWORD) IS present \
+    AND env(DOCKER_PASSWORD) =~ ^\S+$
 
 jobs:
   include:
