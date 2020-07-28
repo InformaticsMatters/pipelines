@@ -101,85 +101,111 @@ def getFeatureMapScore(small_m, large_m, score_mode=FeatMaps.FeatMapScoreMode.Al
 
 
 # This is the main XCOS function
-def getReverseScores(mols, frags, COS_threshold, writer):
+def getReverseScores(mols, frags, score_threshold, writer):
 
     for mol in mols:
-
+        
         # Get the bits
         compound_bits = getBits(mol)
 
         all_scores = []
 
         for bit in compound_bits:
+            
+            # Let's remove wildcard atoms
+            # Removing wildcard atoms does not impact feat score but does lower shape overlay
+            # For scoring should multiply feat score by number of non-wilcard atoms and use
+            # all atoms including wildcard for shape overlay
+            bit_without_wildcard_atoms = Chem.DeleteSubstructs(bit, Chem.MolFromSmarts('[#0]'))
+
+            # Let's only score bits that have more than one atom (do not count wildcard atoms)           
+            # Get number of bit atoms without wildcard atoms
+            no_bit_atoms_without_wild_card = bit_without_wildcard_atoms.GetNumAtoms()
 
             # Get number of bit atoms
             no_bit_atoms = bit.GetNumAtoms()
 
-            scores = []
-
-            for frag_mol in frags:
-
-                # NB reverse SuCOS scoring
-                fm_score = getFeatureMapScore(bit, frag_mol)
-                fm_score = np.clip(fm_score, 0, 1)
-                # Change van der Waals radius scale for stricter overlay
-                protrude_dist = rdShapeHelpers.ShapeProtrudeDist(bit, frag_mol, allowReordering=False, vdwScale=0.2)
-                protrude_dist = np.clip(protrude_dist, 0, 1)
-
-                # Get frag name for linking to score
-                frag_name = frag_mol.GetProp('_Name').strip('Mpro-')
+            # Only score if enough info in bit to describe a vector - this will bias against 
+            # cases where frag has long aliphatic chain
+            
+            if no_bit_atoms_without_wild_card > 1:
                 
-                # Check if MCS yield > 0 atoms
-                mcs_match = rdFMCS.FindMCS([bit,frag_mol],ringMatchesRingOnly=True,matchValences=True)
-                
-                # Get number of atoms in MCS match found
-                no_mcs_atoms = Chem.MolFromSmarts(mcs_match.smartsString).GetNumAtoms()
+                scores = []
 
-                if no_mcs_atoms == 0:
+                for frag_mol in frags:
+                    
+                    # Get frag name for linking to score
+                    frag_name = frag_mol.GetProp('_Name').strip('Mpro-')
 
-                    scores.append((frag_name, 0, no_bit_atoms))
-                
-                if no_mcs_atoms > 0:
+                    # Score only if some common structure shared between bit and fragment.
+                    # Check if MCS yield > 0 atoms
+                    mcs_match = rdFMCS.FindMCS([bit,frag_mol], ringMatchesRingOnly=True, matchValences=True)
+                    
+                    # Get mcs_mol from mcs_match
+                    mcs_mol = Chem.MolFromSmarts(mcs_match.smartsString)
+                    
+                    # check if frag has MCS mol
+                    mcs_test = frag_mol.HasSubstructMatch(mcs_mol)
 
-                    # NB reverse SuCOS scoring
-                    fm_score = getFeatureMapScore(bit, frag_mol)
-                    fm_score = np.clip(fm_score, 0, 1)
+                    if mcs_test:
+                        
+                        # Change van der Waals radius scale for stricter overlay
+                        protrude_dist = rdShapeHelpers.ShapeProtrudeDist(bit, frag_mol, allowReordering=False, vdwScale=0.2)
+                        protrude_dist = np.clip(protrude_dist, 0, 1)
+                        
+                        protrude_score = 1 - protrude_dist
 
-                    # Change van der Waals radius scale for stricter overlay                     
-                    protrude_dist = rdShapeHelpers.ShapeProtrudeDist(bit, frag_mol,
-                                                                     allowReordering=False,
-                                                                     vdwScale=0.2)
-                    protrude_dist = np.clip(protrude_dist, 0, 1)
+                        # We are comparing small bits relative to large frags
+                        # If overlay poor then assign score of 0
+                        # NB reverse SuCOS scoring. Feat map is also comp
+                        # more expensive
 
-                    reverse_SuCOS_score = 0.5 * fm_score + 0.5 * (1 - protrude_dist)
+                        if protrude_score > score_threshold:
+                            
+                            fm_score = getFeatureMapScore(bit, frag_mol)
+                            fm_score = np.clip(fm_score, 0, 1)
+                                    
+                            # What about good shape overlay but poor feat match?
+                            # Let's add a cutoff here to prevent good overlays with
+                            # poor feat match - eg. 3 mem ring 2 x C atoms overlay well
+                            # with 2 x aromatic ring Cs
+                            
+                            if fm_score > score_threshold:
+                                # Use modified SuCOS score where feat_score scaled by number of bit atoms 
+                                # without wildcard atoms and the shape overlay score by the number of bit atoms
+                                # including wildcard atoms
+                                scores.append((frag_name, protrude_score,no_bit_atoms,fm_score,no_bit_atoms_without_wild_card))
+                            else:
+                                scores.append((frag_name,0,no_bit_atoms,0,no_bit_atoms_without_wild_card ))
+                        else:
+                            scores.append((frag_name,0,no_bit_atoms,0,no_bit_atoms_without_wild_card ))
+                    else:
+                        scores.append((frag_name,0,no_bit_atoms,0,no_bit_atoms_without_wild_card ))                  
+                    
+                all_scores.append(scores)
 
-                    scores.append((frag_name, reverse_SuCOS_score, no_bit_atoms))
+                list_dfs = []
 
-            all_scores.append(scores)
+                for score in all_scores:
 
-            list_dfs = []
+                    df = pd.DataFrame(data=score, columns = ['Fragment','Shape_score','no_bit_atoms','Feat_score','no_bit_atoms_without_wild_card'])
+                    
+                    # Get maximum scoring fragment for bit match
+                    df['Modified_SuCOS_score'] = 0.5 * (df.Feat_score * df.no_bit_atoms_without_wild_card) + 0.5 * (df.Shape_score * df.no_bit_atoms)
+                    df = df[df['Modified_SuCOS_score'] == df['Modified_SuCOS_score'].max()]
+                    list_dfs.append(df)
 
-            for score in all_scores:
+                final_df = pd.concat(list_dfs)
 
-                df = pd.DataFrame(data=score, columns=['Fragment', 'Score', 'No_bit_atoms'])
-                
-                # Get maximum scoring fragment for bit match
-                df = df[df['Score'] == df['Score'].max()]
-                list_dfs.append(df)
+        # Score 1: the score is scaled by the number of bit atoms
+        score_1 = final_df.Modified_SuCOS_score.sum()
 
-            final_df = pd.concat(list_dfs)
-
-            # Score 1: the score is scaled by the number of bit atoms
-            score_1 = (final_df.No_bit_atoms * final_df.Score).sum()
-           
-            # Let's only get frags above a threshold
-            final_df = final_df[final_df.Score > COS_threshold]
-
-            # Let#s sort the df by increasing score
-            final_df = final_df.sort_values(by=['Score'], ascending=False)
-
-            # Get the unique fragments above threshold
-            all_frags = pd.unique(final_df.Fragment)
+        # Let's only get frags with a score > 0 
+        #final_df['SuCOS_score'] = 0.5 * final_df.Feat_score + 0.5 * final_df.Shape_score
+        final_df = final_df[final_df.Modified_SuCOS_score > 0]
+        
+        # Get the unique fragments above threshold
+        all_frags = pd.unique(final_df.Fragment)
 
         # Add props we want
         mol.SetProp(field_XCosRefMols, ','.join(all_frags))
@@ -204,8 +230,8 @@ def process(molecules, fragments, writer):
     else:
         utils.log('Using', len(frag_mol_list), 'fragments. No errors')
 
-    #mols, frags, COS_threshold, writer
-    getReverseScores(molecules, frag_mol_list, 0.40, writer)
+    #mols, frags, score_threshold, writer
+    getReverseScores(molecules, frag_mol_list, 0.5, writer)
 
 
 def main():
