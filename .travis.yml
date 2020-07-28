@@ -8,13 +8,13 @@
 #
 # If you set PUBLISH_IMAGES you must also set the following: -
 #
-# DOCKER_USERNAME       If PUBLISH_IMAGES is 'yes'
-# DOCKER_PASSWORD       If PUBLISH_IMAGES is 'yes'
+# DOCKER_USERNAME
+# DOCKER_PASSWORD
 #
 # -----------------
 #
 # NOTE: Pull requests from foreign repositories will not
-#       result in encrupted variables being set.
+#       result in encrypted variables being set.
 #       So, regardless of the state of PUBLISH_IMAGES,
 #       images will only be published if DOCKER_PASSWORD is defined.
 
