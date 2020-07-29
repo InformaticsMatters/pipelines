@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.com/InformaticsMatters/pipelines.svg?branch=master)](https://travis-ci.com/InformaticsMatters/pipelines)
 ![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/informaticsmatters/pipelines?include_prereleases)
 
-The project experiments with ways to generate data processing piplelines.
+The project experiments with ways to generate data processing pipelines.
 The aim is to generate some re-usable building blocks that can be piped
 together into more functional pipelines. Their prime initial use is as executors
 for the Squonk Computational Notebook (http://squonk.it) though it is expected
@@ -22,7 +22,7 @@ be coming soon, including some from the Java ecosystem.
 * See [here](src/nextflow/README.md) for more info on running these in Nextflow.
 
 Note: this is experimental, subject to change, and there are no guarantees that things work as expected!
-That said, its already proved to be highly useful in the Squonk Computational Notebook, and if you are interested let us know, and join the fun.
+That said, it's already proved to be highly useful in the Squonk Computational Notebook, and if you are interested let us know, and join the fun.
 
 The code is licensed under the Apache 2.0 license.
 

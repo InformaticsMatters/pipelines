@@ -8,13 +8,13 @@
 #
 # If you set PUBLISH_IMAGES you must also set the following: -
 #
-# DOCKER_USERNAME       If PUBLISH_IMAGES is 'yes'
-# DOCKER_PASSWORD       If PUBLISH_IMAGES is 'yes'
+# DOCKER_USERNAME
+# DOCKER_PASSWORD
 #
 # -----------------
 #
 # NOTE: Pull requests from foreign repositories will not
-#       result in encrupted variables being set.
+#       result in encrypted variables being set.
 #       So, regardless of the state of PUBLISH_IMAGES,
 #       images will only be published if DOCKER_PASSWORD is defined.
 
@@ -23,39 +23,26 @@ services:
 - docker
 
 stages:
-- name: test
 - name: publish latest
   if: |
     branch = master \
-    AND env(PUBLISH_IMAGES) = yes \
-    AND env(DOCKER_PASSWORD) IS present
+    AND env(PUBLISH_IMAGES) = yes
 - name: publish tag
   if: |
     tag IS present \
-    AND env(PUBLISH_IMAGES) = yes \
-    AND env(DOCKER_PASSWORD) IS present
+    AND env(PUBLISH_IMAGES) = yes
 - name: publish stable
   if: |
     tag IS present \
     AND tag =~ ^([0-9]+\.){1,2}[0-9]+$ \
-    AND env(PUBLISH_IMAGES) = yes \
-    AND env(DOCKER_PASSWORD) IS present
+    AND env(PUBLISH_IMAGES) = yes
 
 jobs:
   include:
 
-  - stage: test
-    name: Test Local Image
-    script:
-    - docker build -t informaticsmatters/rdkit_pipelines:latest -f Dockerfile-rdkit .
-    - docker build -t squonk/rdkit-pipelines-sdposter:latest -f Dockerfile-sdposter .
-    - git clone https://github.com/InformaticsMatters/pipelines-utils.git
-    - cd pipelines-utils/src/groovy
-    - groovy PipelineTester.groovy -indocker
-
   # Publish-stage jobs...
-  # Every successful master build results in a latest image
-  # and every tag results in a tagged image in Docker Hub.
+  # Every successful master build results in a build (and test)
+  # of the latest image and every tag results in a tagged image in Docker Hub.
   # Tags that match a RegEx are considered 'official' tags
   # and also result in a 'stable' image tag.
 
@@ -65,9 +52,14 @@ jobs:
     # Build and push the pipelines-rdkit image and its sd-poster
     - docker build -t informaticsmatters/rdkit_pipelines:latest -f Dockerfile-rdkit .
     - docker build -t squonk/rdkit-pipelines-sdposter:latest -f Dockerfile-sdposter .
-    - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-    - docker push informaticsmatters/rdkit_pipelines:latest
-    - docker push squonk/rdkit-pipelines-sdposter:latest
+    - git clone https://github.com/InformaticsMatters/pipelines-utils.git
+    - cd pipelines-utils/src/groovy
+    - groovy PipelineTester.groovy -indocker
+    - if [ -n "$DOCKER_PASSWORD" ]; then
+        docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+        docker push informaticsmatters/rdkit_pipelines:latest;
+        docker push squonk/rdkit-pipelines-sdposter:latest;
+      fi
 
   - stage: publish tag
     name: Publish Tagged Image
@@ -75,19 +67,23 @@ jobs:
     # Build and push the pipelines-rdkit image and its sd-poster
     - docker build -t informaticsmatters/rdkit_pipelines:${TRAVIS_TAG} -f Dockerfile-rdkit .
     - docker build -t squonk/rdkit-pipelines-sdposter:${TRAVIS_TAG} -f Dockerfile-sdposter .
-    - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-    - docker push informaticsmatters/rdkit_pipelines:${TRAVIS_TAG}
-    - docker push squonk/rdkit-pipelines-sdposter:${TRAVIS_TAG}
+    - if [ -n "$DOCKER_PASSWORD" ]; then
+        docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+        docker push informaticsmatters/rdkit_pipelines:${TRAVIS_TAG};
+        docker push squonk/rdkit-pipelines-sdposter:${TRAVIS_TAG};
+      fi
 
   - stage: publish stable
     name: Publish Stable Image
     script:
     # Pull the corresponding pipelines-rdkit image tag
     # and push it again as 'stable'
-    - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-    - docker pull informaticsmatters/rdkit_pipelines:${TRAVIS_TAG}
-    - docker pull squonk/rdkit-pipelines-sdposter:${TRAVIS_TAG}
-    - docker tag informaticsmatters/rdkit_pipelines:${TRAVIS_TAG} informaticsmatters/rdkit_pipelines:stable
-    - docker tag squonk/rdkit-pipelines-sdposter:${TRAVIS_TAG} squonk/rdkit-pipelines-sdposter:stable
-    - docker push informaticsmatters/rdkit_pipelines:stable
-    - docker push squonk/rdkit-pipelines-sdposter:stable
+    - if [ -n "$DOCKER_PASSWORD" ]; then
+        docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+        docker pull informaticsmatters/rdkit_pipelines:${TRAVIS_TAG};
+        docker pull squonk/rdkit-pipelines-sdposter:${TRAVIS_TAG};
+        docker tag informaticsmatters/rdkit_pipelines:${TRAVIS_TAG} informaticsmatters/rdkit_pipelines:stable;
+        docker tag squonk/rdkit-pipelines-sdposter:${TRAVIS_TAG} squonk/rdkit-pipelines-sdposter:stable;
+        docker push informaticsmatters/rdkit_pipelines:stable;
+        docker push squonk/rdkit-pipelines-sdposter:stable;
+      fi
