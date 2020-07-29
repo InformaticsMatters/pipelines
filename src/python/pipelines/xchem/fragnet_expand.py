@@ -35,16 +35,16 @@ def process(inputs, hac_min=None, hac_max=None, rac_min=None, rac_max=None, hops
     for mol in inputs:
         count += 1
         name = mol.GetProp('_Name')
-        smiles = Chem.MolToSmiles(mol)
-        utils.log('Processing', name, smiles)
-        url = server + '/fragnet-search/rest/v2/search/expand/' + smiles
+        molfile = Chem.MolToMolBlock(mol)
+        utils.log('Processing', name)
+        url = server + '/fragnet-search/rest/v2/search/expand/'
         params = {'hops': hops, 'hac_min': hac_min, 'hac_max': hac_max, 'rac_min': rac_min, 'rac_max': rac_max}
 
-        headers = {}
+        headers = {'Content-Type': 'chemical/x-mdl-molfile'}
         if token:
             headers['Authorization'] = 'bearer ' + token
 
-        r = requests.get(url, params=params, headers=headers)
+        r = requests.post(url, params=params, headers=headers, data=molfile)
         if r.status_code == requests.codes.ok:
             j = r.json()
             num_mols = j['size']
