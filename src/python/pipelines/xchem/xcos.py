@@ -201,7 +201,6 @@ def getReverseScores(mols, frags, score_threshold, writer):
         score_1 = final_df.Modified_SuCOS_score.sum()
 
         # Let's only get frags with a score > 0 
-        #final_df['SuCOS_score'] = 0.5 * final_df.Feat_score + 0.5 * final_df.Shape_score
         final_df = final_df[final_df.Modified_SuCOS_score > 0]
         
         # Get the unique fragments above threshold
@@ -231,7 +230,7 @@ def process(molecules, fragments, writer):
         utils.log('Using', len(frag_mol_list), 'fragments. No errors')
 
     #mols, frags, score_threshold, writer
-    getReverseScores(molecules, frag_mol_list, 0.5, writer)
+    getReverseScores(molecules, frag_mol_list, 0.4, writer)
 
 
 def main():
