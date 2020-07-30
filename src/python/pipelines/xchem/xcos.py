@@ -200,8 +200,7 @@ def getReverseScores(mols, frags, score_threshold, writer):
         # Score 1: the score is scaled by the number of bit atoms
         score_1 = final_df.Modified_SuCOS_score.sum()
 
-        # Let's only get frags with a score > 0 
-        #final_df['SuCOS_score'] = 0.5 * final_df.Feat_score + 0.5 * final_df.Shape_score
+        # Let's only get frags with a score > 0
         final_df = final_df[final_df.Modified_SuCOS_score > 0]
         
         # Get the unique fragments above threshold
@@ -216,7 +215,7 @@ def getReverseScores(mols, frags, score_threshold, writer):
         writer.write(mol)
         writer.flush()
 
-def process(molecules, fragments, writer):
+def process(molecules, fragments, writer, threshold=0.4):
 
     frag_mol_list = []
     errors = 0
@@ -231,20 +230,20 @@ def process(molecules, fragments, writer):
         utils.log('Using', len(frag_mol_list), 'fragments. No errors')
 
     #mols, frags, score_threshold, writer
-    getReverseScores(molecules, frag_mol_list, 0.5, writer)
+    getReverseScores(molecules, frag_mol_list, threshold, writer)
 
 
 def main():
 
     # Example usage:
-    #  python -m pipelines.xchem.xcos -f ../../data/mpro/hits-17.sdf.gz -i ../../data/mpro/poses.sdf.gz  -o xcos
-
-    global fmaps
+    # python -m pipelines.xchem.xcos -f ../../data/mpro/hits-17.sdf.gz -i ../../data/mpro/poses.sdf.gz  -o xcos
 
     parser = argparse.ArgumentParser(description='XCos scoring with RDKit')
     parameter_utils.add_default_io_args(parser)
     parser.add_argument('-f', '--fragments', required=True, help='Fragments to compare')
     parser.add_argument('-ff', '--fragments-format', help='Fragments format')
+    parser.add_argument('-t', '--score-threshold', type=float, default=0.4,
+                        help='Minimum shape overlay and feature map score required for scoring a bit to a fragment')
     parser.add_argument('--no-gzip', action='store_true', help='Do not compress the output (STDOUT is never compressed')
     parser.add_argument('--metrics', action='store_true', help='Write metrics')
 
@@ -276,7 +275,7 @@ def main():
                                                                   compress=not args.no_gzip)
 
     # this does the processing
-    process(inputs_supplr, frags_suppl, writer)
+    process(inputs_supplr, frags_suppl, writer, threshold=args.score_threshold)
 
     writer.close()
 
