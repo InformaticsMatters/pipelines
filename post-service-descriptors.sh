@@ -7,13 +7,16 @@
 set -e
 
 POST=${1:-http://coreservices:8080/coreservices/rest/v1/services}
-BASE_D='docker://github.com/InformaticsMatters/pipelines'
-BASE_N='nextflow://github.com/InformaticsMatters/pipelines'
+BASE_D=docker://github.com/InformaticsMatters/pipelines
+BASE_N=nextflow://github.com/InformaticsMatters/pipelines
 IMAGE_TAG=${IMAGE_TAG:-}
 CT_DJ="application/x-squonk-service-descriptor-docker+json"
 CT_DY="application/x-squonk-service-descriptor-docker+yaml"
 CT_MM="multipart/mixed"
 
+echo BASE_D="${BASE_D}"
+echo BASE_N="${BASE_N}"
+echo IMAGE_TAG="${IMAGE_TAG}"
 
 for d in 'src/python/pipelines/dmpk' \
          'src/python/pipelines/docking' \
