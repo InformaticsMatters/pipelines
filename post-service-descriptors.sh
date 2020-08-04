@@ -7,14 +7,21 @@
 set -e
 
 POST=${1:-http://coreservices:8080/coreservices/rest/v1/services}
-BASE_D='docker://github.com/InformaticsMatters/pipelines'
-BASE_N='nextflow://github.com/InformaticsMatters/pipelines'
+BASE_D=docker://github.com/InformaticsMatters/pipelines
+BASE_N=nextflow://github.com/InformaticsMatters/pipelines
+IMAGE_TAG=${IMAGE_TAG:-}
 CT_DJ="application/x-squonk-service-descriptor-docker+json"
 CT_DY="application/x-squonk-service-descriptor-docker+yaml"
 CT_MM="multipart/mixed"
 
+echo BASE_D="${BASE_D}"
+echo BASE_N="${BASE_N}"
+echo IMAGE_TAG="${IMAGE_TAG}"
 
-for d in 'src/python/pipelines/dmpk' 'src/python/pipelines/docking' 'src/python/pipelines/rdkit' 'src/python/pipelines/dimorphite'
+for d in 'src/python/pipelines/dmpk' \
+         'src/python/pipelines/docking' \
+         'src/python/pipelines/rdkit' \
+         'src/python/pipelines/dimorphite'
 do
     for file in $d/*.dsd.yml
     do
@@ -23,12 +30,14 @@ do
          -T $file\
          -H "Content-Type: $CT_DY"\
          -H "Base-URL: $BASE_D"\
+         -H "Image-Tag: $IMAGE_TAG"\
          $POST
          echo ""
     done
 done
 
-for d in 'src/nextflow/docking' 'src/nextflow/rdkit'
+for d in 'src/nextflow/docking' \
+         'src/nextflow/rdkit'
 do
     for file in $d/*.nsd.yml
     do
