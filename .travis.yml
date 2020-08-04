@@ -31,11 +31,6 @@ stages:
   if: |
     tag IS present \
     AND env(PUBLISH_IMAGES) = yes
-- name: publish stable
-  if: |
-    tag IS present \
-    AND tag =~ ^([0-9]+\.){1,2}[0-9]+$ \
-    AND env(PUBLISH_IMAGES) = yes
 
 jobs:
   include:
@@ -64,26 +59,12 @@ jobs:
   - stage: publish tag
     name: Publish Tagged Image
     script:
-    # Build and push the pipelines-rdkit image and its sd-poster
+    # Build and push the pipelines-rdkit image and its sd-poster.
+    # The poster will have its IMAGE_TAG set to TRAVIS_TAG
     - docker build -t informaticsmatters/rdkit_pipelines:${TRAVIS_TAG} -f Dockerfile-rdkit .
-    - docker build -t squonk/rdkit-pipelines-sdposter:${TRAVIS_TAG} -f Dockerfile-sdposter .
+    - docker build -t squonk/rdkit-pipelines-sdposter:${TRAVIS_TAG} -f Dockerfile-sdposter --build-arg image_tag=${TRAVIS_TAG} .
     - if [ -n "$DOCKER_PASSWORD" ]; then
         docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
         docker push informaticsmatters/rdkit_pipelines:${TRAVIS_TAG};
         docker push squonk/rdkit-pipelines-sdposter:${TRAVIS_TAG};
-      fi
-
-  - stage: publish stable
-    name: Publish Stable Image
-    script:
-    # Pull the corresponding pipelines-rdkit image tag
-    # and push it again as 'stable'
-    - if [ -n "$DOCKER_PASSWORD" ]; then
-        docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
-        docker pull informaticsmatters/rdkit_pipelines:${TRAVIS_TAG};
-        docker pull squonk/rdkit-pipelines-sdposter:${TRAVIS_TAG};
-        docker tag informaticsmatters/rdkit_pipelines:${TRAVIS_TAG} informaticsmatters/rdkit_pipelines:stable;
-        docker tag squonk/rdkit-pipelines-sdposter:${TRAVIS_TAG} squonk/rdkit-pipelines-sdposter:stable;
-        docker push informaticsmatters/rdkit_pipelines:stable;
-        docker push squonk/rdkit-pipelines-sdposter:stable;
       fi
