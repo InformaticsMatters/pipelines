@@ -127,6 +127,7 @@ def do_embed_with_timeout(new_mol, coord_map, timout_secs):
     manager = multiprocessing.Manager()
     ret_values = manager.dict()
     p = multiprocessing.Process(target=do_embed, name="EmbedMolecule", args=(new_mol, coord_map, ret_values))
+    t0 = time.time()
     p.start()
     p.join(timout_secs)
     # If thread is active
@@ -137,13 +138,16 @@ def do_embed_with_timeout(new_mol, coord_map, timout_secs):
         ci = -1
         mol = None
     else:
+        t1 = time.time()
         ci = ret_values['ci']
         mol = ret_values['mol']
+        mol.SetDoubleProp('EmbedTime', t1 - t0)
     return ci, mol
 
 # This is the rdkit ConstrainedEmbed function from AllChem
 # Have edited to make it a bit shorter by deleting the instructions
-def multi_constrained_embed(mol, target, mcsQuery, getForceField=UFFGetMoleculeForceField, timout_embed_secs=5):
+def multi_constrained_embed(mol, target, mcsQuery, getForceField=UFFGetMoleculeForceField,
+                            num_conformers=1, timout_embed_secs=5):
 
     global num_swap_success
     global embedding_failures
@@ -240,6 +244,7 @@ def multi_constrained_embed(mol, target, mcsQuery, getForceField=UFFGetMoleculeF
 
         mols_to_embed = enumerate_undefined_chirals(mol, free_counts)
 
+        index = 0
         for new_mol in mols_to_embed:
             # print('  Target match:', targetMatch)
             # print('  Candid match:', molMatch)
@@ -254,19 +259,22 @@ def multi_constrained_embed(mol, target, mcsQuery, getForceField=UFFGetMoleculeF
 
 
             try:
-                # ci = AllChem.EmbedMolecule(new_mol, coordMap=coordMap, ignoreSmoothingFailures=True)
-                ci, new_mol = do_embed_with_timeout(new_mol, coordMap, timout_embed_secs)
 
-                if ci < 0:
-                    print('  WARNING: Could not embed molecule.')
-                    embedding_failures += 1
-                else:
-                    # rotate the embedded conformation onto the core:
-                    rms = AlignMol(new_mol, target, atomMap=algMap)
+                for conf in range(num_conformers):
+                    ci, new_mol = do_embed_with_timeout(new_mol, coordMap, timout_embed_secs)
 
-                    # process the original embedded molecule
-                    minimize_mol(new_mol, target, molMatch, targetMatch, algMap, getForceField)
-                    mols_matches.append((new_mol, molMatch))
+                    if ci < 0:
+                        print('  WARNING: Could not embed molecule.')
+                        embedding_failures += 1
+                    else:
+                        # rotate the embedded conformation onto the core:
+                        rms = AlignMol(new_mol, target, atomMap=algMap)
+
+                        # process the original embedded molecule
+                        minimize_mol(new_mol, target, molMatch, targetMatch, algMap, getForceField)
+                        new_mol.SetIntProp('Index', index)
+                        new_mol.SetIntProp('Conformer', conf)
+                        mols_matches.append((new_mol, molMatch))
             except:
                 embedding_failures += 1
                 print('  ERROR: Failed to Embed molecule')
@@ -286,7 +294,11 @@ def multi_constrained_embed(mol, target, mcsQuery, getForceField=UFFGetMoleculeF
 
                 # process the original embedded molecule
                 minimize_mol(mol, target, molMatch, targetMatch, algMap, getForceField)
+                new_mol.SetIntProp('Index', index)
+                new_mol.SetIntProp('Conformer', 0)
                 mols_matches.append((mol, molMatch))
+
+        index += 1
 
     t1 = time.time()
     #print('  Embedding took:', t1 - t0)
@@ -438,7 +450,8 @@ def score_mcs(hit, mol, mcs):
     print('  Score:', score)
     return score
 
-def execute(smi, hit_molfile, outfile_base, min_ph=None, max_ph=None, max_inputs=0, max_outputs=0, modulus=0, timout_embed_secs=5):
+def execute(smi, hit_molfile, outfile_base, min_ph=None, max_ph=None, max_inputs=0, max_outputs=0, modulus=0,
+            num_conformers=1, timout_embed_secs=5):
 
     global write_count
 
@@ -498,14 +511,13 @@ def execute(smi, hit_molfile, outfile_base, min_ph=None, max_ph=None, max_inputs
                 count = 0
                 for ligand in enumerated_mols:
                     molh = Chem.AddHs(ligand)
-                    # mol_match_tuple = MultiConstrainedEmbed(molh, queryMol, getForceField=GetFF)
-                    mol_match_tuple = multi_constrained_embed(molh, hit, mcsQuery, timout_embed_secs=timout_embed_secs)
+                    mol_match_tuple = multi_constrained_embed(molh, hit, mcsQuery, num_conformers=num_conformers, timout_embed_secs=timout_embed_secs)
                     print(' ', len(mol_match_tuple), 'mols tethered')
 
                     for t_mol, match in mol_match_tuple:
                         count += 1
                         t_mol.SetProp('_Name', smiles)
-                        t_mol.SetIntProp('Index', count)
+                        # t_mol.SetIntProp('Index', count)
                         if hit.HasProp('_Name'):
                             t_mol.SetProp('Hit', hit.GetProp('_Name'))
                         else:
@@ -538,7 +550,7 @@ def execute(smi, hit_molfile, outfile_base, min_ph=None, max_ph=None, max_inputs
 def main():
     """
     Example usage:
-    python -m pipelines.xchem.prepare_tether_2 --smi ../../data/mpro/Mpro-x0387_0.smi --mol ../../data/mpro/Mpro-x0387_0.mol -o TETHERED --max-inputs 500 --chunk-size 100
+    python -m pipelines.xchem.prepare_tether --smi ../../data/mpro/Mpro-x0387_0.smi --mol ../../data/mpro/Mpro-x0387_0.mol -o TETHERED --max-inputs 500 --chunk-size 100
 
     :return:
     """
@@ -561,6 +573,7 @@ def main():
     parser.add_argument('--max-inputs', type=int, default=0, help='Max number of molecules to process')
     parser.add_argument('--max-outputs', type=int, default=0, help='Max number of records to output')
     parser.add_argument('--modulus', type=int, default=0, help='Process only mols with this modulus')
+    parser.add_argument('--num-conformers', type=int, default=1, help='Generate this number of conformers for each tethering')
     parser.add_argument('--timeout-embed', type=int, default=5, help='Timeout in seconds to apply to limit embedding')
 
 
@@ -577,6 +590,7 @@ def main():
     max_inputs = args.max_inputs
     max_outputs = args.max_outputs
     modulus = args.modulus
+    num_conformers = args.num_conformers
     timout_embed_secs = args.timeout_embed
 
     embedding_failures_file = open(outfile + '_embedding_failures.smi', 'w')
@@ -590,7 +604,8 @@ def main():
     sys.argv = sys.argv[:1]
 
     execute(smi, mol, outfile, min_ph=min_ph, max_ph=max_ph,
-            max_inputs=max_inputs, max_outputs=max_outputs, modulus=modulus, timout_embed_secs=timout_embed_secs)
+            max_inputs=max_inputs, max_outputs=max_outputs, modulus=modulus,
+            num_conformers=num_conformers, timout_embed_secs=timout_embed_secs)
 
     embedding_failures_file.close()
 
