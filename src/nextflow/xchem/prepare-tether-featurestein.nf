@@ -1,6 +1,7 @@
 #!/usr/bin/env nextflow
 
-params.candidates = "data/mpro/expanded-17.json"
+params.smiles = '*.smi'
+params.molfiles = '*.mol'
 params.fragments = "data/mpro/hits-17.sdf.gz"
 params.chunk_tether = 250
 params.chunk_score = 10000
@@ -9,7 +10,9 @@ params.digits = 4
 params.generate_filenames = false
 params.num_conformers = 10
 
-candidates = file(params.candidates)
+// files
+smilesfiles = file(params.smiles)
+molfiles = file(params.molfiles)
 fragments = file(params.fragments)
 
 process generate_feat_maps {
@@ -27,19 +30,27 @@ process generate_feat_maps {
     """
 }
 
-process split_json {
+process splitter {
 
     container 'informaticsmatters/rdkit_pipelines:latest'
 
     input:
-    file candidates
+    file smiles from smilesfiles.flatten()
+    file mol from molfiles.flatten()
 
     output:
-    file '*.smi' into smiles
     file '*.mol' into mols
+    file '*.smi' into smiles
 
     """
-    python -m pipelines.xchem.split_fragnet_candidates -i '$candidates' ${params.generate_filenames ? '--generate-filenames' : ''}
+    stem=${smiles.name[0..-5]}
+    split -l $params.chunk_tether -d -a 3 --additional-suffix .smi $smiles \${stem}_
+    mv $smiles ${smiles}.orig
+    for f in *.smi
+    do
+      cp $mol \${f:0:-4}.mol
+    done
+    mv $mol ${mol}.orig
     """
 }
 

@@ -4,3 +4,6 @@ gradle
 openshift
 work
 .nextflow
+trace.txt*
+report.html*
+wip
