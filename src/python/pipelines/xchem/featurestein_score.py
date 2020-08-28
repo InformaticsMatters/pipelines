@@ -84,6 +84,7 @@ def process(inputs, writer):
                 utils.log('Processed molecule', total, '...')
             mol.SetDoubleProp(field_FeatureSteinQualityScore, qualScore)
             mol.SetDoubleProp(field_FeatureSteinQuantityScore, quantScore)
+            mol.SetProp('Name', mol.GetProp('_Name'))
             writer.write(mol)
             success += 1
         except:

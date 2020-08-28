@@ -32,7 +32,8 @@ from pipelines.dimorphite.dimorphite_dl import run_with_mol_list
 def log(*args, **kwargs):
     """Log output to STDERR
     """
-    print(*args, file=sys.stderr, ** kwargs)
+    print(*args, file=sys.stderr, **kwargs)
+
 
 def enumerate_charges(mol, min_ph, max_ph):
     """
@@ -41,10 +42,11 @@ def enumerate_charges(mol, min_ph, max_ph):
     :return:
     """
 
-    mol_list = [ mol ]
+    mol_list = [mol]
     protonated_mols = run_with_mol_list(mol_list, min_ph=min_ph, max_ph=max_ph)
 
     return protonated_mols
+
 
 chunk_size = 0
 write_count = 0
@@ -52,8 +54,8 @@ file_count = 0
 writer = None
 embedding_failures_file = None
 
-def get_writer(outfile_base):
 
+def get_writer(outfile_base):
     global writer
     global write_count
     global file_count
@@ -74,8 +76,9 @@ def get_writer(outfile_base):
     file_count += 1
 
     writer = Chem.SDWriter(outfile_base + '_' + f'{file_count:03}' + '.sdf')
-    #print('  Using new writer for', id, writer)
+    # print('  Using new writer for', id, writer)
     return writer
+
 
 def get_h_bonds(atom):
     l = []
@@ -85,6 +88,7 @@ def get_h_bonds(atom):
             l.append(b.GetIdx())
     return tuple(l)
 
+
 def get_num_h_neighbours(atom):
     count = 0
     for n in atom.GetNeighbors():
@@ -92,12 +96,14 @@ def get_num_h_neighbours(atom):
             count += 1
     return len(atom.GetNeighbors()) - count
 
+
 def count_h_attachments_for_match(mol, match):
     res = []
     for m in match:
         atom = mol.GetAtomWithIdx(m)
         res.append(get_num_h_neighbours(atom))
     return tuple(res)
+
 
 def count_h_attachements_for_mol(mol, match):
     molh = Chem.AddHs(mol)
@@ -108,6 +114,7 @@ def count_h_attachements_for_mol(mol, match):
             res.append(get_num_h_neighbours(atom))
     return tuple(res)
 
+
 def count_attachments(mol, match):
     res = []
     for m in match:
@@ -115,18 +122,26 @@ def count_attachments(mol, match):
         res.append(get_h_bonds(atom))
     return tuple(res)
 
+
 num_swap_success = 0
 embedding_failures = 0
 
+from random import randint
+
+
 def do_embed(new_mol, coord_map, ret_vals):
-    ci = AllChem.EmbedMolecule(new_mol, coordMap=coord_map, ignoreSmoothingFailures=True)
+    # for some strange reason you get the same conformer unless you specify a different seed.
+    seed = randint(0, 100000000)
+    ci = AllChem.EmbedMolecule(new_mol, coordMap=coord_map, ignoreSmoothingFailures=True, enforceChirality=False, randomSeed=seed)
     ret_vals['ci'] = ci
     ret_vals['mol'] = new_mol
+
 
 def do_embed_with_timeout(new_mol, coord_map, timout_secs):
     manager = multiprocessing.Manager()
     ret_values = manager.dict()
     p = multiprocessing.Process(target=do_embed, name="EmbedMolecule", args=(new_mol, coord_map, ret_values))
+    t0 = time.time()
     p.start()
     p.join(timout_secs)
     # If thread is active
@@ -137,14 +152,16 @@ def do_embed_with_timeout(new_mol, coord_map, timout_secs):
         ci = -1
         mol = None
     else:
+        t1 = time.time()
         ci = ret_values['ci']
         mol = ret_values['mol']
+        mol.SetDoubleProp('EmbedTime', t1 - t0)
+
     return ci, mol
 
-# This is the rdkit ConstrainedEmbed function from AllChem
-# Have edited to make it a bit shorter by deleting the instructions
-def multi_constrained_embed(mol, target, mcsQuery, getForceField=UFFGetMoleculeForceField, timout_embed_secs=5):
 
+def multi_constrained_embed(mol, target, mcsQuery, getForceField=UFFGetMoleculeForceField,
+                            num_conformers=1, timout_embed_secs=5, minimize_cycles=0):
     global num_swap_success
     global embedding_failures
 
@@ -174,6 +191,7 @@ def multi_constrained_embed(mol, target, mcsQuery, getForceField=UFFGetMoleculeF
     # loop over our matches
     nhas = []
 
+    index = 0
     for molMatch in molMatches:
         # print('  Match lengths:', len(targetMatch), len(molMatch))
         nha = count_h_attachments_for_match(mol, molMatch)
@@ -188,7 +206,7 @@ def multi_constrained_embed(mol, target, mcsQuery, getForceField=UFFGetMoleculeF
                 hs_on_matched_atoms = nha[idx]
                 # check if the number of H atoms is different e.g. the atom is substituted compared to the core
                 if hs_on_core_atoms != hs_on_matched_atoms:
-                    #print('    ',idx, hs_on_core_atoms, hs_on_matched_atoms,c)
+                    # print('    ',idx, hs_on_core_atoms, hs_on_matched_atoms,c)
                     # Do we have at least one H on the atom - if so there is potential for swapping the substitutions
                     if hs_on_matched_atoms > 0:
                         atomidx = molMatch[idx]
@@ -201,31 +219,35 @@ def multi_constrained_embed(mol, target, mcsQuery, getForceField=UFFGetMoleculeF
                             o_idx = other_atom.GetIdx()
                             o_sym = other_atom.GetSymbol() + str(other_atom.GetIdx())
                             if other_atom.GetIdx() in molMatch:
-                                #print('  tethered', o_sym)
+                                # print('  tethered', o_sym)
                                 tethered_atoms.append(o_idx)
                                 tethered_symbols.append(o_sym)
                             else:
-                                #print('  free', o_sym)
+                                # print('  free', o_sym)
                                 free_atoms.append(o_idx)
                                 free_symbols.append(o_sym)
-                        print('  Atom:', atom.GetSymbol() + str(atomidx), 'Free:', free_symbols, 'Tethered:', tethered_symbols)
+                        print('  Atom:', atom.GetSymbol() + str(atomidx), 'Free:', free_symbols, 'Tethered:',
+                              tethered_symbols)
                         # Include if there are 2 or more tethered atoms
                         # - otherwise it's free to rotate
                         if len(tethered_atoms) > 1:
-                            #print('  GT1')
-                            atoms_to_switch.append((idx, atomidx, molMatch[idx], hs_on_matched_atoms, tuple(free_atoms), tuple(tethered_atoms)))
+                            # print('  GT1')
+                            atoms_to_switch.append((idx, atomidx, molMatch[idx], hs_on_matched_atoms, tuple(free_atoms),
+                                                    tuple(tethered_atoms)))
 
                         # Handle the special case of where there is only one tether but the bond is not rotatable
                         # e.g. a double bond, but not a methyl group where the 3 Hs are equivalent
                         if len(tethered_atoms) == 1:
-                            #print('  EQ1')
+                            # print('  EQ1')
                             bond = mol.GetBondBetweenAtoms(molMatch[idx], tethered_atoms[0])
-                            if bond: # should always be one, but just in case
+                            if bond:  # should always be one, but just in case
                                 # Don't know how to ask if a bond is rotatable.
                                 # So instead ask if it is a double bond which won't be rotatable
                                 if bond.GetBondType() == Chem.BondType.DOUBLE:
-                                    print('  NON-ROTATABLE', bond.GetBondType(), atom.GetSymbol() + '->' + bond.GetOtherAtom(atom).GetSymbol())
-                                    atoms_to_switch.append((idx, atomidx, molMatch[idx], hs_on_matched_atoms, tuple(free_atoms), tuple(tethered_atoms)))
+                                    print('  NON-ROTATABLE', bond.GetBondType(),
+                                          atom.GetSymbol() + '->' + bond.GetOtherAtom(atom).GetSymbol())
+                                    atoms_to_switch.append((idx, atomidx, molMatch[idx], hs_on_matched_atoms,
+                                                            tuple(free_atoms), tuple(tethered_atoms)))
 
             print('  NHA', nha, 'SSS', molMatch, 'NEW', atoms_to_switch)
 
@@ -237,36 +259,43 @@ def multi_constrained_embed(mol, target, mcsQuery, getForceField=UFFGetMoleculeF
                     free_count += 1
             free_counts.append(free_count)
 
-
         mols_to_embed = enumerate_undefined_chirals(mol, free_counts)
 
         for new_mol in mols_to_embed:
-            # print('  Target match:', targetMatch)
-            # print('  Candid match:', molMatch)
-            coordMap={}
+            print('  Processing mol', Chem.MolToSmiles(new_mol))
+            # print('  Target match:', symbolise_match(targetMatch, target))
+            print('  Candid match:', symbolise_match(molMatch, new_mol))
+            # print('  Candid atoms:', symbolise_mol(new_mol))
+            coordMap = {}
             algMap = []
             targetConf = target.GetConformer(-1)
             for i, idxI in enumerate(targetMatch):
                 # coordMap[idxI] = coreConf.GetAtomPosition(i)
                 coordMap[molMatch[i]] = targetConf.GetAtomPosition(idxI)
                 algMap.append((molMatch[i], targetMatch[i]))
-            #print('  CoordMap:', dump_coord_map(coordMap))
-
+            # print('  CoordMap:', dump_coord_map(coordMap))
 
             try:
-                # ci = AllChem.EmbedMolecule(new_mol, coordMap=coordMap, ignoreSmoothingFailures=True)
-                ci, new_mol = do_embed_with_timeout(new_mol, coordMap, timout_embed_secs)
+                conf_count = 0
+                for conf in range(num_conformers):
+                    clone = Chem.RWMol(new_mol)
+                    ci, embed_mol = do_embed_with_timeout(clone, coordMap, timout_embed_secs)
 
-                if ci < 0:
-                    print('  WARNING: Could not embed molecule.')
-                    embedding_failures += 1
-                else:
-                    # rotate the embedded conformation onto the core:
-                    rms = AlignMol(new_mol, target, atomMap=algMap)
+                    if ci < 0:
+                        print('  WARNING: Could not embed molecule.')
+                        embedding_failures += 1
+                    else:
+                        # rotate the embedded conformation onto the core:
+                        rms = AlignMol(embed_mol, target, atomMap=algMap)
 
-                    # process the original embedded molecule
-                    minimize_mol(new_mol, target, molMatch, targetMatch, algMap, getForceField)
-                    mols_matches.append((new_mol, molMatch))
+                        # process the original embedded molecule
+                        if minimize_cycles > 0:
+                            minimize_mol(embed_mol, target, molMatch, targetMatch, algMap, getForceField, minimize_cycles)
+                        new_mol.SetIntProp('Index', index)
+                        new_mol.SetIntProp('Conformer', conf)
+                        mols_matches.append((embed_mol, molMatch))
+                        conf_count += 1
+                print('   ', conf_count, 'conformers generated')
             except:
                 embedding_failures += 1
                 print('  ERROR: Failed to Embed molecule')
@@ -275,29 +304,46 @@ def multi_constrained_embed(mol, target, mcsQuery, getForceField=UFFGetMoleculeF
         if not mols_matches:
             # all embedding failed. Maybe due to troublesome stereo with highly constrained structures
             # so let's do one last attempt without the stereo
-            #ci = AllChem.EmbedMolecule(mol, coordMap=coordMap, ignoreSmoothingFailures=True)
-            ci, mol = do_embed_with_timeout(mol, coordMap, timout_embed_secs)
+            ci, embed_mol = do_embed_with_timeout(Chem.RWMol(mol), coordMap, timout_embed_secs)
             if ci < 0:
                 print('WARNING: Could not embed molecule.')
                 embedding_failures += 1
             else:
                 # rotate the embedded conformation onto the core:
-                rms = AlignMol(mol, target, atomMap=algMap)
+                rms = AlignMol(embed_mol, target, atomMap=algMap)
 
                 # process the original embedded molecule
-                minimize_mol(mol, target, molMatch, targetMatch, algMap, getForceField)
-                mols_matches.append((mol, molMatch))
+                if minimize_cycles > 0:
+                    minimize_mol(embed_mol, target, molMatch, targetMatch, algMap, getForceField, minimize_cycles)
+                embed_mol.SetIntProp('Index', index)
+                embed_mol.SetIntProp('Conformer', 0)
+                mols_matches.append((embed_mol, molMatch))
+
+        index += 1
 
     t1 = time.time()
-    #print('  Embedding took:', t1 - t0)
+    # print('  Embedding took:', t1 - t0)
     # Return a list of tuples of (mol, match)
     return mols_matches
+
 
 def dump_coord_map(coordMap):
     res = ''
     for idx, point in coordMap.items():
         res += str(idx) + '->[' + str(point.x) + ',' + str(point.y) + ',' + str(point.z) + '] '
     return res
+
+def symbolise_match(match, mol):
+    r = []
+    for i in match:
+        r.append(mol.GetAtomWithIdx(i).GetSymbol() + str(i))
+    return r
+
+def symbolise_mol(mol):
+    r = []
+    for i in range(mol.GetNumAtoms()):
+        r.append(mol.GetAtomWithIdx(i).GetSymbol() + str(i))
+    return r
 
 def enumerate_undefined_chirals(mol, free_counts):
     """
@@ -315,8 +361,8 @@ def enumerate_undefined_chirals(mol, free_counts):
     print('  Chiral centers:', chiral_centers, 'Free atom counts:', free_counts)
 
     for i, cc in enumerate(chiral_centers):
-        if cc[1] == '?': # only enumerate if the stereo is undefined
-            if free_counts[i] > 1: # only enumerate if there are at least 2 free atoms
+        if cc[1] == '?':  # only enumerate if the stereo is undefined
+            if free_counts[i] > 1:  # only enumerate if there are at least 2 free atoms
                 chiral_targets.append(cc[0])
 
     if chiral_targets:
@@ -343,8 +389,8 @@ def enumerate_undefined_chirals(mol, free_counts):
     print('  Mols to embed:', len(mols_to_embed))
     return mols_to_embed
 
-def minimize_mol(mol, target, molMatch, targetMatch, algMap, getForceField):
 
+def minimize_mol(mol, target, molMatch, targetMatch, algMap, getForceField, cycles):
     ff = getForceField(mol, confId=-1)
     conf = target.GetConformer()
     for i, atIdx in enumerate(targetMatch):
@@ -352,7 +398,7 @@ def minimize_mol(mol, target, molMatch, targetMatch, algMap, getForceField):
         pIdx = ff.AddExtraPoint(p.x, p.y, p.z, fixed=True) - 1
         ff.AddDistanceConstraint(pIdx, molMatch[i], 0, 0, 100.0)
     ff.Initialize()
-    n = 4
+    n = cycles
     more = ff.Minimize(energyTol=1e-4, forceTol=1e-3)
     while more and n:
         more = ff.Minimize(energyTol=1e-4, forceTol=1e-3)
@@ -361,31 +407,32 @@ def minimize_mol(mol, target, molMatch, targetMatch, algMap, getForceField):
     rms = AlignMol(mol, target, atomMap=algMap)
     mol.SetDoubleProp('EmbedRMS', rms)
 
+
 def find_best_mcs(hit, mol):
     best_score = 0
     mcs = rdFMCS.FindMCS([hit, mol], completeRingsOnly=True, ringMatchesRingOnly=True,
-                          atomCompare=rdFMCS.AtomCompare.CompareElements, bondCompare=rdFMCS.BondCompare.CompareOrder)
+                         atomCompare=rdFMCS.AtomCompare.CompareElements, bondCompare=rdFMCS.BondCompare.CompareOrder)
     score = score_mcs(hit, mol, mcs)
     if score > best_score:
         best_score = score
         best_mcs = mcs
         best_index = 1
     mcs = rdFMCS.FindMCS([hit, mol], completeRingsOnly=True, ringMatchesRingOnly=False,
-                          atomCompare=rdFMCS.AtomCompare.CompareElements, bondCompare=rdFMCS.BondCompare.CompareOrder)
+                         atomCompare=rdFMCS.AtomCompare.CompareElements, bondCompare=rdFMCS.BondCompare.CompareOrder)
     score = score_mcs(hit, mol, mcs)
     if score > best_score:
         best_score = score
         best_mcs = mcs
         best_index = 2
     mcs = rdFMCS.FindMCS([hit, mol], completeRingsOnly=False, ringMatchesRingOnly=True,
-                          atomCompare=rdFMCS.AtomCompare.CompareElements, bondCompare=rdFMCS.BondCompare.CompareOrder)
+                         atomCompare=rdFMCS.AtomCompare.CompareElements, bondCompare=rdFMCS.BondCompare.CompareOrder)
     score = score_mcs(hit, mol, mcs)
     if score > best_score:
         best_score = score
         best_mcs = mcs
         best_index = 3
     mcs = rdFMCS.FindMCS([hit, mol], completeRingsOnly=False, ringMatchesRingOnly=False,
-                          atomCompare=rdFMCS.AtomCompare.CompareElements, bondCompare=rdFMCS.BondCompare.CompareOrder)
+                         atomCompare=rdFMCS.AtomCompare.CompareElements, bondCompare=rdFMCS.BondCompare.CompareOrder)
     score = score_mcs(hit, mol, mcs)
     if score > best_score:
         best_score = score
@@ -393,28 +440,28 @@ def find_best_mcs(hit, mol):
         best_index = 4
 
     mcs = rdFMCS.FindMCS([hit, mol], completeRingsOnly=True, ringMatchesRingOnly=True,
-                          atomCompare=rdFMCS.AtomCompare.CompareAny, bondCompare=rdFMCS.BondCompare.CompareAny)
+                         atomCompare=rdFMCS.AtomCompare.CompareAny, bondCompare=rdFMCS.BondCompare.CompareAny)
     score = score_mcs(hit, mol, mcs)
     if score > best_score:
         best_score = score
         best_mcs = mcs
         best_index = 5
     mcs = rdFMCS.FindMCS([hit, mol], completeRingsOnly=True, ringMatchesRingOnly=False,
-                          atomCompare=rdFMCS.AtomCompare.CompareAny, bondCompare=rdFMCS.BondCompare.CompareAny)
+                         atomCompare=rdFMCS.AtomCompare.CompareAny, bondCompare=rdFMCS.BondCompare.CompareAny)
     score = score_mcs(hit, mol, mcs)
     if score > best_score:
         best_score = score
         best_mcs = mcs
         best_index = 6
     mcs = rdFMCS.FindMCS([hit, mol], completeRingsOnly=False, ringMatchesRingOnly=True,
-                          atomCompare=rdFMCS.AtomCompare.CompareAny, bondCompare=rdFMCS.BondCompare.CompareAny)
+                         atomCompare=rdFMCS.AtomCompare.CompareAny, bondCompare=rdFMCS.BondCompare.CompareAny)
     score = score_mcs(hit, mol, mcs)
     if score > best_score:
         best_score = score
         best_mcs = mcs
         best_index = 7
     mcs = rdFMCS.FindMCS([hit, mol], completeRingsOnly=False, ringMatchesRingOnly=False,
-                          atomCompare=rdFMCS.AtomCompare.CompareAny, bondCompare=rdFMCS.BondCompare.CompareAny)
+                         atomCompare=rdFMCS.AtomCompare.CompareAny, bondCompare=rdFMCS.BondCompare.CompareAny)
     score = score_mcs(hit, mol, mcs)
     if score > best_score:
         best_score = score
@@ -422,6 +469,7 @@ def find_best_mcs(hit, mol):
         best_index = 8
     print("  Best MCS is", best_index, 'with score', best_score)
     return best_mcs
+
 
 def score_mcs(hit, mol, mcs):
     smartsMol = Chem.MolFromSmarts(mcs.smartsString)
@@ -438,11 +486,17 @@ def score_mcs(hit, mol, mcs):
     print('  Score:', score)
     return score
 
-def execute(smi, hit_molfile, outfile_base, min_ph=None, max_ph=None, max_inputs=0, max_outputs=0, modulus=0, timout_embed_secs=5):
 
+def execute(smi, hit_molfile, outfile_base, min_ph=None, max_ph=None, max_inputs=0, max_outputs=0, modulus=0,
+            num_conformers=1, timout_embed_secs=5,
+            complete_rings_only=True, ring_matches_ring_only=True,
+            atom_compare=rdFMCS.AtomCompare.CompareElements, bond_compare=rdFMCS.BondCompare.CompareOrder,
+            minimize_cycles=0
+            ):
     global write_count
 
-    GetFF=lambda x,confId=-1:AllChem.MMFFGetMoleculeForceField(x,AllChem.MMFFGetMoleculeProperties(x),confId=confId)
+    GetFF = lambda x, confId=-1: AllChem.MMFFGetMoleculeForceField(x, AllChem.MMFFGetMoleculeProperties(x),
+                                                                   confId=confId)
 
     hit = Chem.MolFromMolFile(hit_molfile)
 
@@ -486,8 +540,9 @@ def execute(smi, hit_molfile, outfile_base, min_ph=None, max_ph=None, max_inputs
                 else:
                     enumerated_mols = [mol]
 
-                mcs0 = rdFMCS.FindMCS([hit, mol], completeRingsOnly=False, ringMatchesRingOnly=False,
-                                      atomCompare=rdFMCS.AtomCompare.CompareAny, bondCompare=rdFMCS.BondCompare.CompareAny)
+                mcs0 = rdFMCS.FindMCS([hit, mol], completeRingsOnly=complete_rings_only,
+                                      ringMatchesRingOnly=ring_matches_ring_only,
+                                      atomCompare=atom_compare, bondCompare=bond_compare)
                 # mcs0 = rdFMCS.FindMCS([hit, mol], completeRingsOnly=False, ringMatchesRingOnly=False)
                 # score_mcs(hit, mol, mcs0)
 
@@ -498,14 +553,14 @@ def execute(smi, hit_molfile, outfile_base, min_ph=None, max_ph=None, max_inputs
                 count = 0
                 for ligand in enumerated_mols:
                     molh = Chem.AddHs(ligand)
-                    # mol_match_tuple = MultiConstrainedEmbed(molh, queryMol, getForceField=GetFF)
-                    mol_match_tuple = multi_constrained_embed(molh, hit, mcsQuery, timout_embed_secs=timout_embed_secs)
+                    mol_match_tuple = multi_constrained_embed(molh, hit, mcsQuery, num_conformers=num_conformers,
+                                                              timout_embed_secs=timout_embed_secs, minimize_cycles=minimize_cycles)
                     print(' ', len(mol_match_tuple), 'mols tethered')
 
                     for t_mol, match in mol_match_tuple:
                         count += 1
                         t_mol.SetProp('_Name', smiles)
-                        t_mol.SetIntProp('Index', count)
+                        # t_mol.SetIntProp('Index', count)
                         if hit.HasProp('_Name'):
                             t_mol.SetProp('Hit', hit.GetProp('_Name'))
                         else:
@@ -525,7 +580,7 @@ def execute(smi, hit_molfile, outfile_base, min_ph=None, max_ph=None, max_inputs
                 traceback.print_exc()
 
             t1 = time.time()
-            print('  processed mol', num_processed, 'in', t1-t0, 'secs. Generated', num_added, 'mols')
+            print('  processed mol', num_processed, 'in', t1 - t0, 'secs. Generated', num_added, 'mols')
             if num_added == 0:
                 embedding_failures_file.write(line)
                 embedding_failures_file.flush()
@@ -533,12 +588,28 @@ def execute(smi, hit_molfile, outfile_base, min_ph=None, max_ph=None, max_inputs
 
         w.close()
 
-        print('Totals - inputs:', num_mols, 'processed:', num_processed, 'outputs:', num_outputs, 'chiral swaps:', num_swap_success, 'errors:', num_errors, 'embed failures:', embedding_failures, 'failures:', complete_failures, 'files:', file_count + 1)
+        print('Totals - inputs:', num_mols, 'processed:', num_processed, 'outputs:', num_outputs, 'chiral swaps:',
+              num_swap_success, 'errors:', num_errors, 'embed failures:', embedding_failures, 'failures:',
+              complete_failures, 'files:', file_count + 1)
+
+
+# atom_compares = {
+#     'elements': rdFMCS.AtomCompare.CompareElements,
+#     'any': rdFMCS.AtomCompare.CompareAny,
+#     'anyHeavyAtom': rdFMCS.AtomCompare.CompareAnyHeavyAtom,
+#     'isotopes': rdFMCS.AtomCompare.CompareIsotopes
+# }
+#
+# bond_copares = {
+#     'any': rdFMCS.BondCompare.CompareAny,
+#     'order': rdFMCS.BondCompare.CompareOrder,
+#     'exact': rdFMCS.BondCompare.CompareExact
+# }
 
 def main():
     """
     Example usage:
-    python -m pipelines.xchem.prepare_tether_2 --smi ../../data/mpro/Mpro-x0387_0.smi --mol ../../data/mpro/Mpro-x0387_0.mol -o TETHERED --max-inputs 500 --chunk-size 100
+    python -m pipelines.xchem.prepare_tether --smi ../../data/mpro/Mpro-x0387_0.smi --mol ../../data/mpro/Mpro-x0387_0.mol -o TETHERED --max-inputs 500 --chunk-size 100
 
     :return:
     """
@@ -554,14 +625,24 @@ def main():
 
     parser.add_argument('--smi', help='SMILES containing the expanded candidates for a hit)')
     parser.add_argument('--mol', help='Molfile containing the hit to tether to)')
-    parser.add_argument('-o', '--outfile', default='Tethered', help='Base name for results SDF file (will generate something like Tethered_Mpro-x0072_000.sdf)')
+    parser.add_argument('-o', '--outfile', default='Tethered',
+                        help='Base name for results SDF file (will generate something like Tethered_Mpro-x0072_000.sdf)')
     parser.add_argument('--min-ph', type=float, help='The min pH to consider')
     parser.add_argument('--max-ph', type=float, help='The max pH to consider')
     parser.add_argument('-c', '--chunk-size', type=int, default=200, help='Chunk size for files')
     parser.add_argument('--max-inputs', type=int, default=0, help='Max number of molecules to process')
     parser.add_argument('--max-outputs', type=int, default=0, help='Max number of records to output')
     parser.add_argument('--modulus', type=int, default=0, help='Process only mols with this modulus')
+    parser.add_argument('--num-conformers', type=int, default=1,
+                        help='Generate this number of conformers for each tethering')
     parser.add_argument('--timeout-embed', type=int, default=5, help='Timeout in seconds to apply to limit embedding')
+    parser.add_argument('--ring-matches-ring-only', action="store_true", help='Set ringMatchesRingOnly MCS property to True')
+    parser.add_argument('--complete-rings-only', action="store_true", help='Set completeRingsOnly MCS property to True')
+    parser.add_argument('--atom-compare', default='CompareElements', help='atomCompare MCS property',
+                        choices=['CompareAny', 'CompareAnyHeavyAtom', 'CompareElements', 'CompareIsotopes'])
+    parser.add_argument('--bond-compare', default='CompareOrder', help='bondCompare MCS property',
+                        choices=['CompareAny', 'CompareOrder', 'CompareOrderExact'])
+    parser.add_argument("--minimize", type=int, default=0, help="number of minimisation cycles")
 
 
     args = parser.parse_args()
@@ -577,7 +658,13 @@ def main():
     max_inputs = args.max_inputs
     max_outputs = args.max_outputs
     modulus = args.modulus
+    num_conformers = args.num_conformers
     timout_embed_secs = args.timeout_embed
+    ring_matches_ring_only = args.ring_matches_ring_only
+    complete_rings_only = args.complete_rings_only
+    atom_compare = rdFMCS.AtomCompare.names[args.atom_compare]
+    bond_compare = rdFMCS.BondCompare.names[args.bond_compare]
+    minimize_cycles = args.minimize
 
     embedding_failures_file = open(outfile + '_embedding_failures.smi', 'w')
 
@@ -590,11 +677,16 @@ def main():
     sys.argv = sys.argv[:1]
 
     execute(smi, mol, outfile, min_ph=min_ph, max_ph=max_ph,
-            max_inputs=max_inputs, max_outputs=max_outputs, modulus=modulus, timout_embed_secs=timout_embed_secs)
+            max_inputs=max_inputs, max_outputs=max_outputs, modulus=modulus,
+            num_conformers=num_conformers, timout_embed_secs=timout_embed_secs,
+            complete_rings_only=complete_rings_only, ring_matches_ring_only=ring_matches_ring_only,
+            atom_compare=atom_compare, bond_compare=bond_compare,
+            minimize_cycles=minimize_cycles)
 
     embedding_failures_file.close()
 
     print('Finished')
+
 
 if __name__ == "__main__":
     main()
