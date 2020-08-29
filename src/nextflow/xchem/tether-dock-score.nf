@@ -1,17 +1,19 @@
 #!/usr/bin/env nextflow
 
-// splitter params
-params.chunk_size_expand = 200
-params.limit = 0
-params.digits = 4
-
 // tether params
 params.smiles = '*.smi'
 params.molfiles = '*.mol'
+params.chunk_tether = 250
+params.chunk_score = 1000
+params.num_conformers = 1
 params.ph_min = null
 params.ph_max = null
+params.atom_compare = 'CompareElements'
+params.bond_compare = 'CompareOrder'
+params.complete_rings_only = true
+params.ring_matches_ring_only = true
+params.minimize = 4
 params.timeout_embed = null
-params.chunk_size_tether =  500
 
 // docking params
 params.protein = 'data/mpro/Mpro-x0387_0.mol2'
@@ -23,7 +25,7 @@ params.num_dockings = 5
 params.fragments = 'data/mpro/hits-23.sdf.gz'
 
 // files
-smiles = file(params.smiles)
+smilesfiles = file(params.smiles)
 molfiles = file(params.molfiles)
 protein = file(params.protein)
 prmfile = file(params.prmfile)
@@ -36,16 +38,16 @@ process splitter {
     container 'informaticsmatters/rdkit_pipelines:latest'
 
     input:
-    file smiles from smiles.flatten()
+    file smiles from smilesfiles.flatten()
     file mol from molfiles.flatten()
 
     output:
-    file '*.mol' into split_mols
-    file '*.smi' into split_smiles
+    file '*.mol' into mols
+    file '*.smi' into smiles
 
     """
     stem=${smiles.name[0..-5]}
-    split -l $params.chunk_size_expand -d -a 3 --additional-suffix .smi $smiles \${stem}_
+    split -l $params.chunk_tether -d -a 3 --additional-suffix .smi $smiles \${stem}_
     mv $smiles ${smiles}.orig
     for f in *.smi
     do
@@ -59,23 +61,29 @@ process splitter {
 process tether {
 
     container 'informaticsmatters/rdkit_pipelines:latest'
+    publishDir '.', mode: 'link'
 
     input:
-    file mol from split_mols.flatten()
-    file smiles from split_smiles.flatten()
+    file smiles from smiles.flatten()
+    file mol from mols.flatten()
 
     output:
     file 'Tethered_*.sdf' into tethered_parts
 
     """
-    python -m pipelines.xchem.prepare_tether --smi '$smiles' --mol '$mol'\
-      --chunk-size $params.chunk_size_tether\
+    python -m pipelines.xchem.prepare_tether --smi '$smiles' --mol '$mol' --chunk-size $params.chunk_score\
+      -o 'Tethered_${smiles.name[0..-5]}'\
+      --num-conformers $params.num_conformers\
+      --atom-compare $params.atom_compare --bond-compare $params.bond_compare\
+      ${params.complete_rings_only ? '--complete-rings-only' : ''}\
+      ${params.ring_matches_ring_only ? '--ring-matches-ring-only' : ''}\
+      --minimize $params.minimize\
       ${params.ph_min != null ? '--min-ph ' + params.ph_min : ''}\
       ${params.ph_max != null ? '--max-ph ' + params.ph_max : ''}\
-      ${params.timeout_embed != null ? '--timeout-embed ' + params.timeout_embed : ''}\
-      -o 'Tethered_${smiles.name[0..-5]}'
+      ${params.timeout_embed != null ? '--timeout-embed ' + params.timeout_embed : ''}
     """
 }
+
 
 process rdock {
 
@@ -116,6 +124,8 @@ process featurestein {
 
     container 'informaticsmatters/rdkit_pipelines:latest'
 
+    publishDir ".", mode: 'link'
+
 	input:
     file part from docked_parts
     file fmaps
@@ -128,20 +138,20 @@ process featurestein {
     """
 }
 
-process xcos {
-
-    container 'informaticsmatters/rdkit_pipelines:latest'
-
-    publishDir ".", mode: 'link'
-
-	input:
-    file part from featurestein_parts
-    file fragments
-
-    output:
-    file 'XC_*.sdf.gz'
-
-    """
-    python -m pipelines.xchem.xcos -i '$part' -if sdf -f '$fragments' -o 'XC_${part.name[0..-5]}' -of sdf
-    """
-}
+//process xcos {
+//
+//    container 'informaticsmatters/rdkit_pipelines:latest'
+//
+//    publishDir ".", mode: 'link'
+//
+//	input:
+//    file part from featurestein_parts
+//    file fragments
+//
+//    output:
+//    file 'XC_*.sdf.gz'
+//
+//    """
+//    python -m pipelines.xchem.xcos -i '$part' -if sdf -f '$fragments' -o 'XC_${part.name[0..-5]}' -of sdf
+//    """
+//}
