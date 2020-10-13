@@ -16,13 +16,23 @@ params.minimize = 4
 params.timeout_embed = null
 
 // docking params
-params.protein = 'data/mpro/Mpro-x0387_0.mol2'
-params.prmfile = 'data/mpro/docking-tethered.prm'
-params.asfile = 'data/mpro/docking-tethered.as'
+params.protein = 'receptor.mol2'
+params.prmfile = 'docking.prm'
+params.asfile = 'docking.as'
+params.pharmafile = 'pharma.restr'
 params.num_dockings = 5
 
 // featurestein
 params.fragments = 'data/mpro/hits-23.sdf.gz'
+
+// interactions
+params.iprotein = 'receptor.pdb'
+params.key_hbonds = null
+params.key_hydrophobic = null
+params.key_halogen = null
+params.key_salt_bridge = null
+params.key_pi_stacking = null
+params.key_pi_cation = null
 
 // files
 smilesfiles = file(params.smiles)
@@ -30,7 +40,9 @@ molfiles = file(params.molfiles)
 protein = file(params.protein)
 prmfile = file(params.prmfile)
 asfile = file(params.asfile)
+pharmafile = file(params.pharmafile)
 fragments = file(params.fragments)
+iprotein = file(params.iprotein)
 
 
 process splitter {
@@ -61,7 +73,7 @@ process splitter {
 process tether {
 
     container 'informaticsmatters/rdkit_pipelines:latest'
-    publishDir '.', mode: 'link'
+    publishDir '.', mode: 'copy'
 
     input:
     file smiles from smiles.flatten()
@@ -91,11 +103,12 @@ process rdock {
     errorStrategy 'retry'
     maxRetries 3
 
-	input:
+    input:
     file part from tethered_parts.flatten()
-	file 'receptor.mol2' from protein
-	file 'docking.prm' from prmfile
-	file 'docking.as' from asfile
+    file 'receptor.mol2' from protein
+    file 'docking.prm' from prmfile
+    file 'docking.as' from asfile
+    file 'pharma.restr' from pharmafile
 
     output:
     file 'Docked_*.sd' optional true into docked_parts
@@ -124,7 +137,7 @@ process featurestein {
 
     container 'informaticsmatters/rdkit_pipelines:latest'
 
-    publishDir ".", mode: 'link'
+    publishDir ".", mode: 'copy'
 
 	input:
     file part from docked_parts
@@ -137,6 +150,30 @@ process featurestein {
     python -m pipelines.xchem.featurestein_score -i '$part' -if sdf -f '$fmaps' -o 'FS_${part.name[0..-4]}' -of sdf --no-gzip
     """
 }
+
+process interactions {
+
+    container 'informaticsmatters/rdkit_pipelines:latest'
+    publishDir ".", mode: 'copy'
+
+    input:
+    file part from featurestein_parts
+    file iprotein
+
+    output:
+    file 'INT_*.sdf'
+
+    """
+    python -m pipelines.xchem.calc_interactions -i '$part' -if sdf -p $iprotein -o 'INT_${part.name[0..-5]}' -of sdf --no-gzip\
+      ${params.key_hbond ? '--key-hbond ' + params.key_hbond : ''}\
+      ${params.key_hydrophobic ? '--key-hydrophobic ' + params.key_hydrophobic : ''}\
+      ${params.key_halogen ? '--key-halogen ' + params.key_halogen : ''}\
+      ${params.key_salt_bridge ? '--key-salt-bridge ' + params.key_salt_bridge : ''}\
+      ${params.key_pi_stacking ? '--key-pi-stacking ' + params.key_pi_stacking : ''}\
+      ${params.key_pi_cation ? '--key-pi-cation ' + params.key_pi_cation : ''}
+    """
+}
+
 
 //process xcos {
 //

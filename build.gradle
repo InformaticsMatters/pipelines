@@ -43,8 +43,7 @@ task dist(type: Copy) {
     destinationDir = file('build/dist')
 
     from('src/python') {
-        includes = ['**/*.py','**/*.nf','**/*.json','**/*.yml',
-                    '**/*.nsd.nf','**/*.nsd.config','README.rst']
+        includes = ['**/*.py','**/*.pickle','**/*.json','**/*.yml','README.rst']
         into 'pipelines'
     }
 

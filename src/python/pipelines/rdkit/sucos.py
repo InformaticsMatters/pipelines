@@ -181,7 +181,6 @@ def main():
 
     parser = argparse.ArgumentParser(description='SuCOS with RDKit')
     parameter_utils.add_default_io_args(parser)
-    parser.add_argument('-r', '--refmol', help='Molecule to compare against in Molfile (.mol) or SDF (.sdf) format')
     parser.add_argument('-tm', '--target', help='Target molecule to compare against')
     parser.add_argument('-tf', '--target-format', help='Target molecule format')
     parser.add_argument('-ti', '--targetidx', help='Target molecule index in file if not the first', type=int, default=1)
@@ -189,6 +188,7 @@ def main():
     parser.add_argument('--tanimoto', action='store_true', help='Include Tanimoto distance in score')
     parser.add_argument('--score_mode', choices=['all', 'closest', 'best'],
                         help="choose the scoring mode for the feature map, default is 'all'.")
+    parser.add_argument('--no-gzip', action='store_true', help='Do not compress the output (STDOUT is never compressed')
 
     args = parser.parse_args()
     utils.log("SuCOS Args: ", args)
@@ -215,13 +215,13 @@ def main():
         clsMappings[field_SuCOS_ProtrudeScore] = "java.lang.Float"
         fieldMetaProps.append({"fieldName":field_SuCOS_ProtrudeScore,   "values": {"source":source, "description":"SuCOS Protrude score"}})
 
-
-    inputs_file,output,inputs_supplr,writer,output_base = rdkit_utils. \
-        default_open_input_output(args.input, args.informat, args.output,
-                                  'sucos', args.outformat,
-                                  valueClassMappings=clsMappings,
-                                  datasetMetaProps=datasetMetaProps,
-                                  fieldMetaProps=fieldMetaProps)
+        inputs_file, inputs_supplr = rdkit_utils.default_open_input(args.input, args.informat)
+        output, writer, output_base = rdkit_utils.default_open_output(args.output,
+                                                                  'sucos', args.outformat,
+                                                                  valueClassMappings=clsMappings,
+                                                                  datasetMetaProps=datasetMetaProps,
+                                                                  fieldMetaProps=fieldMetaProps,
+                                                                  compress=not args.no_gzip)
 
     # this does the processing
     count, total, errors = process(target_mol, inputs_supplr, writer, tani=args.tanimoto, score_mode=score_mode)
