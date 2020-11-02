@@ -9,9 +9,9 @@ Publication: https://doi.org/10.26434/chemrxiv.8100203.v1
 """
 
 from __future__ import print_function
-import argparse, os, sys, gzip
+import argparse, os
 import numpy as np
-from rdkit import Chem, rdBase, RDConfig
+from rdkit import rdBase, RDConfig
 from rdkit.Chem import AllChem, rdShapeHelpers
 from rdkit.Chem.FeatMaps import FeatMaps
 from pipelines_utils import parameter_utils, utils
@@ -36,6 +36,7 @@ for k in fdef.GetFeatureFamilies():
 keep = ('Donor', 'Acceptor', 'NegIonizable', 'PosIonizable', 'ZnBinder',
         'Aromatic', 'Hydrophobe', 'LumpedHydrophobe')
 
+
 def filterFeature(f):
     result = f.GetFamily() in keep
     # TODO - nothing ever seems to be filtered. Is this expected?
@@ -43,12 +44,14 @@ def filterFeature(f):
         utils.log("Filtered out feature type", f.GetFamily())
     return result
 
+
 def getRawFeatures(mol):
 
     rawFeats = fdef.GetFeaturesForMol(mol)
     # filter that list down to only include the ones we're interested in
     filtered = list(filter(filterFeature, rawFeats))
     return filtered
+
 
 def get_FeatureMapScore(small_feats, large_feats, tani=False, score_mode=FeatMaps.FeatMapScoreMode.All):
     """
@@ -82,7 +85,7 @@ def get_FeatureMapScore(small_feats, large_feats, tani=False, score_mode=FeatMap
             return fm_score
     except ZeroDivisionError:
         utils.log("ZeroDivisionError")
-        return 0
+        return 0.0
 
     if tani:
         tani_score = float(c) / (A+B-c)
@@ -112,10 +115,10 @@ def get_SucosScore(ref_mol, query_mol, tani=False, ref_features=None, query_feat
     if not query_features:
         query_features = getRawFeatures(query_mol)
 
-    fm_score = get_FeatureMapScore(ref_features, query_features, tani, score_mode)
-    fm_score = np.clip(fm_score, 0, 1)
+    try:
+        fm_score = get_FeatureMapScore(ref_features, query_features, tani, score_mode)
+        fm_score = np.clip(fm_score, 0, 1)
 
-    try :
         if tani:
             tani_sim = 1 - float(rdShapeHelpers.ShapeTanimotoDist(ref_mol, query_mol))
             tani_sim = np.clip(tani_sim, 0, 1)
@@ -127,13 +130,14 @@ def get_SucosScore(ref_mol, query_mol, tani=False, ref_features=None, query_feat
             protrude_val = 1.0 - protrude_dist
             SuCOS_score = 0.5 * fm_score + 0.5 * protrude_val
             return SuCOS_score, fm_score, protrude_val
-    except:
+    except Exception:
         utils.log("Failed to calculate SuCOS scores. Returning 0,0,0")
-        return 0, 0, 0
+        return 0.0, 0.0, 0.0
+
 
 def process(target_mol, inputs_supplr, writer, tani=False, score_mode=FeatMaps.FeatMapScoreMode.All):
 
-    #utils.log("Reference mol has", ref_mol.GetNumHeavyAtoms(), "heavy atoms")
+    # utils.log("Reference mol has", ref_mol.GetNumHeavyAtoms(), "heavy atoms")
     ref_features = getRawFeatures(target_mol)
 
     count = 0
@@ -142,27 +146,28 @@ def process(target_mol, inputs_supplr, writer, tani=False, score_mode=FeatMaps.F
     for mol in inputs_supplr:
         count +=1
         if mol is None:
-            errors +=1
+            errors += 1
             continue
-        #utils.log("Mol has", str(mol.GetNumHeavyAtoms()), "heavy atoms")
+        # utils.log("Mol has", str(mol.GetNumHeavyAtoms()), "heavy atoms")
         try:
             sucos_score, fm_score, val3 = get_SucosScore(target_mol, mol, tani=tani, ref_features=ref_features, score_mode=score_mode)
+            utils.log("Scores:", sucos_score, fm_score, val3)
             mol.SetDoubleProp(field_SuCOS_Score, sucos_score)
             mol.SetDoubleProp(field_SuCOS_FMScore, fm_score)
             if tani:
                 mol.SetDoubleProp(field_SuCOS_TaniScore, val3)
             else:
                 mol.SetDoubleProp(field_SuCOS_ProtrudeScore, val3)
-            utils.log("Scores:", sucos_score, fm_score, val3)
             writer.write(mol)
             total +=1
         except ValueError as e:
-            errors +=1
+            errors += 1
             utils.log("Molecule", count, "failed to score:", e.message)
 
     utils.log("Completed.", count, "processed, ", total, "succeeded, ", errors, "errors")
 
     return count, total, errors
+
 
 def parse_score_mode(value):
     if value == None or value == 'all':
