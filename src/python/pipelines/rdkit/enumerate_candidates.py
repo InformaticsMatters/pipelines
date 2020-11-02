@@ -23,6 +23,9 @@ import sys, argparse, traceback
 from pipelines_utils import utils
 
 from rdkit import Chem
+from rdkit.Chem.rdForceFieldHelpers import UFFGetMoleculeForceField
+
+
 from molvs.tautomer import TautomerEnumerator
 
 from . import prepare_3d
@@ -70,12 +73,16 @@ def execute(suppl, writer, enumerate_chirals=False,
             enumerate_charges=False, enumerate_tautomers=False,
             combinatorial=False,
             min_charge=None, max_charge=None, num_charges=None,
-            min_ph=5.0, max_ph=9.0):
+            min_ph=5.0, max_ph=9.0,
+            gen3d=False, add_hydrogens=False, minimize=0, smiles_field=None):
 
     utils.log('Executing ...')
 
     if enumerate_tautomers or combinatorial:
         enumerator = TautomerEnumerator()
+
+    if minimize:
+        getFF = UFFGetMoleculeForceField
 
     count = 0
     total = 0
@@ -113,6 +120,20 @@ def execute(suppl, writer, enumerate_chirals=False,
             total += len(enumerated_mols)
 
             for m in enumerated_mols.values():
+
+                if smiles_field:
+                    m.SetProp(smiles_field, Chem.MolToSmiles(m))
+
+                if gen3d:
+                    if add_hydrogens:
+                        m = Chem.AddHs(m)
+                    m = prepare_3d.convert_to_3d(m)
+                    if not m:
+                        errors += 1
+                        continue
+                    if minimize:
+                        prepare_3d.minimize_mol(m, getFF, minimize)
+
                 m.SetProp('_Name', name)
                 writer.write(m)
 
@@ -127,11 +148,15 @@ def execute(suppl, writer, enumerate_chirals=False,
 ### start main execution #########################################
 
 def main():
+
+    # Example:
+    #   python -m pipelines.rdkit.enumerate_candidates -i ../../data/nci10.smiles -o foo.smi --enumerate-charges --enumerate-charges --enumerate-tautomers
+
     ### command line args definitions #########################################
 
     parser = argparse.ArgumentParser(description='Enumerate candidates')
     parser.add_argument('-i', '--input', help="Input file as SMILES")
-    parser.add_argument('-o', '--output', help="Output file as SMILES")
+    parser.add_argument('-o', '--output', help="Output file as SMILES or SDF")
     parser.add_argument('-d', '--delimiter', default='\t', help="Delimiter")
     parser.add_argument("--name-column", type=int, default=1, help="Column for name field (zero based)")
     parser.add_argument('-t', '--title-line', default=False, help="Do the files have title lines")
@@ -144,7 +169,11 @@ def main():
     parser.add_argument("--min-charge", type=int, help="Minimum charge of molecule to process")
     parser.add_argument("--max-charge", type=int, help="Maximum charge of molecule to process")
     parser.add_argument("--num-charges", type=int, help="Maximum number of atoms with a charge")
+    parser.add_argument('--add-hydrogens', action='store_true', help='Include hydrogens in the output')
 
+    parser.add_argument('--gen3d', action='store_true', help='Generate 3D coordinates (output as SDF)')
+    parser.add_argument("--minimize", type=int, default=0, help="number of minimisation cycles when generating 3D molecules")
+    parser.add_argument('--smiles-field', help='Add the SMILES as a field of this name (SDF output only)')
 
     args = parser.parse_args()
     utils.log("enumerate_candidates: ", args)
@@ -164,6 +193,11 @@ def main():
     min_charge = args.min_charge
     max_charge = args.max_charge
     num_charges = args.num_charges
+    add_hydrogens = args.add_hydrogens
+    gen3d = args.gen3d
+    minimize = args.minimize
+    smiles_field = args.smiles_field
+
 
     # Dimporphite needs to use argparse with its own arguments, not messed up with our arguments
     # so we store the original args
@@ -174,13 +208,18 @@ def main():
     sys.argv = sys.argv[:1]
 
     suppl = Chem.SmilesMolSupplier(input, delimiter=delimiter, titleLine=title_line, nameColumn=name_column)
-    writer = Chem.SmilesWriter(output, delimiter=delimiter, includeHeader=title_line)
+
+    if gen3d:
+        writer = Chem.SDWriter(output)
+    else:
+        writer = Chem.SmilesWriter(output, delimiter=delimiter, includeHeader=title_line)
 
     count, total, errors = execute(suppl, writer, enumerate_chirals=enumerate_chirals,
                                    enumerate_charges=enumerate_charges, enumerate_tautomers=enumerate_tautomers,
                                    combinatorial=combinatorial,
                                    min_charge=min_charge, max_charge=max_charge, num_charges=num_charges,
-                                   min_ph=min_ph, max_ph=max_ph
+                                   min_ph=min_ph, max_ph=max_ph, add_hydrogens=add_hydrogens,
+                                   gen3d=gen3d, minimize=minimize, smiles_field=smiles_field
                                    )
 
     utils.log(count, total, errors)
