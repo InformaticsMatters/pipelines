@@ -104,13 +104,14 @@ from . import interactions
 def generate_js(type, values):
     content = []
     for v in values:
-        js = "  ['%s', '%s', [%s, %s, %s], [%s, %s, %s]]," % (type, v[0], v[1][0], v[1][1], v[1][2], v[2][0], v[2][1], v[2][2])
+        js = "  ['%s', '%s', [%s, %s, %s], [%s, %s, %s]]," % (
+            type, v[0], v[1][0], v[1][1], v[1][2], v[2][0], v[2][1], v[2][2])
         content.append(js)
     return "\n".join(content)
 
 
 def get_canonical_hbond(atom):
-    #print('classifying', atom['atomtype'], atom['isbackbone'], atom['isacceptor'], atom['isdonor'], atom['isdonorh'])
+    # print('classifying', atom['atomtype'], atom['isbackbone'], atom['isacceptor'], atom['isdonor'], atom['isdonorh'])
     res = atom['resname'] + str(atom['resnum'])
     if atom['isbackbone']:
         if atom['atomtype'] == 'N.am' or atom['atomtype'] == 'N.3':
@@ -139,14 +140,14 @@ def determine_protein_format(protein_file, protein_format):
         return 'pdb'
 
 
-def read_next_protein(proteins, format, previous, index):
+def read_next_protein(proteins, format, previous, index, keep_hs=False):
     if previous and index >= len(proteins):
         return previous
-    protein = next(toolkit.readfile(format, proteins[index]))
+    protein = next(toolkit.readfile(format, proteins[index], removeHs=not keep_hs))
     if not protein:
         raise ValueError('Unable to read protein')
     else:
-        print('Read protein', index + 1)
+        utils.log('Read protein', index + 1)
         protein.protein = True
         protein.removeh()
         return protein
@@ -180,13 +181,13 @@ def calc_rfscore(protein, ligand):
         model.predict_ligand(ligand)
 
 
-def process(protein_files, ligands, writer, key_inters, protein_format=None, filter_strict=False, report_file=None,
+def process(protein_files, ligands, writer, key_inters, protein_format=None, filter_strict=False,
+            exact_protein=False, exact_ligand=False, keep_hs_protein=False, keep_hs_ligand=False, report_file=None,
             compare_file=None, nnscores=None, rfscores=None, plecscores=None):
-
-    pformat =  determine_protein_format(protein_files[0], protein_format)
+    pformat = determine_protein_format(protein_files[0], protein_format)
     utils.log('Protein format:', pformat)
     utils.log(len(protein_files), 'proteins specified')
-    ligands = toolkit.readfile('sdf', ligands)
+    ligands = toolkit.readfile('sdf', ligands, removeHs=not keep_hs_ligand)
 
     if report_file:
         report_data = []
@@ -214,12 +215,13 @@ def process(protein_files, ligands, writer, key_inters, protein_format=None, fil
     for ligand in ligands:
         # print('Processing ligand', total + 1)
         try:
-            protein = read_next_protein(protein_files, pformat, protein, total)
+            protein = read_next_protein(protein_files, pformat, protein, total, keep_hs=keep_hs_protein)
             if nnscores:
                 calc_nnscore(protein, ligand)
             if rfscores:
                 calc_rfscore(protein, ligand)
-            inter_data = process_mol(protein, ligand, key_inters, total, filter_strict=filter_strict, compare_data=compare_data)
+            inter_data = process_mol(protein, ligand, key_inters, total, filter_strict=filter_strict,
+                                     exact_protein=exact_protein, exact_ligand=exact_ligand, compare_data=compare_data)
             if report_data is not None:
                 report_data.append(inter_data)
 
@@ -241,7 +243,8 @@ def process(protein_files, ligands, writer, key_inters, protein_format=None, fil
     return count, errors
 
 
-def process_mol(protein, mol, key_inters, index, filter_strict=True, compare_data=None):
+def process_mol(protein, mol, key_inters, index, filter_strict=False,
+                exact_protein=False, exact_ligand=False, compare_data=None):
     mol_key_inters = []
     inter_data = {}
     num_inters = 0
@@ -256,7 +259,9 @@ def process_mol(protein, mol, key_inters, index, filter_strict=True, compare_dat
         inter_set.ligand_name = molname
 
     # handle H-bond interactions
-    inters = calc_hydrogen_bond_interactions(protein, mol, key_inters.get(interactions.I_TYPE_HBOND, None), mol_key_inters, filter_strict=filter_strict)
+    inters = calc_hydrogen_bond_interactions(protein, mol, key_inters.get(interactions.I_TYPE_HBOND, None),
+                                             mol_key_inters, filter_strict=filter_strict,
+                                             exact_protein=exact_protein, exact_ligand=exact_ligand)
     if inters:
         compare_interactions(inters, compare_data, all_scores)
         data = inters.asText()
@@ -266,7 +271,8 @@ def process_mol(protein, mol, key_inters, index, filter_strict=True, compare_dat
         inter_set.add(inters)
 
     # handle hydrophobic interactions
-    inters = calc_hydrophobic_interactions(protein, mol, key_inters.get(interactions.I_TYPE_HYDROPHOBIC, None), mol_key_inters)
+    inters = calc_hydrophobic_interactions(protein, mol, key_inters.get(interactions.I_TYPE_HYDROPHOBIC, None),
+                                           mol_key_inters)
     if inters:
         compare_interactions(inters, compare_data, all_scores)
         data = inters.asText()
@@ -276,7 +282,8 @@ def process_mol(protein, mol, key_inters, index, filter_strict=True, compare_dat
         inter_set.add(inters)
 
     # handle salt bridge interactions
-    inters = calc_salt_bridge_interactions(protein, mol, key_inters.get(interactions.I_TYPE_SALT_BRIDGE, None), mol_key_inters)
+    inters = calc_salt_bridge_interactions(protein, mol, key_inters.get(interactions.I_TYPE_SALT_BRIDGE, None),
+                                           mol_key_inters, exact_protein=exact_protein, exact_ligand=exact_ligand)
     if inters:
         compare_interactions(inters, compare_data, all_scores)
         data = inters.asText()
@@ -286,7 +293,8 @@ def process_mol(protein, mol, key_inters, index, filter_strict=True, compare_dat
         inter_set.add(inters)
 
     # handle pi stacking interactions
-    inters = calc_pi_stacking_interactions(protein, mol, key_inters.get(interactions.I_TYPE_PI_STACKING, None), mol_key_inters)
+    inters = calc_pi_stacking_interactions(protein, mol, key_inters.get(interactions.I_TYPE_PI_STACKING, None),
+                                           mol_key_inters, filter_strict=filter_strict)
     if inters:
         compare_interactions(inters, compare_data, all_scores)
         data = inters.asText()
@@ -296,7 +304,8 @@ def process_mol(protein, mol, key_inters, index, filter_strict=True, compare_dat
         inter_set.add(inters)
 
     # handle pi cation interactions
-    inters = calc_pi_cation_interactions(protein, mol, key_inters.get(interactions.I_TYPE_PI_CATION, None), mol_key_inters)
+    inters = calc_pi_cation_interactions(protein, mol, key_inters.get(interactions.I_TYPE_PI_CATION, None),
+                                         mol_key_inters, filter_strict=filter_strict)
     if inters:
         compare_interactions(inters, compare_data, all_scores)
         data = inters.asText()
@@ -306,7 +315,8 @@ def process_mol(protein, mol, key_inters, index, filter_strict=True, compare_dat
         inter_set.add(inters)
 
     # handle halogen bond interactions
-    inters = calc_halogen_bond_interactions(protein, mol, key_inters.get(interactions.I_TYPE_HALOGEN, None), mol_key_inters)
+    inters = calc_halogen_bond_interactions(protein, mol, key_inters.get(interactions.I_TYPE_HALOGEN, None),
+                                            mol_key_inters, filter_strict=filter_strict)
     if inters:
         compare_interactions(inters, compare_data, all_scores)
         data = inters.asText()
@@ -353,7 +363,8 @@ def compare_interactions(inter_type, compare_to, all_scores):
                     all_scores[k] = inter.score_value
 
 
-def calc_hydrogen_bond_interactions(protein, mol, key_inters_defs, mol_key_inters, filter_strict=True):
+def calc_hydrogen_bond_interactions(protein, mol, key_inters_defs, mol_key_inters,
+                                    filter_strict=False, exact_protein=False, exact_ligand=False):
     """ Calculate H-bond interactions
 
     Parameters:
@@ -369,15 +380,16 @@ def calc_hydrogen_bond_interactions(protein, mol, key_inters_defs, mol_key_inter
 
     # first apply a fix that's needed to handle the mis-assignment of donor atoms for a particular tautomeric
     # form: nc[n;H1]. See https://groups.google.com/g/oddt/c/fqzmhSqprw8/m/nmaaUlCDAgAJ
-    mol.atom_dict.setflags(write=True)
-    matches = oddt.toolkit.Smarts('[n;H0]').findall(mol)
-    for (idx,) in matches:
-        # idx assumes 0 based indexing e.g. RDKit. OBabel uses 1 based indexing.
-        mol.atom_dict['isdonor'][idx] = False
-    mol.atom_dict.setflags(write=False)
+    # mol.atom_dict.setflags(write=True)
+    # matches = oddt.toolkit.Smarts('[n;H0]').findall(mol)
+    # for (idx,) in matches:
+    #     # idx assumes 0 based indexing e.g. RDKit. OBabel uses 1 based indexing.
+    #     mol.atom_dict['isdonor'][idx] = False
+    # mol.atom_dict.setflags(write=False)
     # end of fix
 
-    protein_atoms, ligand_atoms, strict = oddt.interactions.hbonds(protein, mol)
+    protein_atoms, ligand_atoms, strict = oddt.interactions.hbonds(protein, mol,
+                                                                   mol1_exact=exact_protein, mol2_exact=exact_ligand)
     inters = {}
 
     for p, l, s in zip(protein_atoms, ligand_atoms, strict):
@@ -396,7 +408,7 @@ def calc_hydrogen_bond_interactions(protein, mol, key_inters_defs, mol_key_inter
                 if key_inters_defs and c in key_inters_defs:
                     mol_key_inters.append(interactions.I_TYPE_HBOND + ':' + c)
     if inters:
-        #print('  found', len(inters), 'h-bonds')
+        # print('  found', len(inters), 'h-bonds')
         return interactions.InteractionType(interactions.I_NAME_HBOND, list(inters.values()))
     else:
         return None
@@ -437,15 +449,15 @@ def calc_hydrophobic_interactions(protein, mol, key_inters_defs, mol_key_inters)
                 mol_key_inters.append(interactions.I_TYPE_HYDROPHOBIC + ':' + c)
 
     if inters:
-        #print('  found', len(inters), 'hydrophobics')
+        # print('  found', len(inters), 'hydrophobics')
         return interactions.InteractionType(interactions.I_NAME_HYDROPHOBIC, list(inters.values()))
     else:
         return None
 
 
-def calc_salt_bridge_interactions(protein, mol, key_inters_defs, mol_key_inters):
+def calc_salt_bridge_interactions(protein, mol, key_inters_defs, mol_key_inters, exact_protein=False, exact_ligand=False):
     inters = {}
-    protein_atoms, ligand_atoms = oddt.interactions.salt_bridges(protein, mol)
+    protein_atoms, ligand_atoms = oddt.interactions.salt_bridges(protein, mol, mol1_exact=exact_protein, mol2_exact=exact_ligand)
     for p, l in zip(protein_atoms, ligand_atoms):
         c = get_canonical_residue(p)
         dist = spatial.distance(np.array([p['coords']]), np.array([l['coords']]))[0][0]
@@ -467,7 +479,7 @@ def calc_salt_bridge_interactions(protein, mol, key_inters_defs, mol_key_inters)
         return None
 
 
-def calc_pi_stacking_interactions(protein, mol, key_inters_defs, mol_key_inters, filter_strict=True):
+def calc_pi_stacking_interactions(protein, mol, key_inters_defs, mol_key_inters, filter_strict=False):
     protein_atoms, ligand_atoms, strict_parallel, strict_perpendicular = oddt.interactions.pi_stacking(protein, mol)
     inters = {}
     for p, l, s1, s2 in zip(protein_atoms, ligand_atoms, strict_parallel, strict_perpendicular):
@@ -476,7 +488,7 @@ def calc_pi_stacking_interactions(protein, mol, key_inters_defs, mol_key_inters,
             dist = spatial.distance(np.array([p['centroid']]), np.array([l['centroid']]))[0][0]
             p_coords = (p['centroid'][0].item(), p['centroid'][1].item(), p['centroid'][2].item())
             l_coords = (l['centroid'][0].item(), l['centroid'][1].item(), l['centroid'][2].item())
-            t = interactions.Interaction(c, p_coords, l_coords, dist, l['id'].item())
+            t = interactions.Interaction(c, p_coords, l_coords, dist, None)
 
             if c in inters:
                 current_value = inters[c]
@@ -493,18 +505,18 @@ def calc_pi_stacking_interactions(protein, mol, key_inters_defs, mol_key_inters,
         return None
 
 
-def calc_pi_cation_interactions(protein, mol, key_inters_defs, mol_key_inters, filter_strict=True):
+def calc_pi_cation_interactions(protein, mol, key_inters_defs, mol_key_inters, filter_strict=False):
     inters = {}
     rings, cation, strict = oddt.interactions.pi_cation(protein, mol)
     for ring, cat, s in zip(rings, cation, strict):
         if s or not filter_strict:
             dist = spatial.distance(np.array([ring['centroid']]), np.array([cat['coords']]))[0][0]
-            if ring['resnum']: # ring is from protein
+            if ring['resnum']:  # ring is from protein
                 c = get_canonical_residue(ring)
                 p_coords = (ring['centroid'][0].item(), ring['centroid'][1].item(), ring['centroid'][2].item())
                 l_coords = (cat['coords'][0].item(), cat['coords'][1].item(), cat['coords'][2].item())
                 t = interactions.Interaction(c, p_coords, l_coords, dist, None)
-            else: # ring must be from ligand
+            else:  # ring must be from ligand
                 c = get_canonical_residue(cat)
                 p_coords = (cat['centroid'][0].item(), cat['centroid'][1].item(), cat['centroid'][2].item())
                 l_coords = (ring['coords'][0].item(), ring['coords'][1].item(), ring['coords'][2].item())
@@ -525,7 +537,7 @@ def calc_pi_cation_interactions(protein, mol, key_inters_defs, mol_key_inters, f
         return None
 
 
-def calc_halogen_bond_interactions(protein, mol, key_inters_defs, mol_key_inters, filter_strict=True):
+def calc_halogen_bond_interactions(protein, mol, key_inters_defs, mol_key_inters, filter_strict=False):
     protein_atoms, ligand_atoms, strict = oddt.interactions.halogenbonds(protein, mol)
     inters = {}
     for p, l, s in zip(protein_atoms, ligand_atoms, strict):
@@ -553,7 +565,6 @@ def calc_halogen_bond_interactions(protein, mol, key_inters_defs, mol_key_inters
 ### start main execution #########################################
 
 def main():
-
     # Example usage
     # python -m pipelines.xchem.calc_interactions -p ../../data/mpro/Mpro-x0387_0.pdb -i ../../data/mpro/hits-17.sdf.gz -o output
 
@@ -563,6 +574,10 @@ def main():
     # NOTE reading mol2 format seems to be problematical.
     parser.add_argument('-pf', '--protein-format', choices=['pdb', 'mol2'], help="Protein file format")
     parser.add_argument('--strict', action='store_true', help='Strict filtering')
+    parser.add_argument('--exact-protein', action='store_true', help='Exact matching of hydrogens and charges for protein')
+    parser.add_argument('--exact-ligand', action='store_true', help='Exact matching of hydrogens and charges for ligand')
+    parser.add_argument('--keep-hs-protein', action='store_true', help='Keep hydrogens on the protein')
+    parser.add_argument('--keep-hs-ligand', action='store_true', help='Keep hydrogens on the ligand')
     parser.add_argument('--key-hbond', nargs='*', help='List of canonical H-bond interactions to count')
     parser.add_argument('--key-hydrophobic', nargs='*', help='List of canonical hydrophobic interactions to count')
     parser.add_argument('--key-salt-bridge', nargs='*', help='List of canonical salt bridge interactions to count')
@@ -571,7 +586,8 @@ def main():
     parser.add_argument('--key-halogen', nargs='*', help='List of canonical halogen bond interactions to count')
     parser.add_argument('--rfscores', nargs='*', help="Pickle(s) for RFScore model e.g. RFScore_v1_pdbbind2016.pickle")
     parser.add_argument('--nnscores', nargs='*', help="Pickle(s) for NNScore model e.g. NNScore_pdbbind2016.pickle")
-    parser.add_argument('--plecscores', nargs='*', help="Pickle(s) for PLECScore model e.g. PLEClinear_p5_l1_pdbbind2016_s65536.pickle")
+    parser.add_argument('--plecscores', nargs='*',
+                        help="Pickle(s) for PLECScore model e.g. PLEClinear_p5_l1_pdbbind2016_s65536.pickle")
     parser.add_argument('-r', '--report-file', help="File for the report")
     parser.add_argument('-c', '--compare', help="Compare interactions with this report")
 
@@ -595,9 +611,8 @@ def main():
     if args.key_halogen:
         key_inters[interactions.I_TYPE_HALOGEN] = args.key_halogen
 
-
     source = "calc_interactions.py using ODDT"
-    datasetMetaProps = {"source":source, "description": "Calculate interactions using ODDT"}
+    datasetMetaProps = {"source": source, "description": "Calculate interactions using ODDT"}
 
     clsMappings = {}
     fieldMetaProps = []
@@ -611,25 +626,33 @@ def main():
     clsMappings['NumKeyInteractions'] = "java.lang.Integer"
     clsMappings['KeyInteractions'] = "java.lang.String"
     fieldMetaProps.append({
-        "fieldName": interactions.I_NAME_HBOND, "values": {"source": source, "description": "Hydrogen bond interactions"},
-        "fieldName": interactions.I_NAME_HALOGEN, "values": {"source": source, "description": "Halogen bond interactions"},
-        "fieldName": interactions.I_NAME_HYDROPHOBIC, "values": {"source": source, "description": "Hydrophobic interactions"},
-        "fieldName": interactions.I_NAME_SALT_BRIDGE, "values": {"source": source, "description": "Salt bridge interactions"},
-        "fieldName": interactions.I_NAME_PI_STACKING, "values": {"source": source, "description": "Pi stacking interactions"},
-        "fieldName": interactions.I_NAME_PI_CATION, "values": {"source": source, "description": "Pi cation interactions"}
+        "fieldName": interactions.I_NAME_HBOND,
+        "values": {"source": source, "description": "Hydrogen bond interactions"},
+        "fieldName": interactions.I_NAME_HALOGEN,
+        "values": {"source": source, "description": "Halogen bond interactions"},
+        "fieldName": interactions.I_NAME_HYDROPHOBIC,
+        "values": {"source": source, "description": "Hydrophobic interactions"},
+        "fieldName": interactions.I_NAME_SALT_BRIDGE,
+        "values": {"source": source, "description": "Salt bridge interactions"},
+        "fieldName": interactions.I_NAME_PI_STACKING,
+        "values": {"source": source, "description": "Pi stacking interactions"},
+        "fieldName": interactions.I_NAME_PI_CATION,
+        "values": {"source": source, "description": "Pi cation interactions"}
     })
 
     inputs_file, inputs_supplr = rdkit_utils.default_open_input(args.input, args.informat)
     output, writer, output_base = rdkit_utils.default_open_output(args.output,
-                        'calc_interactions', args.outformat,
-                        valueClassMappings=clsMappings,
-                        datasetMetaProps=datasetMetaProps,
-                        fieldMetaProps=fieldMetaProps,
-                        compress=not args.no_gzip)
+                                                                  'calc_interactions', args.outformat,
+                                                                  valueClassMappings=clsMappings,
+                                                                  datasetMetaProps=datasetMetaProps,
+                                                                  fieldMetaProps=fieldMetaProps,
+                                                                  compress=not args.no_gzip)
 
     # this does the processing
     count, errors = process(args.protein, args.input, writer, key_inters,
                             protein_format=args.protein_format, filter_strict=args.strict,
+                            exact_protein=args.exact_protein, exact_ligand=args.exact_ligand,
+                            keep_hs_protein=args.keep_hs_protein, keep_hs_ligand=args.keep_hs_ligand,
                             report_file=args.report_file, compare_file=args.compare,
                             rfscores=args.rfscores, nnscores=args.nnscores, plecscores=args.plecscores)
     utils.log('Processing complete.', count, 'records processed.', errors, 'errors')
@@ -640,7 +663,8 @@ def main():
     output.close()
     #
     if args.metrics:
-        utils.write_metrics(output_base, {'__InputCount__':total, '__OutputCount__':count, '__ErrorCount__':errors, 'ODDTInteraction':count})
+        utils.write_metrics(output_base, {'__InputCount__': total, '__OutputCount__': count, '__ErrorCount__': errors,
+                                          'ODDTInteraction': count})
 
 
 if __name__ == "__main__":
