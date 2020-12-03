@@ -305,7 +305,8 @@ def process_mol(protein, mol, key_inters, index, filter_strict=False,
 
     # handle pi cation interactions
     inters = calc_pi_cation_interactions(protein, mol, key_inters.get(interactions.I_TYPE_PI_CATION, None),
-                                         mol_key_inters, filter_strict=filter_strict)
+                                         mol_key_inters, filter_strict=filter_strict,
+                                         exact_protein=exact_protein, exact_ligand=exact_ligand)
     if inters:
         compare_interactions(inters, compare_data, all_scores)
         data = inters.asText()
@@ -483,7 +484,7 @@ def calc_pi_stacking_interactions(protein, mol, key_inters_defs, mol_key_inters,
     protein_atoms, ligand_atoms, strict_parallel, strict_perpendicular = oddt.interactions.pi_stacking(protein, mol)
     inters = {}
     for p, l, s1, s2 in zip(protein_atoms, ligand_atoms, strict_parallel, strict_perpendicular):
-        if (s1 and s2) or not filter_strict:
+        if (s1 or s2) or not filter_strict:
             c = get_canonical_residue(p)
             dist = spatial.distance(np.array([p['centroid']]), np.array([l['centroid']]))[0][0]
             p_coords = (p['centroid'][0].item(), p['centroid'][1].item(), p['centroid'][2].item())
@@ -505,22 +506,30 @@ def calc_pi_stacking_interactions(protein, mol, key_inters_defs, mol_key_inters,
         return None
 
 
-def calc_pi_cation_interactions(protein, mol, key_inters_defs, mol_key_inters, filter_strict=False):
+def calc_pi_cation_interactions(protein, mol, key_inters_defs, mol_key_inters,
+                                filter_strict=False, exact_protein=False, exact_ligand=False):
+    """
+    Pi-cation calculations are directional so are run in both directions (protein->ligand and ligand-> protein).
+    Hence this method runs the pi_cation() calculation twice.
+    :param protein:
+    :param mol:
+    :param key_inters_defs:
+    :param mol_key_inters:
+    :param filter_strict:
+    :param exact_protein:
+    :param exact_ligand:
+    :return:
+    """
     inters = {}
-    rings, cation, strict = oddt.interactions.pi_cation(protein, mol)
+    # first treat the protein as the pi and the ligand as the cation
+    rings, cation, strict = oddt.interactions.pi_cation(protein, mol, cation_exact=exact_ligand)
     for ring, cat, s in zip(rings, cation, strict):
         if s or not filter_strict:
             dist = spatial.distance(np.array([ring['centroid']]), np.array([cat['coords']]))[0][0]
-            if ring['resnum']:  # ring is from protein
-                c = get_canonical_residue(ring)
-                p_coords = (ring['centroid'][0].item(), ring['centroid'][1].item(), ring['centroid'][2].item())
-                l_coords = (cat['coords'][0].item(), cat['coords'][1].item(), cat['coords'][2].item())
-                t = interactions.Interaction(c, p_coords, l_coords, dist, None)
-            else:  # ring must be from ligand
-                c = get_canonical_residue(cat)
-                p_coords = (cat['centroid'][0].item(), cat['centroid'][1].item(), cat['centroid'][2].item())
-                l_coords = (ring['coords'][0].item(), ring['coords'][1].item(), ring['coords'][2].item())
-                t = interactions.Interaction(c, p_coords, l_coords, dist, None)
+            c = get_canonical_residue(ring)
+            p_coords = (ring['centroid'][0].item(), ring['centroid'][1].item(), ring['centroid'][2].item())
+            l_coords = (cat['coords'][0].item(), cat['coords'][1].item(), cat['coords'][2].item())
+            t = interactions.Interaction(c, p_coords, l_coords, dist, None)
 
             if c in inters:
                 current_value = inters[c]
@@ -530,6 +539,26 @@ def calc_pi_cation_interactions(protein, mol, key_inters_defs, mol_key_inters, f
                 inters[c] = t
                 if key_inters_defs and c in key_inters_defs:
                     mol_key_inters.append(interactions.I_TYPE_PI_CATION + ':' + c)
+
+    # now with the ligand as the pi and the protein as the cation
+    rings, cation, strict = oddt.interactions.pi_cation(mol, protein, cation_exact=exact_protein)
+    for ring, cat, s in zip(rings, cation, strict):
+        if s or not filter_strict:
+            dist = spatial.distance(np.array([ring['centroid']]), np.array([cat['coords']]))[0][0]
+            c = get_canonical_residue(ring)
+            p_coords = (cat['coords'][0].item(), cat['coords'][1].item(), cat['coords'][2].item())
+            l_coords = (ring['centroid'][0].item(), ring['centroid'][1].item(), ring['centroid'][2].item())
+            t = interactions.Interaction(c, p_coords, l_coords, dist, None)
+
+            if c in inters:
+                current_value = inters[c]
+                if dist < current_value.distance:
+                    inters[c] = t
+            else:
+                inters[c] = t
+                if key_inters_defs and c in key_inters_defs:
+                    mol_key_inters.append(interactions.I_TYPE_PI_CATION + ':' + c)
+
 
     if inters:
         return interactions.InteractionType(interactions.I_NAME_PI_CATION, list(inters.values()))

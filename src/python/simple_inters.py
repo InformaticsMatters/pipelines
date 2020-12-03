@@ -41,7 +41,7 @@ for p, l, s in zip(protein_atoms, ligand_atoms, strict):
     print('  H-bond', get_canonical_hbond(p), '-', l['atomtype'], l['id'].item(), s)
 print('Found', count, 'H-bond interactions')
 
-protein_atoms, ligand_atoms = interactions.salt_bridges(protein, ligand, mol1_exact=False, mol2_exact=exact_ligand)
+protein_atoms, ligand_atoms = interactions.salt_bridges(protein, ligand, mol2_exact=exact_ligand)
 count = 0
 for p, l in zip(protein_atoms, ligand_atoms):
     count += 1
@@ -62,14 +62,15 @@ for p, l, s1, s2 in zip(protein_atoms, ligand_atoms, strict_parallel, strict_per
     print('  PiStack', p['resname'] + str(p['resnum']), '-', s1, s2)
 print('Found', count, 'pistack interactions')
 
-rings, cation, strict = oddt.interactions.pi_cation(protein, ligand)
 count = 0
+rings, cation, strict = oddt.interactions.pi_cation(protein, ligand, cation_exact=exact_ligand)
 for ring, cat, s in zip(rings, cation, strict):
     count += 1
-    if ring['resnum']:  # ring is from protein
-        print('  PiCation', ring['resname'] + str(ring['resnum']), 'protein -', s)
-    else:
-        print('  PiCation', cat['resname'] + str(cat['resnum']), 'ligand -', s)
+    print('  PiCation', ring['resname'] + str(ring['resnum']), 'protein-ligand -', s)
+rings, cation, strict = oddt.interactions.pi_cation(ligand, protein, cation_exact=False)
+for ring, cat, s in zip(rings, cation, strict):
+    count += 1
+    print('  PiCation', cat['resname'] + str(cat['resnum']), 'ligand-protein -', s)
 print('Found', count, 'pication interactions')
 
 protein_atoms, ligand_atoms, strict = oddt.interactions.halogenbonds(protein, ligand)
