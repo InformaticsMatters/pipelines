@@ -53,5 +53,5 @@ jobs:
     - name: Run PipelineTester
       run: |
         git clone https://github.com/InformaticsMatters/pipelines-utils.git
-        cd pipelines-utils/src/groovy
-        groovy PipelineTester.groovy -indocker
+        cd pipelines-utils
+        ./gradlew runDockerPipelineTester
