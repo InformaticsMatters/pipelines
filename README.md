@@ -1,6 +1,10 @@
 # Pipelines
 
-[![Build Status](https://travis-ci.com/InformaticsMatters/pipelines.svg?branch=master)](https://travis-ci.com/InformaticsMatters/pipelines)
+![build](https://github.com/InformaticsMatters/pipelines/workflows/build/badge.svg)
+![build latest](https://github.com/InformaticsMatters/pipelines/workflows/build%20latest/badge.svg)
+![build tag](https://github.com/InformaticsMatters/pipelines/workflows/build%20tag/badge.svg)
+![build stable](https://github.com/InformaticsMatters/pipelines/workflows/build%20stable/badge.svg)
+
 ![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/informaticsmatters/pipelines?include_prereleases)
 
 The project experiments with ways to generate data processing pipelines.
