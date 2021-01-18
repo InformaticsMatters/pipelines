@@ -28,6 +28,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v2
     # Build the images
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v1
@@ -46,6 +47,7 @@ jobs:
         file: Dockerfile-sdposter
         tags: squonk/rdkit-pipelines-sdposter:latest
     # Test the images
+    # We need Java and Groovy
     - name: Set up Java 11
       uses: actions/setup-java@v1
       with:

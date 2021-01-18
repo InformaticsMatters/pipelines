@@ -33,6 +33,7 @@ jobs:
   publish-tag:
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v2
     # Build and push the images with a tag.
     # Testing will have been done using the 'build-latest' workflow.
     - name: Inject slug/short variables
