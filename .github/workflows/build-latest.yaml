@@ -52,7 +52,7 @@ jobs:
       with:
         java-version: 11
     - name: Run pipeline tester
-      uses: informaticsmatters/pipeline-tester-action
+      uses: informaticsmatters/pipeline-tester-action@v1
     # Publish the images
     - name: Push
       run: docker push informaticsmatters/rdkit_pipelines:latest
