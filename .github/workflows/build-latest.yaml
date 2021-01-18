@@ -51,14 +51,8 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 11
-    - name: Run PipelineTester
-      run: |
-        curl -s get.sdkman.io | bash
-        source "$HOME/.sdkman/bin/sdkman-init.sh"
-        sdk install groovy
-        git clone https://github.com/InformaticsMatters/pipelines-utils.git
-        cd pipelines-utils/src/groovy
-        groovy PipelineTester.groovy -indocker
+    - name: Run pipeline tester
+      uses: informaticsmatters/pipeline-tester-action
     # Publish the images
     - name: Push
       run: docker push informaticsmatters/rdkit_pipelines:latest
