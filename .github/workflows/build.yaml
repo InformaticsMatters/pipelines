@@ -25,6 +25,9 @@ on:
   pull_request:
     branches:
     - 'master'
+  repository_dispatch:
+    types:
+    - pipelines-utils-rdkit
 
 jobs:
   build:
