@@ -45,12 +45,6 @@ jobs:
         push: false
         file: Dockerfile-rdkit
         tags: informaticsmatters/rdkit_pipelines:latest
-    - name: Build pipelines sdposter
-      uses: docker/build-push-action@v2
-      with:
-        push: false
-        file: Dockerfile-sdposter
-        tags: squonk/rdkit-pipelines-sdposter:latest
     # Test the images
     # We need Java and Groovy
     - name: Set up Java 11
@@ -67,6 +61,10 @@ jobs:
         groovy PipelineTester.groovy -indocker
     # Publish the images
     - name: Push
-      run: |
-        docker push informaticsmatters/rdkit_pipelines:latest
-        docker push squonk/rdkit-pipelines-sdposter:latest
+      run: docker push informaticsmatters/rdkit_pipelines:latest
+    - name: Build and push pipelines sdposter
+      uses: docker/build-push-action@v2
+      with:
+        push: true
+        file: Dockerfile-sdposter
+        tags: squonk/rdkit-pipelines-sdposter:latest
