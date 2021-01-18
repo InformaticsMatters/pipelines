@@ -53,6 +53,12 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 11
+    - name: Install groovy
+      run: |
+        curl -s get.sdkman.io | bash
+        source "$HOME/.sdkman/bin/sdkman-init.sh"
+        sdk install groovy
+        groovy -version
     - name: Run PipelineTester
       run: |
         git clone https://github.com/InformaticsMatters/pipelines-utils.git
