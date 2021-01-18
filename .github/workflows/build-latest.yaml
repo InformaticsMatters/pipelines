@@ -55,10 +55,9 @@ jobs:
         curl -s get.sdkman.io | bash
         source "$HOME/.sdkman/bin/sdkman-init.sh"
         sdk install groovy
-        groovy -version
         git clone https://github.com/InformaticsMatters/pipelines-utils.git
-        cd pipelines-utils
-        ./gradlew runDockerPipelineTester
+        cd pipelines-utils/src/groovy
+        groovy PipelineTester.groovy -indocker
     # Publish the images
     - name: Login to DockerHub
       uses: docker/login-action@v1
