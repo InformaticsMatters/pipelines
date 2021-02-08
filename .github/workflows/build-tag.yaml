@@ -3,9 +3,8 @@ name: build tag
 
 # Actions for any 'unofficial' tag.
 
-# It's not an official tag if it's not formed from three digits
-# (i.e. is not 'N.N.N').
-# We publish images using the tag as a tag.
+# It's not an official tag if it's not formed from 2 or 3 digits
+# (i.e. is not 'N.N.N'). We publish images using the tag as a tag.
 
 # -----------------
 # Control variables (GitHub Secrets)
@@ -28,6 +27,7 @@ on:
     tags:
     - '**'
     - '![0-9]+.[0-9]+.[0-9]+'
+    - '![0-9]+.[0-9]+'
 
 jobs:
   publish-tag:
@@ -38,10 +38,6 @@ jobs:
     # Testing will have been done using the 'build-latest' workflow.
     - name: Inject slug/short variables
       uses: rlespinasse/github-slug-action@v3.x
-    - name: Set up QEMU
-      uses: docker/setup-qemu-action@v1
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
     - name: Login to DockerHub
       uses: docker/login-action@v1
       with:
